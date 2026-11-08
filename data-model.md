@@ -16,6 +16,8 @@ upstream:
 > **說明：** 專案沒有 SRS 和 business-rules 文件，改用 `prd.md` v0.7、`acceptance-criteria.md` v0.3、`roadmap.md` v0.3、`api-spec.md` v0.1、`c4-diagram.md` v0.2 當依據。
 >
 > **寫法（Owner 決定 2026-11-08，3A）：** 這是**邏輯模型**，不綁定儲存方式（SQLite、JSON 檔或其他，待「本機存資料」ADR）。型別用通用名稱（text、integer、boolean、datetime、list）；§6 的索引寫成「需要支援的查詢」，等 ADR 選定後再對應到實際做法。
+>
+> **更新（2026-11-08）：** `adr-002-local-storage.md`（Proposed）暫定用 SQLite，存在 `%APPDATA%\學習精靈\`；ADR-001 小試驗第 4 項確認後，§6 的「待 ADR」改成 SQLite 索引。作答紀錄可以匯出成 CSV（AC-14）。
 
 ---
 
@@ -237,7 +239,7 @@ erDiagram
   - AnswerRecord 複製一份 `concept`，方便算 G2。
   - 每台電腦只有 1 位玩家（PRD 沒有提到多人共用一台電腦）。
   - 階段 2～5 的 on delete 是 Claude 草稿。
-- **Highest-value next input:** 「本機存資料」ADR（階段 1 開始寫程式前要定）——選定後，§6 的索引才能對應到實際做法，AC-10、AC-13 的「全部成功才算數」也要靠它做到。
+- **Highest-value next input:** ADR-001 小試驗第 4 項的結果（確認 ADR-002 的 SQLite）——確認後，§6 的索引才能對應到實際做法，AC-10、AC-13 的「全部成功才算數」也靠 SQLite 的 transaction 做到。
 
 ### TODO（缺資料）
 

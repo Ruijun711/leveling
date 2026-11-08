@@ -4,7 +4,7 @@
 
 ## 在新電腦接續時，貼給 Claude 的話
 
-> 請先讀取 `progress.md`、`project-brief.md`、`persona.md`、`jtbd.md`、`questionnaire.md`、`responses.csv`、`value-hypothesis.md`、`prd.md`、`roadmap.md`、`acceptance-criteria.md`、`adr-001-desktop-framework.md`、`c4-diagram.md`、`api-spec.md`、`data-model.md`、`practice-questions-stage0.md`，了解目前進度後再繼續。各 `*-quick.md` 工作包等要用到時再讀。**新增或修改任何檔案前，都必須先經過我同意。**
+> 請先讀取 `progress.md`、`project-brief.md`、`persona.md`、`jtbd.md`、`questionnaire.md`、`responses.csv`、`value-hypothesis.md`、`prd.md`、`roadmap.md`、`acceptance-criteria.md`、`adr-001-desktop-framework.md`、`adr-002-local-storage.md`、`c4-diagram.md`、`api-spec.md`、`data-model.md`、`practice-questions-stage0.md`，了解目前進度後再繼續。各 `*-quick.md` 工作包等要用到時再讀。**新增或修改任何檔案前，都必須先經過我同意。**
 
 ---
 
@@ -20,10 +20,11 @@
 | `value-hypothesis-quick.md` | 價值假設卡工作包：撰寫 `value-hypothesis.md` 的規則與範本 |
 | `prd-quick.md` | PRD 工作包：撰寫 `prd.md` 的規則與範本 |
 | `prd.md` | PRD 草稿 v0.7（v1 做完整產品概念的 Windows 桌面程式，含 AI 解釋錯題與鼓勵，6 個 P0 FR；技能數值、血量傷害、寶物清單、AI 服務與費用待 Avi 提供） |
-| `acceptance-criteria.md` | 階段 1 核心循環的驗收條件 v0.3（user story ＋ 13 條 AC，不含 AI；含下載題庫） |
+| `acceptance-criteria.md` | 階段 1 核心循環的驗收條件 v0.4（user story ＋ 14 條 AC，不含 AI；含下載題庫、匯出作答紀錄） |
 | `acceptance-criteria-quick.md` | 驗收條件工作包：撰寫 `acceptance-criteria.md` 的規則與範本 |
 | `roadmap.md` | v1 分階段開發規劃 v0.3（階段 0～5，含每階段的試用方式與門檻；階段 1 加上下載題庫；階段 0 的出題表與 G1 算法） |
-| `adr-001-desktop-framework.md` | ADR-001：桌面程式的語言和框架（Proposed；先做 PySide6、Godot 小試驗再決定） |
+| `adr-001-desktop-framework.md` | ADR-001：桌面程式的語言和框架（Proposed；先做 PySide6、Godot 小試驗再決定，試驗共 4 項） |
+| `adr-002-local-storage.md` | ADR-002：本機資料怎麼存（Proposed；暫定 SQLite，等 ADR-001 小試驗第 4 項確認；作答紀錄匯出 CSV；v1 不備份） |
 | `adr-quick.md` | ADR 工作包：撰寫架構決策紀錄的規則與範本 |
 | `c4-diagram.md` | C4 架構圖 v0.2（Level 1、2，圖用 Mermaid flowchart；v1 完整版，標出各元素從哪個階段開始；題庫下載在階段 1、上傳經驗值在階段 3+；技術大多待 ADR） |
 | `c4-diagram-quick.md` | C4 圖工作包：撰寫 `c4-diagram.md` 的規則與範本 |
@@ -134,6 +135,7 @@
 | 11-08 | 資料模型範圍 | 階段 1 寫完整欄位，階段 2～5 只畫關係，加上 api-spec 的雲端玩家進度（1C） |
 | 11-08 | 個資 | 暱稱不能用真名，維持輕量版資料模型（2B）；階段 0 表單和 `roadmap.md` 加上「不要用真名」 |
 | 11-08 | 資料模型寫法 | 邏輯模型，不綁定儲存方式，索引寫成需要支援的查詢（3A） |
+| 11-08 | 本機存資料（ADR-002） | 暫定 SQLite（1A）；先寫成 Proposed，ADR-001 小試驗加第 4 項「經驗值存起來、重開後讀回」（2A）；試用資料由同學自己匯出 CSV 傳給 Avi，新增 AC-14（3A）；v1 不備份（4A） |
 
 ---
 
@@ -178,7 +180,8 @@
 - [x] 全面檢查文件，依 Avi 同意修正（2026-11-08）：`prd.md` v0.7、`acceptance-criteria.md` v0.3、`roadmap.md` v0.3、`value-hypothesis.md` v0.4、`c4-diagram.md` v0.2 等
 - [x] 依 `api-spec-quick.md` 完成 `api-spec.md` v0.1（Avi 決定 1B 2A 3C 4A，2026-11-08）
 - [x] 依 `data-model-quick.md` 完成 `data-model.md` v0.1（Avi 決定 1C 2B 3A，2026-11-08）
-- [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林」
+- [x] 依 `adr-quick.md` 撰寫 `adr-002-local-storage.md`（Proposed，Avi 決定 1A 2A 3A 4A，2026-11-08）
+- [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林＋經驗值存進 SQLite」
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [ ] 階段 0：在 script.google.com 執行 `createStage0Form()`、找 ≥ 8 位 P1 同學、依出題表執行 `releaseBatch1()`～`4()`、追蹤 2 週
 
@@ -206,6 +209,7 @@
 4. **AC-11 檢查新題目的時機**（開機時或每天，`acceptance-criteria.md`）
 5. **提供 `prd.md` 的 TODO**（見下方）
 6. **作答紀錄的保留期限、要不要做「重設進度」**（`data-model.md` §12，不急）
+7. **匯出檔用什麼方式傳給你**（Email、Line、雲端硬碟；階段 1 試用前決定，`adr-002-local-storage.md`）
 
 ### PRD 待補（`prd.md` v0.7，2026-11-08）
 
@@ -223,10 +227,10 @@
 ## 下一步
 
 1. **開始階段 0**（見 `roadmap.md` §3「階段 0 細節」）：執行 `create-stage0-form.gs`，2 週後把結果寫回 `value-hypothesis.md`（A1 第二次測試）
-2. **ADR-001 小試驗**（可以和階段 0 同時進行）：PySide6、Godot 各做一個小版本，結果寫回 `adr-001-desktop-framework.md`，選定後改成 Accepted
+2. **ADR-001 小試驗**（可以和階段 0 同時進行）：PySide6、Godot 各做一個小版本（共 4 項），結果寫回 `adr-001-desktop-framework.md`；第 4 項（SQLite）寫回 `adr-002-local-storage.md`；兩份一起改成 Accepted
 3. Avi 提供 PRD 剩下的 TODO 後，Claude 填入 `prd.md`
 4. **決定題庫檔案放在哪個雲端服務**（階段 1 前要定，屬於「雲端資料服務」ADR 的一部分；見 `roadmap.md` §2、`c4-diagram.md` §12）
-5. 之後要另寫的 ADR：本機存資料（階段 1 要用；需要支援的查詢見 `data-model.md` §6）、雲端資料服務、AI 服務、程式碼批改（見 `c4-diagram.md` §12）
+5. 之後要另寫的 ADR：雲端資料服務、AI 服務、程式碼批改（見 `c4-diagram.md` §12）
 6. （選做）之後要做 JTBD-002 時，再訂它的成功標準
 7. ~~concierge 測試~~ → 已完成（2026-11-05，8 人），結果寫在 `value-hypothesis.md` §5「測試結果」
 8. （選做）追問 P1 新手：「現在怎麼判斷自己有沒有進步？」

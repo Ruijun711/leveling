@@ -3,7 +3,7 @@ doc_type: "adr"
 variant: "light"
 status: "proposed"
 owner: "Avi"
-last_updated: "2026-11-07"
+last_updated: "2026-11-08"
 upstream:
   required: ["technical-discussion-notes"]
   optional: ["prd", "c4-diagram", "nfr"]
@@ -11,7 +11,7 @@ upstream:
 
 # ADR-001: 階段 1 桌面程式要用哪個語言和框架
 
-**Status:** Proposed · **Owner:** Avi · **Last updated:** 2026-11-07
+**Status:** Proposed · **Owner:** Avi · **Last updated:** 2026-11-08
 
 > [!NOTE]
 > 依據：`prd.md` v0.6（§6 NFR Platform、Latency；FR-5；§9 R2）、`roadmap.md` v0.1（階段 1、3、5）、`acceptance-criteria.md` v0.1（AC-1、AC-4、AC-9、AC-10）、`project-brief.md`（§主要約束）。範圍、Owner 技能、作業系統、是否考慮階段 3 由 Owner 決定（2026-11-07：1A 2B 3C 4A）；先做小試驗再決定由 Owner 決定（2026-11-07：1A、2 可以）。
@@ -78,17 +78,19 @@ upstream:
 ### Chosen: **暫定——先做小試驗，再從 Option A 和 Option B 選一個** · **[M]**
 
 - **Scope:** 適用於學習精靈桌面程式（階段 1～5 的畫面、遊戲邏輯、桌面 Boss 戰）。不包含本機存資料的方式、AI 服務、批改程式碼的方式、同學互看等級的伺服器（之後另寫 ADR）。
-- **小試驗：** A、B 各做一個最簡單的版本，內容是「出 1 題選擇題、答對加 10 點經驗值，再讓一張哥布林圖片出現在桌面上」，用以下 3 個標準比較：
+- **小試驗：** A、B 各做一個最簡單的版本，內容是「出 1 題選擇題、答對加 10 點經驗值，再讓一張哥布林圖片出現在桌面上，並把經驗值存起來」，用以下 4 個標準比較：
 
   | # | 要試的事 | 判斷標準 |
   |---|---|---|
   | 1 | Boss 能不能出現在桌面上 | 哥布林圖片顯示在桌面上，背景透明、沒有視窗邊框、蓋在其他視窗上面，而且會移動 |
   | 2 | 經驗值能不能 3 秒內更新 | 從按下送出到畫面顯示新的經驗值，不超過 3 秒（依據：AC-1） |
   | 3 | 做到可以動要花多久 | 記錄 Owner 從開始到 1、2 都做到的時間；_TODO: 需要 Owner 決定兩邊時間差多少才算「明顯比較快」_ |
+  | 4 | 經驗值能不能存起來（ADR-002） | 把經驗值存進 SQLite，關掉程式重開，讀回來的經驗值是對的（依據：AC-9；adr-002 §6，Owner 決定 2026-11-08，2A） |
 
   - 兩個都過 1、2：選花的時間比較少的那個。
   - 只有一個過 1、2：選那一個。
   - 兩個都沒過：重新考慮 Option C，或調整階段 3 的設計。
+  - 第 4 項不影響選 A 或 B，結果寫回 `adr-002-local-storage.md`（選定的框架做不到時，ADR-002 改用 JSON 檔）。
   - _TODO: 試驗結果出來後，把 Chosen 改成 A 或 B，Status 改成 Accepted，Confidence 改成 [H]_
 
 - **Positive consequences:** 用實際做出來的結果決定，不用靠猜；如果 B 做得出來，階段 3 的動畫會比較好做；如果 A 做得出來，階段 5 執行 Python 程式比較直接。
@@ -98,7 +100,7 @@ upstream:
   - 不管選哪一個都有已知代價：選 A，階段 3 的動畫要自己寫；選 B，階段 5 要另外呼叫 Python 批改程式碼，而且做題目畫面比較麻煩。
 - **Follow-up:**
   - 做小試驗，結果寫回本 ADR（§6、§10）。
-  - 選定後另寫 ADR：本機存資料的方式（AC-5、AC-9、AC-10 要用）。
+  - 本機存資料已另寫 `adr-002-local-storage.md`（Proposed，2026-11-08）；小試驗第 4 項的結果寫回 ADR-002。
   - 同學用什麼作業系統，試用前先問（依據：Owner 3C）。
 
 ---
@@ -108,6 +110,7 @@ upstream:
 | Date | Decision | Options | Chosen | Rejected why | Confidence |
 |---|---|---|---|---|---|
 | 2026-11-07 | 桌面程式的語言和框架怎麼決定（**Owner 決定** 1A） | A PySide6 / B Godot / C Electron / D 保持現狀；決定方式：先做小試驗 / 現在直接選 | 先做 A、B 小試驗再決定 | C：Owner 的 JavaScript 只會一點，遊戲邏輯要用 JavaScript 寫，學習成本最高；D：做不到 3 秒內更新和桌面 Boss 戰，prd 已排除；「現在直接選」：A 好學、B 做遊戲容易，沒有哪一個明顯比較好 | **[M]** |
+| 2026-11-08 | 小試驗加第 4 項「經驗值存進 SQLite、重開後讀回」（**Owner 決定** ADR-002 2A） | 加進小試驗 / 不加，ADR-002 直接定案 | 加進小試驗 | 不加：不確定 Godot 的 SQLite 外掛好不好用；第 4 項只用來確認 ADR-002，不影響選 A 或 B | **[H]** |
 | 2026-11-07 | 小試驗的判斷標準（**Owner 同意** 2） | 桌面 Boss、3 秒內更新、花多久 / 另外加其他標準 | 這 3 項 | 其他標準（例如安裝檔大小、開機自動執行）A、B 都做得到，比較不出差別 | **[M]** |
 
 ---
