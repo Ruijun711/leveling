@@ -33,23 +33,29 @@ upstream:
 
 ## 2. Level 1 — System Context
 
+> 圖的畫法：為了避免文字重疊，改用 Mermaid `flowchart`，不用工作包建議的 `C4Context` 語法（Owner 同意 2026-11-08）。分層規則照舊：Level 1 只放系統、使用者和外部系統。
+
 ```mermaid
-C4Context
-    title System Context：學習精靈 v1
-    Person(player, "玩家（P1 程式新手）", "aipe05 學員，學程式不到 6 個月，課後在自己的電腦上練習")
-    Person(owner, "Avi（出題者／管理者）", "出題、寫每題的觀念說明、每週抽查 AI 說明")
-    System(sys, "學習精靈", "Windows 桌面程式：練習題、經驗值與升級、職業與技能、桌面 Boss 戰、角色解釋錯題與鼓勵")
-    System_Ext(win, "Windows 作業系統", "桌面上的透明視窗、開機自動執行、提醒")
-    System_Ext(ai, "AI 服務（待 ADR）", "依玩家的答案產生錯題說明和鼓勵的話")
-    System_Ext(cloud, "雲端資料服務（待 ADR）", "放題庫給程式下載；存每個人的經驗值和等級")
-    Rel(player, sys, "作答、學技能、換職業、挑戰 Boss", "階段 1～5")
-    Rel(sys, win, "顯示桌面 Boss 和提醒、開機自動執行", "階段 1、3")
-    Rel(sys, ai, "送出題目和玩家的答案，取得說明和鼓勵", "HTTPS，階段 4")
-    Rel(sys, cloud, "下載新題庫（只下載）", "HTTPS，階段 1")
-    Rel(sys, cloud, "上傳、讀取經驗值和等級", "HTTPS，階段 3+")
-    Rel(owner, cloud, "上傳新題目和觀念說明", "方式 TODO")
-    Rel(owner, sys, "每週抽查 20 則 AI 說明", "階段 4，取得方式 TODO")
+flowchart LR
+    player(["玩家<br/>P1 程式新手"])
+    owner(["Avi<br/>出題者・管理者"])
+    sys["學習精靈<br/>Windows 桌面程式"]:::core
+    win["Windows"]:::ext
+    ai["AI 服務<br/>階段 4"]:::ext
+    cloud["雲端資料服務"]:::ext
+
+    player -->|作答・挑戰 Boss| sys
+    sys -->|桌面視窗・提醒| win
+    sys -->|取得說明和鼓勵| ai
+    sys -->|下載題庫：階段 1<br/>上傳等級：階段 3+| cloud
+    owner -->|上傳題目| cloud
+    owner -.->|每週抽查 AI 說明<br/>階段 4| sys
+
+    classDef core fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef ext fill:#eeeeee,stroke:#999999,stroke-dasharray:4 3,color:#333333
 ```
+
+圖例：圓角框是使用者；藍色框是學習精靈；灰色虛線框是外部系統；虛線箭頭表示取得方式還沒定（TODO）。
 
 ### Actors & External Systems
 
@@ -66,36 +72,64 @@ C4Context
 
 ## 3. Level 2 — Containers
 
+> 圖的畫法同 §2，改用 Mermaid `flowchart`（Owner 同意 2026-11-08）。
+
 ```mermaid
-C4Container
-    title Containers：學習精靈 v1
-    Person(player, "玩家（P1 程式新手）")
-    Person(owner, "Avi（出題者／管理者）")
-    Container_Boundary(c1, "學習精靈") {
-        Container(app, "桌面程式", "PySide6 或 Godot（ADR-001 Proposed）", "出題、判斷選擇題對錯、經驗值與升級、職業與技能、角色外觀、桌面 Boss 戰、提醒、顯示說明")
-        ContainerDb(local, "本機資料", "待 ADR（本機存資料）", "經驗值、等級、作答紀錄、職業與技能、寶物、題庫和觀念說明")
-        Container(judge, "程式碼批改環境", "待 ADR（程式碼批改）", "執行玩家填空的 Python 程式，判斷對錯")
-    }
-    System_Ext(win, "Windows 作業系統")
-    System_Ext(ai, "AI 服務（待 ADR）")
-    System_Ext(cloud, "雲端資料服務（待 ADR）")
-    Rel(player, app, "作答、學技能、挑戰 Boss", "滑鼠、鍵盤")
-    Rel(app, local, "讀寫進度和作答紀錄；讀題庫", "階段 1")
-    Rel(app, win, "桌面視窗、開機自動執行、提醒", "階段 1、3")
-    Rel(app, judge, "送出玩家的程式碼，取得對錯", "階段 5")
-    Rel(app, ai, "送出題目和玩家的答案，取得說明和鼓勵", "HTTPS，階段 4")
-    Rel(app, cloud, "下載新題庫（只下載）", "HTTPS，階段 1")
-    Rel(app, cloud, "上傳、讀取經驗值和等級", "HTTPS，階段 3+")
-    Rel(owner, cloud, "上傳新題目和觀念說明", "方式 TODO")
+flowchart LR
+    player(["玩家<br/>P1 程式新手"])
+    owner(["Avi<br/>出題者"])
+
+    subgraph sys["學習精靈（裝在玩家的 Windows 電腦上）"]
+        app["桌面程式<br/>PySide6 或 Godot"]:::core
+        local[("本機資料<br/>進度・紀錄・題庫")]:::core
+        judge["程式碼批改<br/>階段 5"]:::core
+    end
+
+    win["Windows"]:::ext
+    ai["AI 服務<br/>階段 4"]:::ext
+    cloud["雲端資料服務"]:::ext
+
+    player -->|作答・挑戰 Boss| app
+    app -->|讀寫| local
+    app -->|送出程式碼| judge
+    app -->|桌面視窗・提醒| win
+    app -->|取得說明和鼓勵| ai
+    app -->|下載題庫：階段 1<br/>上傳等級：階段 3+| cloud
+    owner -->|上傳題目| cloud
+
+    classDef core fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef ext fill:#eeeeee,stroke:#999999,stroke-dasharray:4 3,color:#333333
 ```
 
-| Container | Tech | Responsibility | 階段 | Confidence | Source |
-|---|---|---|---|---|---|
-| 桌面程式 | PySide6（Python）或 Godot 4（GDScript），**待 ADR-001 小試驗** | 從題庫隨機出題、判斷選擇題對錯、計算經驗值與升級（3 秒內更新）、職業與技能、角色外觀、桌面 Boss 即時戰鬥與寶物、超過 1 天沒練習時提醒、答錯時顯示說明 | 1～5 | **[M]**（職責）／**[L]**（技術） | prd FR-1～FR-6、§6 Latency；acceptance-criteria AC-1～AC-10；adr-001 §3、§6 |
-| 本機資料 | _TODO: 需要「本機存資料」ADR_ | 存經驗值、等級、作答紀錄（AC-5 欄位）、職業與技能、寶物；關機重開後還在；寫入失敗時不加經驗值。也存題庫和觀念說明：安裝檔附一份基本題庫，之後從雲端下載的新題目也存在這裡，讓沒網路時也能練、也能顯示備用說明 | 1 | **[M]**（職責）／**[L]**（技術） | acceptance-criteria AC-5、AC-9、AC-10、§4 Privacy；prd FR-3（4-4A）；adr-001 §6 Follow-up；Owner 決定 2026-11-08（C） |
-| 程式碼批改環境 | _TODO: 需要「程式碼批改」ADR（在桌面程式裡直接執行，或另外一個獨立的執行環境）_ | 執行玩家填空的 Python 程式碼，判斷對錯，回傳結果給桌面程式計算遞減經驗值 | 5 | **[L]** | prd FR-1（寫程式題）、FR-2、§9 R2；adr-001 §2「方不方便執行並批改玩家寫的 Python 程式」 |
+| 容器 | 做什麼 | 技術 | 階段 | 信心 |
+|---|---|---|---|---|
+| 桌面程式 | 出題、算經驗值、角色、Boss 戰、提醒 | PySide6 或 Godot（待 ADR-001） | 1～5 | **[M]** |
+| 本機資料 | 存進度、作答紀錄、題庫 | 待 ADR | 1 | **[M]** |
+| 程式碼批改環境 | 執行玩家的程式、判斷對錯 | 待 ADR | 5 | **[L]** |
 
-> **分層說明：** Boss 戰、提醒、角色都畫在「桌面程式」裡，沒有拆成獨立的容器。原因是這些部分是不是獨立執行的程式，要等 ADR-001 選定框架後才知道；拆開屬於 Level 3（Component），本文件不畫。「程式碼批改環境」可能最後併入桌面程式，先畫成獨立容器，是為了標出階段 5 的安全風險（見 §9 R5）。
+「信心」指的是職責；三個容器的技術都還沒定，都是 **[L]**。
+
+### 容器說明
+
+**桌面程式**
+- 從題庫隨機出題、判斷選擇題對錯、計算經驗值與升級（3 秒內更新）、職業與技能、角色外觀、桌面 Boss 即時戰鬥與寶物、超過 1 天沒練習時提醒、答錯時顯示說明。
+- 技術：PySide6（Python）或 Godot 4（GDScript），等 ADR-001 小試驗結果決定。
+- 來源：prd FR-1～FR-6、§6 Latency；acceptance-criteria AC-1～AC-13；adr-001 §3、§6
+
+**本機資料**
+- 存經驗值、等級、作答紀錄（AC-5 欄位）、職業與技能、寶物；關機重開後還在；寫入失敗時不加經驗值。
+- 也存題庫和觀念說明：安裝檔附一份基本題庫，之後從雲端下載的新題目也存在這裡，讓沒網路時也能練、也能顯示備用說明。
+- 技術：_TODO: 需要「本機存資料」ADR_
+- 來源：acceptance-criteria AC-5、AC-9～AC-13、§4 Privacy；prd FR-3（4-4A）；adr-001 §6 Follow-up；Owner 決定 2026-11-08（C）
+
+**程式碼批改環境**
+- 執行玩家填空的 Python 程式碼，判斷對錯，回傳結果給桌面程式計算遞減經驗值。
+- 技術：_TODO: 需要「程式碼批改」ADR（在桌面程式裡直接執行，或另外一個獨立的執行環境）_
+- 來源：prd FR-1（寫程式題）、FR-2、§9 R2；adr-001 §2
+
+**分層說明**
+- Boss 戰、提醒、角色都算在「桌面程式」裡，沒有拆成獨立的容器。這些部分是不是獨立執行的程式，要等 ADR-001 選定框架後才知道；拆開屬於 Level 3（Component），本文件不畫。
+- 「程式碼批改環境」最後可能併入桌面程式。先畫成獨立容器，是為了標出階段 5 的安全風險（見 §9 R5）。
 
 ---
 
