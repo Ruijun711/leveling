@@ -1,0 +1,143 @@
+---
+doc_type: "c4-diagram"
+variant: "light"
+status: "draft"
+owner: "Avi"
+last_updated: "2026-11-08"
+upstream:
+  required: ["codebase-structure", "adr"]
+  optional: ["stakeholder-map"]
+---
+
+# C4 Architecture: 學習精靈 v1
+
+**Status:** Draft v0.2 · **Owner:** Avi · **Last updated:** 2026-11-08
+
+> [!NOTE]
+> 依據：`prd.md` v0.6、`roadmap.md` v0.1、`acceptance-criteria.md` v0.1、`adr-001-desktop-framework.md`（Proposed）、`project-brief.md`。**目前沒有程式碼**（工作包要求的 `codebase-structure` 不存在），所以這是「v1 規劃中的架構」，不是現有系統的描述。範圍、題目來源、互看等級的伺服器、從哪個階段開始下載題目由 Owner 決定（2026-11-08：1A 2B 3B、C）。
+>
+> **階段標記：** 每個元素和連線後面的「階段 N」對應 `roadmap.md` §2，表示從哪個階段開始才有。
+
+---
+
+## 1. Executive Summary
+
+- **給誰看：** Avi 自己開發時對照用，以及之後請老師、同學或 AI 協助時，快速看懂學習精靈由哪些部分組成、和哪些外部服務有關。**[M]**
+- **畫哪幾層：** Level 1（System Context）和 Level 2（Container）。範圍是 v1 完整版（階段 1～5，加上同學互看等級），每個元素標出從哪個階段開始才有。（依據：Owner 決定 2026-11-08，1A）
+- **不畫的部分：** Level 3（Component）和 Level 4（Code），因為還沒有程式碼，桌面程式框架也還沒選定（ADR-001 Proposed）。階段 0 的 Google 表單＋試算表不在圖上，因為 v1 不沿用。（依據：prd §10 5A）
+- **最大的未知：** 除了「桌面程式是 PySide6 或 Godot」以外，本機存資料、AI 服務、雲端資料服務、程式碼批改的方式都還沒有 ADR，所以 Level 2 的技術欄位大多是「待 ADR」。**[L]**
+
+> **TL;DR:** 學習精靈是裝在玩家 Windows 電腦上的桌面程式，進度存在本機；它依賴三個外部系統：Windows（桌面 Boss、開機自動執行、提醒）、AI 服務（解釋錯題、鼓勵，階段 4）、雲端資料服務（下載新題目、同學互看等級）。
+
+---
+
+## 2. Level 1 — System Context
+
+```mermaid
+C4Context
+    title System Context：學習精靈 v1
+    Person(player, "玩家（P1 程式新手）", "aipe05 學員，學程式不到 6 個月，課後在自己的電腦上練習")
+    Person(owner, "Avi（出題者／管理者）", "出題、寫每題的觀念說明、每週抽查 AI 說明")
+    System(sys, "學習精靈", "Windows 桌面程式：練習題、經驗值與升級、職業與技能、桌面 Boss 戰、角色解釋錯題與鼓勵")
+    System_Ext(win, "Windows 作業系統", "桌面上的透明視窗、開機自動執行、提醒")
+    System_Ext(ai, "AI 服務（待 ADR）", "依玩家的答案產生錯題說明和鼓勵的話")
+    System_Ext(cloud, "雲端資料服務（待 ADR）", "放題庫給程式下載；存每個人的經驗值和等級")
+    Rel(player, sys, "作答、學技能、換職業、挑戰 Boss", "階段 1～5")
+    Rel(sys, win, "顯示桌面 Boss 和提醒、開機自動執行", "階段 1、3")
+    Rel(sys, ai, "送出題目和玩家的答案，取得說明和鼓勵", "HTTPS，階段 4")
+    Rel(sys, cloud, "下載新題庫（只下載）", "HTTPS，階段 1")
+    Rel(sys, cloud, "上傳、讀取經驗值和等級", "HTTPS，階段 3+")
+    Rel(owner, cloud, "上傳新題目和觀念說明", "方式 TODO")
+    Rel(owner, sys, "每週抽查 20 則 AI 說明", "階段 4，取得方式 TODO")
+```
+
+### Actors & External Systems
+
+| Element | Type | Responsibility | Confidence | Source |
+|---|---|---|---|---|
+| 玩家（P1 程式新手） | Actor | 課後做練習題培養自己的職業角色；挑戰桌面 Boss | **[M]** | persona §P1；prd §1 |
+| Avi（出題者／管理者） | Actor | 出題、每題寫好觀念說明（給 AI 參考，也是沒網路時的備用說明）、每週抽查 20 則 AI 說明 | **[M]** | prd FR-3、§6 AI 說明正確性、§9 R2；roadmap §2 階段 1 說明 |
+| 學習精靈 | System | Windows 桌面程式，負責 FR-1～FR-6 | **[H]** | prd §1、§6 Platform |
+| Windows 作業系統 | External | 讓 Boss 和提醒以透明、無邊框、最上層的視窗出現在桌面上；開機自動執行 | **[M]** | prd §6 Platform、FR-5、FR-6；acceptance-criteria AC-4、AC-9；adr-001 §2 |
+| AI 服務（待 ADR） | External | 針對玩家自己的答案解釋錯在哪；在答錯、升級、打倒 Boss、一段時間沒練習時鼓勵玩家。PRD 不指定是哪一家 | **[M]** | prd FR-3、FR-6、§10（4-1A）；roadmap 階段 4 |
+| 雲端資料服務（待 ADR） | External | 階段 1 起：放題庫讓程式下載新題目（只下載，不上傳任何玩家資料）。階段 3+：存每個人的經驗值和等級，讓同學互看。用現成服務，不自己寫伺服器 | **[L]** | Owner 決定 2026-11-08（2B、3B、C）；roadmap §2 階段 1、3+；prd §6 Privacy |
+
+---
+
+## 3. Level 2 — Containers
+
+```mermaid
+C4Container
+    title Containers：學習精靈 v1
+    Person(player, "玩家（P1 程式新手）")
+    Person(owner, "Avi（出題者／管理者）")
+    Container_Boundary(c1, "學習精靈") {
+        Container(app, "桌面程式", "PySide6 或 Godot（ADR-001 Proposed）", "出題、判斷選擇題對錯、經驗值與升級、職業與技能、角色外觀、桌面 Boss 戰、提醒、顯示說明")
+        ContainerDb(local, "本機資料", "待 ADR（本機存資料）", "經驗值、等級、作答紀錄、職業與技能、寶物、題庫和觀念說明")
+        Container(judge, "程式碼批改環境", "待 ADR（程式碼批改）", "執行玩家填空的 Python 程式，判斷對錯")
+    }
+    System_Ext(win, "Windows 作業系統")
+    System_Ext(ai, "AI 服務（待 ADR）")
+    System_Ext(cloud, "雲端資料服務（待 ADR）")
+    Rel(player, app, "作答、學技能、挑戰 Boss", "滑鼠、鍵盤")
+    Rel(app, local, "讀寫進度和作答紀錄；讀題庫", "階段 1")
+    Rel(app, win, "桌面視窗、開機自動執行、提醒", "階段 1、3")
+    Rel(app, judge, "送出玩家的程式碼，取得對錯", "階段 5")
+    Rel(app, ai, "送出題目和玩家的答案，取得說明和鼓勵", "HTTPS，階段 4")
+    Rel(app, cloud, "下載新題庫（只下載）", "HTTPS，階段 1")
+    Rel(app, cloud, "上傳、讀取經驗值和等級", "HTTPS，階段 3+")
+    Rel(owner, cloud, "上傳新題目和觀念說明", "方式 TODO")
+```
+
+| Container | Tech | Responsibility | 階段 | Confidence | Source |
+|---|---|---|---|---|---|
+| 桌面程式 | PySide6（Python）或 Godot 4（GDScript），**待 ADR-001 小試驗** | 從題庫隨機出題、判斷選擇題對錯、計算經驗值與升級（3 秒內更新）、職業與技能、角色外觀、桌面 Boss 即時戰鬥與寶物、超過 1 天沒練習時提醒、答錯時顯示說明 | 1～5 | **[M]**（職責）／**[L]**（技術） | prd FR-1～FR-6、§6 Latency；acceptance-criteria AC-1～AC-10；adr-001 §3、§6 |
+| 本機資料 | _TODO: 需要「本機存資料」ADR_ | 存經驗值、等級、作答紀錄（AC-5 欄位）、職業與技能、寶物；關機重開後還在；寫入失敗時不加經驗值。也存題庫和觀念說明：安裝檔附一份基本題庫，之後從雲端下載的新題目也存在這裡，讓沒網路時也能練、也能顯示備用說明 | 1 | **[M]**（職責）／**[L]**（技術） | acceptance-criteria AC-5、AC-9、AC-10、§4 Privacy；prd FR-3（4-4A）；adr-001 §6 Follow-up；Owner 決定 2026-11-08（C） |
+| 程式碼批改環境 | _TODO: 需要「程式碼批改」ADR（在桌面程式裡直接執行，或另外一個獨立的執行環境）_ | 執行玩家填空的 Python 程式碼，判斷對錯，回傳結果給桌面程式計算遞減經驗值 | 5 | **[L]** | prd FR-1（寫程式題）、FR-2、§9 R2；adr-001 §2「方不方便執行並批改玩家寫的 Python 程式」 |
+
+> **分層說明：** Boss 戰、提醒、角色都畫在「桌面程式」裡，沒有拆成獨立的容器。原因是這些部分是不是獨立執行的程式，要等 ADR-001 選定框架後才知道；拆開屬於 Level 3（Component），本文件不畫。「程式碼批改環境」可能最後併入桌面程式，先畫成獨立容器，是為了標出階段 5 的安全風險（見 §9 R5）。
+
+---
+
+## 9. Architecture Risks
+
+> **R1（單點故障）：進度只存在玩家自己的電腦** — 硬碟壞掉、重灌或換電腦，經驗值、等級、職業、寶物和作答紀錄就全部不見。雲端只存經驗值和等級（3B），救不回其他資料。 — **Severity:** M — **Follow-up:** 在「本機存資料」ADR 決定要不要把完整進度備份到雲端資料服務。
+>
+> **R2（跨邊界的頻繁呼叫，影響 3 秒內更新）：作答流程如果要等雲端或 AI 回應** — 如果每次作答都先上傳到雲端、或等 AI 說明產生完才顯示經驗值，網路慢時就會超過 p95 < 3 秒。 — **Severity:** H — **Follow-up:** 寫 ADR 時明訂：經驗值和等級一律先在本機計算、存檔、顯示，上傳雲端和呼叫 AI 都在背景進行，不阻擋畫面更新。（依據：prd §6 Latency；acceptance-criteria AC-1、AC-2）
+>
+> **R3（外部依賴、單點）：雲端資料服務連不上或停止服務** — 程式下載不到新題目，玩家很快就把題庫做完，R1「持續練習」會更難達成；同學互看等級也會失效。綁定一家服務，之後要換也比較麻煩。 — **Severity:** M — **Follow-up:** 題庫下載後存在本機（見 §12 假設）；在「雲端資料服務」ADR 比較服務、費用和換服務的難度。
+>
+> **R4（外部依賴）：AI 服務斷線、出錯或費用超出** — 沒有說明就解決不了 JTBD-003；AI 說明錯誤也會教錯觀念。 — **Severity:** M — **Follow-up:** 已有備用說明（prd FR-3 4-4A）和每週抽查（prd §6）；費用上限待 Owner 決定（prd §12 TODO）。
+>
+> **R5（安全）：階段 5 在玩家電腦上執行玩家寫的程式碼** — 玩家的程式如果寫出無窮迴圈或刪檔指令，可能讓學習精靈當掉，甚至影響玩家的電腦。 — **Severity:** M — **Follow-up:** 在「程式碼批改」ADR 決定執行時間上限和隔離方式。
+>
+> **R6（存取權限、作弊）：雲端的經驗值由每台電腦自己上傳** — 存取權限設錯，同學會看到別人的答案（違反 prd §6 Privacy）；而且玩家可以改本機資料或直接改上傳的數字，讓互看的等級失去可信度（R1 第 12 題的「在坑自己」問題）。 — **Severity:** M — **Follow-up:** 在「雲端資料服務」ADR 設定只開放經驗值和等級、每人只能改自己的資料；_TODO: 要不要防止竄改經驗值，待 Owner 決定_。
+>
+> **循環依賴：** 目前沒有發現。所有連線都是桌面程式往外呼叫；雲端資料服務和 AI 服務不會反過來呼叫桌面程式。**[M]**
+
+---
+
+## 12. Confidence & Sources & TODO
+
+- **整份文件最低 confidence 欄位：** 雲端資料服務、程式碼批改環境、所有容器的技術欄位都是 **[L]**；桌面程式和本機資料的職責、Windows、AI 服務、兩個 actor 是 **[M]**。只有「學習精靈是 Windows 桌面程式」是 **[H]**。
+- **已解決的 CONFLICT（Owner 決定 2026-11-08，C）：** 2B「從雲端下載新題目」原本和 roadmap（伺服器在階段 3 之後）、acceptance-criteria §4 Privacy（驗證「沒有任何對外連線」）不一致。決定：**階段 1 就從雲端下載題庫，但只下載、不上傳任何玩家資料**；安裝檔附一份基本題庫；上傳經驗值和等級、同學互看維持在階段 3 之後。roadmap 和 acceptance-criteria 已同步修改（v0.2）。
+- **Fabricated assumptions（推測但 input 未明說）：**
+  - 下載的新題目會和基本題庫一起存在本機，讓沒網路時也能練、也能顯示備用說明（依 prd FR-3 4-4A 推得）。
+  - Avi 用雲端資料服務的管理介面上傳新題目，不另外做出題工具。
+  - 經驗值和等級什麼時候上傳（每次作答後，或定期）沒有說明；圖上只畫「上傳、讀取」。
+  - 職業、技能、寶物、作答紀錄只存在本機，不上傳雲端（3B 只提到經驗值和等級）。
+  - Avi 每週抽查的 AI 說明，假設會存在某處讓 Avi 取得；存在本機或雲端都還沒定。玩家的作答資料只在自己電腦上，Avi 怎麼拿到需要設計，也涉及 Privacy。
+  - Windows 畫成外部系統，是因為桌面透明視窗、開機自動執行、提醒都依賴作業系統功能。
+  - Boss 戰、提醒、角色都和桌面程式是同一個容器（見 §3 分層說明）。
+- **Highest-value next input:** ADR-001 小試驗的結果（決定桌面程式的技術），其次是「本機存資料」ADR（階段 1 就要用）。
+
+### TODO（缺資料）
+
+- _TODO: 題庫檔案放在哪個雲端服務，要在階段 1 前決定（「雲端資料服務」ADR 的一部分）_
+- _TODO: 桌面程式的框架，需要 ADR-001 小試驗結果_
+- _TODO: 本機存資料的方式，需要另寫 ADR（AC-5、AC-9、AC-10 要用）_
+- _TODO: 要用哪個雲端資料服務、費用、存取權限設定，需要另寫 ADR_
+- _TODO: 要用哪個 AI 服務、每月費用上限（prd §12 TODO）_
+- _TODO: 程式碼批改的方式與隔離方式，需要另寫 ADR（階段 5）_
+- _TODO: Avi 怎麼上傳新題目、怎麼取得 AI 說明來抽查_
+- _TODO: 要不要防止玩家竄改上傳的經驗值，待 Owner 決定_
