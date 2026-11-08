@@ -30,8 +30,8 @@
 | `03-架構/` | `c4-diagram.md` | C4 架構圖 v0.2（Mermaid flowchart） |
 | | `api-spec.md` | 雲端資料介面 v0.1（E1～E4、題庫格式） |
 | | `data-model.md` | 資料模型 v0.1（階段 1 本機 5 個 entity＋雲端玩家進度） |
-| `03-架構/adr/` | `adr-001-desktop-framework.md` | 桌面框架（Proposed；PySide6 小試驗已通過，Godot 未試） |
-| | `adr-002-local-storage.md` | 本機資料：暫定 SQLite（Proposed） |
+| `03-架構/adr/` | `adr-001-desktop-framework.md` | 桌面框架：**PySide6（Accepted）**；兩個小試驗都通過 |
+| | `adr-002-local-storage.md` | 本機資料：**SQLite（Accepted）** |
 | | `adr-003-cloud-data-service.md` | 階段 1 題庫放 GitHub 公開 repo（Proposed） |
 | | `adr-004-ai-service.md` | AI 服務：雲端代理保管金鑰（Proposed） |
 | | `adr-005-code-grading.md` | 寫程式題：本機獨立程式執行、比對輸出（Proposed） |
@@ -40,6 +40,7 @@
 | `05-階段0-未使用/` | `practice-questions-stage0.md` | 12 題選擇題（**未使用**；改當階段 1 題庫第一批題目） |
 | | `create-stage0-form.gs`、`code-review-stage0-form.md` | 階段 0 表單腳本和它的 code review（**未使用**，保留參考） |
 | `spike/pyside6/` | `main.py` | ADR-001 小試驗 PySide6 版（題目、經驗值、SQLite、桌面哥布林）；`.venv/` 不進 git |
+| `spike/godot/` | `main.gd`、`goblin_window.gd` 等 | ADR-001 小試驗 Godot 版（參考用；Godot 執行檔和外掛已刪，要再試需重新下載 Godot 4.7.2 和 godot-sqlite v4.9） |
 | `工作包/` | `*-quick.md`（11 個） | Launch Atlas 工作包：prd、jtbd、value-hypothesis、acceptance-criteria、adr、c4-diagram、api-spec、data-model、non-functional-reqs、code-review-checklist、unit-test |
 
 > `persona-quick.md`（Persona 工作包）與 `responses.pdf`（問卷 PDF 版）已於 2026-11-04 由 Avi 刪除。`persona.md` 已完成，問卷資料以 `responses.csv` 為準。
@@ -147,6 +148,7 @@
 | 11-08 | 跳過階段 0 | 用舊資料部分完成（1C）：反指標 25/40 = 62.5%；G1、G2 改由階段 1 試用第一次驗證；階段 0 檔案保留、標未使用，12 題改當階段 1 題庫（2A）；其他問卷、訪談步驟標跳過（3A）；階段 1 之後的程式試用保留（4A） |
 | 11-08 | 整理資料夾 | 依類別分成 01-研究、02-產品、03-架構（含 adr）、04-測試、05-階段0-未使用、工作包；中文資料夾名（1A）；檔名不改、文件內提到的檔名不改，只更新 progress（2A）；用 `git mv` 保留紀錄（3A） |
 | 11-08 | PySide6 小試驗 | 4 項都通過：哥布林透明、9.9 毫秒、約 15 分鐘、SQLite 重開後還在；Avi 看得懂、改得動。Godot 也要試（1A）；結果先寫進 ADR-001、002，維持 Proposed（2A）；比較規則：時間不到一半才算明顯快，否則看好不好懂（3A） |
+| 11-08 | **選定 PySide6** | Godot 也通過 4 項（第一次黑框，改 Compatibility 繪圖方式後透明；14.2 毫秒；約 12 分鐘）；時間沒差一半、Avi 覺得都好懂，依已知代價選 PySide6（1A）；ADR-001、002 改成 Accepted；試驗程式碼保留、刪掉 Godot 下載檔（2A） |
 
 ---
 
@@ -198,7 +200,7 @@
 - [x] 依 `code-review-checklist-quick.md` review `create-stage0-form.gs`，新增 `code-review-stage0-form.md`（Avi 決定 1A 2A 3A 4A，2026-11-08）
 - [x] 依 `unit-test-quick.md` 完成 `unit-test-stage1.md` v0.1（Avi 決定 1A 2A 3A 4A，2026-11-08）
 - [x] ADR-001 小試驗 PySide6 版：4 項都通過（2026-11-08，`spike/pyside6/main.py`）
-- [ ] ADR-001 小試驗 Godot 版：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林＋經驗值存進 SQLite」
+- [x] ADR-001 小試驗 Godot 版：4 項都通過（改繪圖方式後）；**選定 PySide6**，ADR-001、002 Accepted（2026-11-08）
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [x] ~~階段 0：執行表單、找同學、追蹤 2 週~~ → 跳過，用舊資料部分完成（Owner 決定 2026-11-08，1C）
 
@@ -221,7 +223,7 @@
 ## 待 Avi 處理
 
 1. ~~執行階段 0~~ → 跳過（Owner 決定 2026-11-08：不再做問卷或表單）
-2. **ADR-001**：試驗時間差多少才算「明顯比較快」
+2. ~~ADR-001 試驗時間差~~ → 已決定，並已選定 PySide6
 3. **申請 GitHub 帳號、建立公開題庫 repo**（階段 1 前；確認下載得到後，ADR-003 改成 Accepted；repo 只放題庫，不放專案資料夾的其他檔案）
 4. **AC-11 檢查新題目的時機**（開機時或每天，`acceptance-criteria.md`）
 5. **提供 `prd.md` 的 TODO**（見下方）
@@ -243,11 +245,11 @@
 
 ## 下一步
 
-1. ~~開始階段 0~~ → 跳過。**現在的第一步是 ADR-001 小試驗（下一項）**；G1 改由階段 1 試用第一次驗證
-2. **ADR-001 小試驗**：PySide6、Godot 各做一個小版本（共 4 項），結果寫回 `adr-001-desktop-framework.md`；第 4 項（SQLite）寫回 `adr-002-local-storage.md`；兩份一起改成 Accepted
+1. ~~開始階段 0~~ → 跳過；G1 改由階段 1 試用第一次驗證
+2. ~~ADR-001 小試驗~~ → 完成，選定 PySide6；**下一步：建立 GitHub 題庫 repo（第 4 項），然後開始階段 1**
 3. Avi 提供 PRD 剩下的 TODO 後，Claude 填入 `prd.md`
 4. **建立 GitHub 公開題庫 repo**（階段 1 前；見 `adr-003-cloud-data-service.md` §6 Follow-up）
-5. 所有規劃中的 ADR 都寫完了（001～006，都是 Proposed）。各自定案的時機：001、002 等小試驗；003 等建好題庫 repo；006 階段 3 前試驗；004 階段 4 前實測；005 階段 5 前定時間上限
+5. 所有規劃中的 ADR 都寫完了（001～006，都是 Proposed）。各自定案的時機：001、002 **已 Accepted**；003 等建好題庫 repo；006 階段 3 前試驗；004 階段 4 前實測；005 階段 5 前定時間上限
 6. （選做）之後要做 JTBD-002 時，再訂它的成功標準
 7. ~~concierge 測試~~ → 已完成（2026-11-05，8 人），結果寫在 `value-hypothesis.md` §5「測試結果」
 8. ~~（選做）追問 P1 新手~~ → 跳過（不再做問卷）

@@ -24,8 +24,8 @@ upstream:
 
 - **給誰看：** Avi 自己開發時對照用，以及之後請老師、同學或 AI 協助時，快速看懂學習精靈由哪些部分組成、和哪些外部服務有關。**[M]**
 - **畫哪幾層：** Level 1（System Context）和 Level 2（Container）。範圍是 v1 完整版（階段 1～5，加上同學互看等級），每個元素標出從哪個階段開始才有。（依據：Owner 決定 2026-11-08，1A）
-- **不畫的部分：** Level 3（Component）和 Level 4（Code），因為還沒有程式碼，桌面程式框架也還沒選定（ADR-001 Proposed）。階段 0 的 Google 表單＋試算表不在圖上，因為 v1 不沿用。（依據：prd §10 5A）
-- **最大的未知：** 桌面程式（ADR-001）、本機存資料（ADR-002）、階段 1 題庫放在 GitHub（ADR-003）、AI 服務（ADR-004）、程式碼批改（ADR-005）、階段 3+ 的雲端（ADR-006）都已有 ADR，但全部還是 Proposed，要等各自的小試驗或實測。**[L]**
+- **不畫的部分：** Level 3（Component）和 Level 4（Code），因為還沒有程式碼（桌面程式框架已選 PySide6，ADR-001 Accepted）。階段 0 的 Google 表單＋試算表不在圖上，因為 v1 不沿用。（依據：prd §10 5A）
+- **最大的未知：** 桌面程式用 PySide6（ADR-001，Accepted）、本機存資料用 SQLite（ADR-002，Accepted）；階段 1 題庫放在 GitHub（ADR-003）、AI 服務（ADR-004）、程式碼批改（ADR-005）、階段 3+ 的雲端（ADR-006）都已有 ADR，但全部還是 Proposed，要等各自的小試驗或實測。**[L]**
 
 > **TL;DR:** 學習精靈是裝在玩家 Windows 電腦上的桌面程式，進度存在本機；它依賴三個外部系統：Windows（桌面 Boss、開機自動執行、提醒）、AI 服務（解釋錯題、鼓勵，階段 4）、雲端資料服務（下載新題目、同學互看等級）。
 
@@ -80,7 +80,7 @@ flowchart LR
     owner(["Avi<br/>出題者"])
 
     subgraph sys["學習精靈（裝在玩家的 Windows 電腦上）"]
-        app["桌面程式<br/>PySide6 或 Godot"]:::core
+        app["桌面程式<br/>Python + PySide6"]:::core
         local[("本機資料<br/>進度・紀錄・題庫")]:::core
         judge["程式碼批改<br/>階段 5"]:::core
     end
@@ -103,7 +103,7 @@ flowchart LR
 
 | 容器 | 做什麼 | 技術 | 階段 | 信心 |
 |---|---|---|---|---|
-| 桌面程式 | 出題、算經驗值、角色、Boss 戰、提醒 | PySide6 或 Godot（待 ADR-001） | 1～5 | **[M]** |
+| 桌面程式 | 出題、算經驗值、角色、Boss 戰、提醒 | Python + PySide6（ADR-001） | 1～5 | **[M]** |
 | 本機資料 | 存進度、作答紀錄、題庫 | SQLite（ADR-002，Proposed） | 1 | **[M]** |
 | 程式碼批改環境 | 執行玩家的程式、判斷對錯 | 本機獨立 Python 程式（ADR-005，Proposed） | 5 | **[L]** |
 
@@ -113,13 +113,13 @@ flowchart LR
 
 **桌面程式**
 - 從題庫隨機出題、判斷選擇題對錯、計算經驗值與升級（3 秒內更新）、職業與技能、角色外觀、桌面 Boss 即時戰鬥與寶物、超過 1 天沒練習時提醒、答錯時顯示說明。
-- 技術：PySide6（Python）或 Godot 4（GDScript），等 ADR-001 小試驗結果決定。
+- 技術：Python + PySide6（ADR-001 Accepted，2026-11-08；小試驗 4 項都通過）。
 - 來源：prd FR-1～FR-6、§6 Latency；acceptance-criteria AC-1～AC-13；adr-001 §3、§6
 
 **本機資料**
 - 存經驗值、等級、作答紀錄（AC-5 欄位）、職業與技能、寶物；關機重開後還在；寫入失敗時不加經驗值。
 - 也存題庫和觀念說明：安裝檔附一份基本題庫，之後從雲端下載的新題目也存在這裡，讓沒網路時也能練、也能顯示備用說明。
-- 技術：SQLite，一個檔案放在 `%APPDATA%\學習精靈\`；作答紀錄可以匯出成 CSV，由同學自己傳給 Avi（`adr-002-local-storage.md`，Proposed，等 ADR-001 小試驗第 4 項確認）
+- 技術：SQLite，一個檔案放在 `%APPDATA%\學習精靈\`；作答紀錄可以匯出成 CSV，由同學自己傳給 Avi（`adr-002-local-storage.md`，Accepted；原本寫「Proposed，等 ADR-001 小試驗第 4 項確認）
 - 來源：acceptance-criteria AC-5、AC-9～AC-13、§4 Privacy；prd FR-3（4-4A）；adr-001 §6 Follow-up；Owner 決定 2026-11-08（C）
 
 **程式碼批改環境**
@@ -163,12 +163,12 @@ flowchart LR
   - Avi 每週抽查的 AI 說明，假設會存在某處讓 Avi 取得；存在本機或雲端都還沒定。玩家的作答資料只在自己電腦上，由同學自己匯出 CSV 傳給 Avi（ADR-002，Owner 決定 2026-11-08，3A）。
   - Windows 畫成外部系統，是因為桌面透明視窗、開機自動執行、提醒都依賴作業系統功能。
   - Boss 戰、提醒、角色都和桌面程式是同一個容器（見 §3 分層說明）。
-- **Highest-value next input:** ADR-001 小試驗的結果（決定桌面程式的技術），小試驗第 4 項也會確認 ADR-002 的 SQLite。
+- **Highest-value next input:** 階段 1 開始寫程式後的程式碼結構（可以補 Level 3 Component 圖）。
 
 ### TODO（缺資料）
 
 - ~~題庫檔案放在哪個雲端服務~~ → GitHub 公開題庫 repo（`adr-003-cloud-data-service.md`，Proposed）
-- _TODO: 桌面程式的框架，需要 ADR-001 小試驗結果_
+- ~~桌面程式的框架~~ → PySide6（ADR-001 Accepted）
 - ~~本機存資料的方式~~ → 已寫 `adr-002-local-storage.md`（Proposed，暫定 SQLite）
 - _TODO: 階段 3+ 選 Firebase 或 Supabase（ADR-006 小試驗）；階段 3 是否只用免費方案_
 - _TODO: 要用哪個 AI 服務、每月費用上限（ADR-004：階段 4 前實測 20 題再選）_

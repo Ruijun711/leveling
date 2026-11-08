@@ -1,7 +1,7 @@
 ---
 doc_type: "adr"
 variant: "light"
-status: "proposed"
+status: "accepted"
 owner: "Avi"
 last_updated: "2026-11-08"
 upstream:
@@ -11,7 +11,7 @@ upstream:
 
 # ADR-001: 階段 1 桌面程式要用哪個語言和框架
 
-**Status:** Proposed · **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Accepted（2026-11-08）· **Owner:** Avi · **Last updated:** 2026-11-08
 
 > [!NOTE]
 > 依據：`prd.md` v0.6（§6 NFR Platform、Latency；FR-5；§9 R2）、`roadmap.md` v0.1（階段 1、3、5）、`acceptance-criteria.md` v0.1（AC-1、AC-4、AC-9、AC-10）、`project-brief.md`（§主要約束）。範圍、Owner 技能、作業系統、是否考慮階段 3 由 Owner 決定（2026-11-07：1A 2B 3C 4A）；先做小試驗再決定由 Owner 決定（2026-11-07：1A、2 可以）。
@@ -75,7 +75,9 @@ upstream:
 
 ## 6. Decision & Consequences
 
-### Chosen: **暫定——先做小試驗，再從 Option A 和 Option B 選一個** · **[M]**
+### Chosen: **Option A：Python + PySide6** · **[H]**
+
+> 兩個都通過 4 項、時間沒差到一半、Owner 覺得兩個一樣好懂，所以依已知代價選擇（Owner 決定 2026-11-08）：階段 1～2 的表單式畫面、階段 5 直接執行 Python、SQLite 內建、用 Owner 已經會的 Python，比階段 3 的動畫優勢重要；而且 G1 要到階段 1 試用才驗證，階段 3 不一定會做。
 
 - **Scope:** 適用於學習精靈桌面程式（階段 1～5 的畫面、遊戲邏輯、桌面 Boss 戰）。不包含本機存資料的方式、AI 服務、批改程式碼的方式、同學互看等級的伺服器（之後另寫 ADR）。
 - **小試驗：** A、B 各做一個最簡單的版本，內容是「出 1 題選擇題、答對加 10 點經驗值，再讓一張哥布林圖片出現在桌面上，並把經驗值存起來」，用以下 4 個標準比較：
@@ -91,19 +93,19 @@ upstream:
   - 只有一個過 1、2：選那一個。
   - 兩個都沒過：重新考慮 Option C，或調整階段 3 的設計。
   - 第 4 項不影響選 A 或 B，結果寫回 `adr-002-local-storage.md`（選定的框架做不到時，ADR-002 改用 JSON 檔）。
-  - _TODO: 試驗結果出來後，把 Chosen 改成 A 或 B，Status 改成 Accepted，Confidence 改成 [H]_
 
 - **試驗結果（2026-11-08）：** 程式由 Claude 寫、Avi 執行和檢查（Owner 決定 spike 3A）。
 
   | # | 判斷標準 | A：PySide6 6.12.0 | B：Godot |
   |---|---|---|---|
-  | 1 | 哥布林出現在桌面（透明、無邊框、最上層、會移動） | ✅ 通過（Avi 確認） | _待試_ |
-  | 2 | 送出到畫面更新 < 3 秒 | ✅ **9.9 毫秒** | _待試_ |
-  | 3 | 做到可以動花多久 | 約 **15 分鐘**（15:50 開始安裝，16:06 Avi 全部確認完；中間含整理資料夾的時間） | _待試_ |
-  | 4 | 經驗值存進 SQLite，重開後還在 | ✅ 通過（Python 內建 `sqlite3`） | _待試_ |
-  | 加測 | Avi 自己改 `XP_PER_CORRECT` 10 → 20 | ✅ 看得懂、改得動 | _待試_ |
+  | 1 | 哥布林出現在桌面（透明、無邊框、最上層、會移動） | ✅ 通過（Avi 確認） | ❌ 第一次是**黑色方框**（預設的 Vulkan 繪圖方式）；改用 Compatibility（OpenGL）後 ✅ 通過 |
+  | 2 | 送出到畫面更新 < 3 秒 | ✅ **9.9 毫秒** | ✅ **14.2 毫秒**；改繪圖方式後 17.0 毫秒（等畫面真的畫出來才停止計時） |
+  | 3 | 做到可以動花多久 | 約 **15 分鐘**（15:50 開始安裝，16:06 Avi 全部確認完；中間含整理資料夾的時間） | 約 **12 分鐘**（16:13 開始下載，16:25 Avi 確認完），另加修黑框的時間 |
+  | 4 | 經驗值存進 SQLite，重開後還在 | ✅ 通過（Python 內建 `sqlite3`） | ✅ 通過（要另裝 godot-sqlite v4.9 外掛；中文路徑沒問題） |
+  | 加測 | Avi 自己改 `XP_PER_CORRECT` 10 → 20 | ✅ 看得懂、改得動 | ✅ 看得懂、改得動（Avi：「感覺都還好」） |
 
-  程式：`spike/pyside6/main.py`（commit `2d05fb9`）。
+  程式：`spike/pyside6/main.py`（commit `2d05fb9`）、`spike/godot/`（Godot 4.7.2，commit `74949f7`、`2cfc247`）。
+- **選 A 的代價：** 階段 3 的即時戰鬥動畫、血條、技能特效都要自己用 Qt 畫，比 Godot 慢；這次只證明「透明、最上層、會走動」做得到。
 
 - **Positive consequences:** 用實際做出來的結果決定，不用靠猜；如果 B 做得出來，階段 3 的動畫會比較好做；如果 A 做得出來，階段 5 執行 Python 程式比較直接。
 - **Negative consequences（必填）:**
@@ -123,6 +125,7 @@ upstream:
 |---|---|---|---|---|---|
 | 2026-11-07 | 桌面程式的語言和框架怎麼決定（**Owner 決定** 1A） | A PySide6 / B Godot / C Electron / D 保持現狀；決定方式：先做小試驗 / 現在直接選 | 先做 A、B 小試驗再決定 | C：Owner 的 JavaScript 只會一點，遊戲邏輯要用 JavaScript 寫，學習成本最高；D：做不到 3 秒內更新和桌面 Boss 戰，prd 已排除；「現在直接選」：A 好學、B 做遊戲容易，沒有哪一個明顯比較好 | **[M]** |
 | 2026-11-08 | 小試驗加第 4 項「經驗值存進 SQLite、重開後讀回」（**Owner 決定** ADR-002 2A） | 加進小試驗 / 不加，ADR-002 直接定案 | 加進小試驗 | 不加：不確定 Godot 的 SQLite 外掛好不好用；第 4 項只用來確認 ADR-002，不影響選 A 或 B | **[H]** |
+| 2026-11-08 | 選哪個框架（**Owner 決定** 1A） | A PySide6 / B Godot | A | B：階段 1～2 的表單畫面比較麻煩、階段 5 要另外附帶 Python、SQLite 要靠外掛、這次踩到黑框問題；它的優勢在階段 3 動畫，但 G1 要到階段 1 才驗證，階段 3 不一定會做 | **[H]** |
 | 2026-11-08 | Godot 要不要也試（**Owner 決定** 1A） | A 照原計畫也試 Godot / B PySide6 已通過，直接選 | A | B：換框架等於重寫，很難回頭；Godot 的優勢在階段 3 的即時戰鬥動畫，PySide6 的走路哥布林看不出差別 | **[H]** |
 | 2026-11-08 | 兩個都通過時怎麼比（**Owner 決定** 3A） | A 時間不到一半才算明顯快，否則看好不好懂、改不改得動 / B 差 30 分鐘以上 / C 不比時間 | A | B：程式主要由 Claude 寫，固定分鐘數主要反映 Claude 的速度；C：時間差很大時仍是有用的訊號 | **[H]** |
 | 2026-11-07 | 小試驗的判斷標準（**Owner 同意** 2） | 桌面 Boss、3 秒內更新、花多久 / 另外加其他標準 | 這 3 項 | 其他標準（例如安裝檔大小、開機自動執行）A、B 都做得到，比較不出差別 | **[M]** |
@@ -131,16 +134,16 @@ upstream:
 
 ## 12. Confidence & Sources & TODO
 
-- **整份文件最低 confidence 欄位：** §6 Chosen **[M]**（還沒試驗）；§10 兩條 **[M]**。
+- **整份文件最低 confidence 欄位：** §10 2026-11-07 的兩條 **[M]**（當時還沒試驗）。§6 Chosen 已依試驗結果改成 **[H]**。
 - **Fabricated assumptions（推測但 input 未明說）：**
   - A、B、C 都做得到透明、無邊框、永遠在最上層的視窗，是 Claude 依各框架的一般功能判斷，還沒在 Owner 的電腦上試過。
   - 「開機自動執行、跳出提醒、打包安裝檔」A、B、C 都做得到，所以沒有放進試驗標準。
   - 同學用 Windows（Owner 3C 先以 Windows 為準，還沒確認）。
   - 費用都是免費，是依各框架目前的授權；PySide6 是 LGPL 授權，個人專案免費。
-- **Highest-value next input:** 小試驗（spike）的結果。
+- **Highest-value next input:** 階段 1 開發時，打包成安裝檔和開機自動執行的實際做法。
 
 ### TODO（缺資料）
 
-- _TODO: PySide6 已試完（4 項通過）；需要 Godot 的結果，才能把 Chosen 改成 A 或 B_
+- ~~需要 A、B 小試驗結果~~ → 兩個都通過，選 A（PySide6）（Owner 決定 2026-11-08）
 - ~~試驗時間差多少才算「明顯比較快」~~ → 不到另一個的一半（Owner 決定 2026-11-08，3A）
 - _TODO: 需要確認同學用什麼作業系統（試用前問）_

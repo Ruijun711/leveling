@@ -1,7 +1,7 @@
 ---
 doc_type: "adr"
 variant: "light"
-status: "proposed"
+status: "accepted"
 owner: "Avi"
 last_updated: "2026-11-08"
 upstream:
@@ -11,7 +11,7 @@ upstream:
 
 # ADR-002: 本機資料怎麼存
 
-**Status:** Proposed · **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Accepted（2026-11-08）· **Owner:** Avi · **Last updated:** 2026-11-08
 
 > [!NOTE]
 > 依據：`data-model.md` v0.1（§2 entity、§6 需要的查詢）、`acceptance-criteria.md` v0.3（AC-5、AC-9、AC-10、AC-13、§4 Privacy）、`c4-diagram.md` v0.2（§3 本機資料、§9 R1、R2）、`adr-001-desktop-framework.md`（Proposed）、`roadmap.md` v0.3（§3 試用方式）。格式、決定方式、試用資料怎麼收、備份由 Owner 決定（2026-11-08：1A 2A 3A 4A）。
@@ -75,13 +75,15 @@ upstream:
 
 ## 6. Decision & Consequences
 
-### Chosen: **暫定 Option A（SQLite），ADR-001 小試驗確認後定案** · **[M]**
+### Chosen: **Option A（SQLite，Python 內建 `sqlite3`）** · **[H]**
+
+> ADR-001 選定 PySide6（Owner 決定 2026-11-08），小試驗第 4 項已通過，依 §6「選定的框架做得到：改成 Accepted」定案。
 
 - **Scope:** 適用於階段 1～5 存在使用者電腦上的所有資料（data-model §2，包含之後的職業、技能、寶物）。不包含雲端資料（另寫「雲端資料服務」ADR）。
 - **怎麼確認（Owner 決定 2A）：** 在 ADR-001 小試驗加第 4 項「把經驗值存進 SQLite，關掉程式重開，讀回來是對的」。PySide6、Godot 都要試。
   - 選定的框架做得到：本 ADR 改成 Accepted，Confidence 改成 **[H]**。
   - 選了 Godot 但 SQLite 外掛不好用：改用 Option B，並重寫本 ADR 的 §6。
-  - **PySide6 結果（2026-11-08）：** ✅ 通過。Python 內建 `sqlite3`，作答紀錄和經驗值用同一個 transaction 寫入，關掉程式重開後經驗值還在（Avi 確認）；試驗資料庫在 `%APPDATA%\學習精靈-試驗\spike.db`。Godot 待試。
+  - **PySide6 結果（2026-11-08）：** ✅ 通過。Python 內建 `sqlite3`，作答紀錄和經驗值用同一個 transaction 寫入，關掉程式重開後經驗值還在（Avi 確認）；試驗資料庫在 `%APPDATA%\學習精靈-試驗\spike.db`。Godot 版也通過（要另裝外掛），但 ADR-001 選了 PySide6。
 - **存放位置（Claude 提議）：** `%APPDATA%\學習精靈\` 底下的一個資料庫檔案。不需要管理員權限；移除程式時可以選擇保留資料。**[M]**
 - **安全存檔：** 作答紀錄和經驗值放在同一個 transaction 裡寫入（AC-10）；新題目和新的題庫版本號也放在同一個 transaction（AC-13）。**[H]**
 - **試用資料（Owner 決定 3A）：** 程式有「匯出作答紀錄」按鈕，產生 CSV 檔，由同學自己決定要不要傳給 Avi。程式本身不上傳任何資料，符合 AC §4 Privacy。驗收條件見 AC-14。**[M]**
@@ -114,17 +116,17 @@ upstream:
 
 ## 12. Confidence & Sources & TODO
 
-- **整份文件最低 confidence 欄位：** §6 Chosen **[M]**（還沒試驗）；存放位置、匯出檔、備份 **[M]**；§10 第 1 條 **[M]**。
+- **整份文件最低 confidence 欄位：** 存放位置、匯出檔、備份 **[M]**；§10 第 1 條 **[M]**。
 - **Fabricated assumptions（推測但 input 未明說）：**
   - Godot 4 可以透過外掛（例如 godot-sqlite）使用 SQLite，是 Claude 依一般資料判斷，還沒在 Owner 的電腦上試過。
   - 存放位置 `%APPDATA%\學習精靈\` 是 Claude 提議的一般做法，Owner 沒有特別指定。
   - 匯出的 CSV 只放作答紀錄（data-model AnswerRecord 的欄位），不放暱稱和玩家代號；Avi 從「誰傳來的」就知道是誰（Claude 提議，見 AC-14）。
   - 同學願意把匯出檔傳給 Avi（階段 0、concierge 時同學願意交表單，所以推測願意）。
-- **Highest-value next input:** ADR-001 小試驗第 4 項的結果。
+- **Highest-value next input:** 階段 1 開發時，用暫存 SQLite 檔做 AC-10、AC-13 的整合測試（unit-test-stage1 R2）。
 
 ### TODO（缺資料）
 
-- _TODO: PySide6 第 4 項已通過；等 ADR-001 選定框架（Godot 待試），才能改成 Accepted_
+- ~~等 ADR-001 選定框架~~ → PySide6，已 Accepted（Owner 決定 2026-11-08）
 - _TODO: 匯出檔用什麼方式傳給 Avi（Email、Line、雲端硬碟），試用前決定_
 - _TODO: 資料表版本怎麼記（`user_version`），開發時確認_
 - _TODO: 作答紀錄保留期限（data-model §12）_

@@ -25,7 +25,7 @@ upstream:
 - 階段 5 加入寫程式題：Python 基礎語法、程式填空，補上缺的一兩行（FR-1；Owner 決定 8A、9B）。
 - 一定要自動判斷，不靠人工；可以送很多次，答對時經驗值 10→8→6→4→2 遞減（FR-2，10C、10-2A）。
 - 作答資料不離開電腦（NFR S1）；要能擋住無窮迴圈、避免影響玩家電腦（c4-diagram R5；NFR S7）。
-- 如果 ADR-001 選 Godot，要另外附帶 Python 才能執行玩家的程式（adr-001 Option B Cons）。
+- ADR-001 已選 PySide6（Python），可以直接用 Python 執行玩家的程式，不用另外附帶（2026-11-08）。
 
 > **TL;DR:** 寫程式題要自動批改，得決定「用什麼方法判斷對錯」，同時兼顧公平、隱私和安全。
 
@@ -92,12 +92,12 @@ upstream:
 - **題目要多的欄位：** 程式範本（含空格位置）、預期輸出。_TODO: 寫進 `api-spec.md` 的 Question 和 `data-model.md`，階段 5 前凍結_
 - **Positive consequences:** 寫法不同但正確就算對；沒網路也能批改；資料不離開電腦；結果穩定；無窮迴圈不會讓學習精靈當掉。
 - **Negative consequences（必填）:**
-  - 選 Godot 時要附帶 Python，安裝檔變大，也多一件要維護的事（ADR-001）。
+  - ~~選 Godot 時要附帶 Python~~ → ADR-001 選了 PySide6，不需要（2026-11-08）。打包成安裝檔時，要確認執行玩家程式用的是學習精靈自帶的 Python。
   - 每題要多寫程式範本和預期輸出，出題工作變多。
   - 只比對輸出，「印出對的結果但寫法很怪」也會算對。
   - 不是完整的隔離：會用 Python 的玩家還是可能繞過模組檢查，在自己電腦上做壞事；但影響的只有玩家自己的電腦。
 - **Follow-up:**
-  - ADR-001 選定後，確認怎麼執行 Python（PySide6 直接用；Godot 要附帶）。
+  - ~~ADR-001 選定後確認怎麼執行 Python~~ → PySide6 直接用 Python 的 `subprocess` 執行（2026-11-08）。
   - 階段 5 前：決定時間上限，在 `api-spec.md`、`data-model.md` 加上程式範本和預期輸出欄位。
   - 寫批改的測試：正確答案、寫法不同的正確答案、無窮迴圈、禁止的模組。
 
@@ -118,7 +118,7 @@ upstream:
   - 程式填空題都會印出結果，可以用「比對輸出」判斷（PRD 只說「補上缺的一兩行」）。
   - 禁止模組清單（`os`、`subprocess`、`shutil`）是 Claude 提議。
   - 「忽略每行最後的空白」是 Claude 提議，避免看不到的差別被判錯。
-- **Highest-value next input:** ADR-001 小試驗的結果（決定怎麼執行 Python）。
+- **Highest-value next input:** 階段 5 前實測時間上限要設幾秒。
 
 ### TODO（缺資料）
 
