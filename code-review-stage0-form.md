@@ -11,7 +11,9 @@ upstream:
 
 # Code Review Checklist: create-stage0-form.gs（階段 0 表單腳本）
 
-**Status:** Draft v0.3 · **Owner:** Avi（Claude first-pass） · **Last updated:** 2026-11-08
+**Status:** Draft v0.3（未使用）· **Owner:** Avi（Claude first-pass） · **Last updated:** 2026-11-08
+
+> **⚠️ 未使用：** 階段 0 已跳過（Owner 決定 2026-11-08：不再產生問卷或表單）。檔案保留供參考；腳本的試跑（F-007）不再進行。
 
 > [!NOTE]
 > **範圍（Owner 決定 2026-11-08，1A）：** 只 review `create-stage0-form.gs` 全檔 369 行（git `64adcf7` 建立、`4fffd84` 修改；沒有 PR，視為「從空白到現在」的整份改動）。`create-form.gs`、`create-practice-form.gs` 已執行完畢，不在範圍內。

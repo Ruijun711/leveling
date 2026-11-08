@@ -16,7 +16,7 @@
 | `persona.md` | 使用者輪廓草稿 v0.4（狀態：draft，已依 4 份問卷更新，已填入 JTBD ref） |
 | `jtbd.md` | JTBD 草稿 v0.2（5 條 JTBD；JTBD-001、003 成功標準已訂，002 先保留 TODO） |
 | `jtbd-quick.md` | JTBD 工作包：撰寫 `jtbd.md` 的規則與範本 |
-| `value-hypothesis.md` | 價值假設卡草稿 v0.4（已有測試結果：A1 依門檻成立，但只驗證到一次性作答；階段 0 當作 A1 的第二次測試） |
+| `value-hypothesis.md` | 價值假設卡草稿 v0.4（已有測試結果：A1 依門檻成立，但只驗證到一次性作答；階段 0 已跳過，A1 第二次測試取消；補算反指標 62.5%） |
 | `value-hypothesis-quick.md` | 價值假設卡工作包：撰寫 `value-hypothesis.md` 的規則與範本 |
 | `prd-quick.md` | PRD 工作包：撰寫 `prd.md` 的規則與範本 |
 | `prd.md` | PRD 草稿 v0.8（§6 NFR 移到 `non-functional-reqs.md`；v1 做完整產品概念的 Windows 桌面程式，含 AI 解釋錯題與鼓勵，6 個 P0 FR；技能數值、血量傷害、寶物清單、AI 服務與費用待 Avi 提供） |
@@ -24,7 +24,7 @@
 | `non-functional-reqs.md` | 非功能需求 v0.1（NFR 唯一來源：速度、可用性、隱私、無障礙、AI 品質、平台，每條有 SLI＋目標＋量測方法；合規） |
 | `non-functional-reqs-quick.md` | NFR 工作包：撰寫 `non-functional-reqs.md` 的規則與範本 |
 | `acceptance-criteria-quick.md` | 驗收條件工作包：撰寫 `acceptance-criteria.md` 的規則與範本 |
-| `roadmap.md` | v1 分階段開發規劃 v0.3（階段 0～5，含每階段的試用方式與門檻；階段 1 加上下載題庫；階段 0 的出題表與 G1 算法） |
+| `roadmap.md` | v1 分階段開發規劃 v0.4（階段 0 已跳過；階段 0～5，含每階段的試用方式與門檻；階段 1 加上下載題庫；階段 0 的出題表與 G1 算法） |
 | `adr-001-desktop-framework.md` | ADR-001：桌面程式的語言和框架（Proposed；先做 PySide6、Godot 小試驗再決定，試驗共 4 項） |
 | `adr-002-local-storage.md` | ADR-002：本機資料怎麼存（Proposed；暫定 SQLite，等 ADR-001 小試驗第 4 項確認；作答紀錄匯出 CSV；v1 不備份） |
 | `adr-003-cloud-data-service.md` | ADR-003：階段 1 的題庫放在哪個雲端服務（Proposed；GitHub 公開題庫 repo、只用免費方案、push 前跑檢查程式；階段 3+ 另寫 ADR） |
@@ -44,9 +44,9 @@
 | `api-spec-quick.md` | API Spec 工作包：撰寫 `api-spec.md` 的規則與範本 |
 | `data-model.md` | 資料模型 v0.1（邏輯模型：階段 1 本機 5 個 entity 完整欄位＋階段 3+ 雲端玩家進度；階段 2～5 只畫關係；暱稱不能用真名） |
 | `data-model-quick.md` | Data Model 工作包：撰寫 `data-model.md` 的規則與範本 |
-| `practice-questions-stage0.md` | 階段 0 的 12 題選擇題（4 個觀念 × 3 題，分 4 次出），附出題表、答案與解說 |
-| `create-stage0-form.gs` | Google Apps Script：`createStage0Form()` 建立測驗模式表單和試算表；`releaseBatch1()`～`releaseBatch4()` 分次加題；「經驗值」工作表給同學看，「統計」工作表算 G1 和反指標 |
-| `code-review-stage0-form.md` | `create-stage0-form.gs` 的 code review v0.1（7 條：1 must_block 縮排、6 should_fix；附試跑步驟；F-001～F-006 都已修，等 Avi 試跑） |
+| `practice-questions-stage0.md` | 階段 0 的 12 題選擇題（4 個觀念 × 3 題，分 4 次出），附出題表、答案與解說（**未使用**：階段 0 已跳過，12 題改當階段 1 題庫） |
+| `create-stage0-form.gs` | **未使用**（階段 0 已跳過）。Google Apps Script：`createStage0Form()` 建立測驗模式表單和試算表；`releaseBatch1()`～`releaseBatch4()` 分次加題；「經驗值」工作表給同學看，「統計」工作表算 G1 和反指標 |
+| `code-review-stage0-form.md` | **未使用**（階段 0 已跳過）。`create-stage0-form.gs` 的 code review v0.1（7 條：1 must_block 縮排、6 should_fix；附試跑步驟；F-001～F-006 都已修，等 Avi 試跑） |
 | `code-review-checklist-quick.md` | Code Review 工作包：撰寫 code review checklist 的規則與範本 |
 | `unit-test-stage1.md` | 階段 1 核心規則的單元測試計畫 v0.1（7 個 target、38 條 test case；不綁定語言，ADR-001 選定後再寫成 pytest 或 GUT） |
 | `unit-test-quick.md` | Unit Test 工作包：撰寫單元測試計畫的規則與範本 |
@@ -153,6 +153,8 @@
 | 11-08 | 單元測試 | 測階段 1 核心規則，先寫計畫、函式名稱由 Claude 提議（1A）；不綁定語言（2A）；提醒的「24 小時內」不含剛好 24 小時，固定每 12 小時一則，已補進 AC-4（3A）；只寫計畫、不寫測試程式（4A） |
 | 11-08 | 單元測試 TODO | 答案不在選項裡時報錯、不用掉第一次作答（1A，補進 AC-7）；和作答同一刻的提醒不算（2A）；還沒作答過時，從第一次開啟起算 24 小時提醒（3A，補進 AC-4）；`unit-test-stage1.md` 增為 38 條 |
 | 11-08 | 階段 0 腳本修正 | 修 code review F-002～F-006（暱稱不分大小寫、60 列、重跑不重複加題、用試算表時區、H1 用 DATEVALUE）；F-001 縮排改用不換行空白並在說明提醒（B）；空白交卷不算交卷（2A），`roadmap.md` §3 已更新 |
+| 11-08 | **不再做問卷或表單** | 停止產生問卷；之前的問卷和回覆都保留；需要資料時直接問 Avi |
+| 11-08 | 跳過階段 0 | 用舊資料部分完成（1C）：反指標 25/40 = 62.5%；G1、G2 改由階段 1 試用第一次驗證；階段 0 檔案保留、標未使用，12 題改當階段 1 題庫（2A）；其他問卷、訪談步驟標跳過（3A）；階段 1 之後的程式試用保留（4A） |
 
 ---
 
@@ -168,7 +170,7 @@
 - [x] 發問卷給 aipe05 同學，回收 3 份（Avi 決定以這 3 份為主）
 - [x] 匯出問卷結果，更新 `persona.md` 為 v0.2
 - [x] 新增第 4 份回覆（R4），更新 `persona.md` 為 v0.3
-- [ ] 追問訪談（選做，問卷已移除訪談意願題，需另行邀請）
+- [x] ~~追問訪談（選做）~~ → 跳過（Owner 決定 2026-11-08：不再做問卷）
 - [x] 依 `jtbd-quick.md` 完成 JTBD 盤點，整理出 5 條 JTBD 候選
 - [x] Avi 回覆 3 個待決問題（1B 2B 3C，2026-11-05）
 - [x] 修改 brief 目標受眾（3C，經 Avi 同意）
@@ -205,7 +207,7 @@
 - [x] 依 `unit-test-quick.md` 完成 `unit-test-stage1.md` v0.1（Avi 決定 1A 2A 3A 4A，2026-11-08）
 - [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林＋經驗值存進 SQLite」
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
-- [ ] 階段 0：在 script.google.com 執行 `createStage0Form()`、找 ≥ 8 位 P1 同學、依出題表執行 `releaseBatch1()`～`4()`、追蹤 2 週
+- [x] ~~階段 0：執行表單、找同學、追蹤 2 週~~ → 跳過，用舊資料部分完成（Owner 決定 2026-11-08，1C）
 
 ---
 
@@ -225,7 +227,7 @@
 
 ## 待 Avi 處理
 
-1. **執行階段 0**：先照 `code-review-stage0-form.md` F-007 的試跑步驟，用另一個專案試跑一次（**F-001 縮排沒確認前不要發給同學**）；確認縮排有顯示；然後執行 `createStage0Form()`，把連結記到 `連結.txt`；確認表單「設定 → 測驗」裡「公布成績：每次提交後立即公布」、同學可以看到答錯的題目和正確答案；找 ≥ 8 位 P1 同學，在「統計」工作表 H2 填入人數
+1. ~~執行階段 0~~ → 跳過（Owner 決定 2026-11-08：不再做問卷或表單）
 2. **ADR-001**：試驗時間差多少才算「明顯比較快」
 3. **申請 GitHub 帳號、建立公開題庫 repo**（階段 1 前；確認下載得到後，ADR-003 改成 Accepted；repo 只放題庫，不放專案資料夾的其他檔案）
 4. **AC-11 檢查新題目的時機**（開機時或每天，`acceptance-criteria.md`）
@@ -248,11 +250,11 @@
 
 ## 下一步
 
-1. **開始階段 0**（見 `roadmap.md` §3「階段 0 細節」）：執行 `create-stage0-form.gs`，2 週後把結果寫回 `value-hypothesis.md`（A1 第二次測試）
-2. **ADR-001 小試驗**（可以和階段 0 同時進行）：PySide6、Godot 各做一個小版本（共 4 項），結果寫回 `adr-001-desktop-framework.md`；第 4 項（SQLite）寫回 `adr-002-local-storage.md`；兩份一起改成 Accepted
+1. ~~開始階段 0~~ → 跳過。**現在的第一步是 ADR-001 小試驗（下一項）**；G1 改由階段 1 試用第一次驗證
+2. **ADR-001 小試驗**：PySide6、Godot 各做一個小版本（共 4 項），結果寫回 `adr-001-desktop-framework.md`；第 4 項（SQLite）寫回 `adr-002-local-storage.md`；兩份一起改成 Accepted
 3. Avi 提供 PRD 剩下的 TODO 後，Claude 填入 `prd.md`
 4. **建立 GitHub 公開題庫 repo**（階段 1 前；見 `adr-003-cloud-data-service.md` §6 Follow-up）
 5. 所有規劃中的 ADR 都寫完了（001～006，都是 Proposed）。各自定案的時機：001、002 等小試驗；003 等建好題庫 repo；006 階段 3 前試驗；004 階段 4 前實測；005 階段 5 前定時間上限
 6. （選做）之後要做 JTBD-002 時，再訂它的成功標準
 7. ~~concierge 測試~~ → 已完成（2026-11-05，8 人），結果寫在 `value-hypothesis.md` §5「測試結果」
-8. （選做）追問 P1 新手：「現在怎麼判斷自己有沒有進步？」
+8. ~~（選做）追問 P1 新手~~ → 跳過（不再做問卷）
