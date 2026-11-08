@@ -17,7 +17,7 @@ upstream:
 >
 > **寫法（Owner 決定 2026-11-08，3A）：** 這是**邏輯模型**，不綁定儲存方式（SQLite、JSON 檔或其他，待「本機存資料」ADR）。型別用通用名稱（text、integer、boolean、datetime、list）；§6 的索引寫成「需要支援的查詢」，等 ADR 選定後再對應到實際做法。
 >
-> **更新（2026-11-08）：** `adr-002-local-storage.md`（Proposed）暫定用 SQLite，存在 `%APPDATA%\學習精靈\`；ADR-001 小試驗第 4 項確認後，§6 的「待 ADR」改成 SQLite 索引。作答紀錄可以匯出成 CSV（AC-14）。
+> **更新（2026-11-08）：** `adr-002-local-storage.md`（Proposed）暫定用 SQLite，存在 `%APPDATA%\學習精靈\`；ADR-001 小試驗第 4 項確認後，§6 的「待 ADR」改成 SQLite 索引。作答紀錄可以匯出成 CSV（AC-14），包含量 Latency 用的 `update_ms`（non-functional-reqs L1，2026-11-08 新增）。
 
 ---
 
@@ -104,6 +104,7 @@ upstream:
 | `is_correct` | boolean | [NO] | | 對或錯 |
 | `is_first_attempt` | boolean | [NO] | 同一位玩家、同一題只能有 1 筆是 true | 選擇題只算第一次作答（AC-6） |
 | `xp_gained` | integer | [NO] | 選擇題：第一次作答答對才是 10，其餘是 0 | 階段 5 寫程式題另有遞減規則（10→8→6→4→2），放在 CodeSubmission |
+| `update_ms` | integer | [YES] | ≥ 0 | 從按下送出到畫面顯示新經驗值和等級，花了幾毫秒；量 Latency 用，隨匯出檔交回（non-functional-reqs L1；AC-14）。存檔失敗時沒有這筆紀錄，所以不會記到 **[M]** |
 | `created_at` | datetime | [NO] | audit | 等於存檔時間 |
 | `updated_at` | datetime | [NO] | audit | 只新增不修改，所以永遠等於 `created_at` |
 | `version` | integer | [NO] | audit | 永遠是 1 |
