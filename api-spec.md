@@ -23,7 +23,7 @@ upstream:
 ## 1. Executive Summary
 
 - **用途：** 定義學習精靈桌面程式和雲端資料服務之間的資料格式。階段 1 下載題庫；階段 3 之後上傳自己的經驗值和等級，並讀取同學的經驗值和等級。（依據：c4-diagram §3；roadmap §2）
-- **使用者（consumer）：** 只有學習精靈桌面程式。資料由 Avi 透過雲端服務上傳題庫（方式 TODO，見 c4-diagram §12）。
+- **使用者（consumer）：** 只有學習精靈桌面程式。題庫由 Avi 編輯 GitHub 公開題庫 repo 的檔案，跑檢查程式後 push（`adr-003-cloud-data-service.md`，Owner 決定 2026-11-08，4A）。
 - **共 4 個介面：** 2 個階段 1 用（**[M]**），2 個階段 3+ 用（**[L]**，身分確認方式還沒定）。
 - **凍結狀態：** 題庫格式（§3 的 Question）建議在階段 0 結束、開始寫階段 1 程式前凍結；經驗值的格式等階段 3 前再凍結。_TODO: 凍結時間待 Owner 確認_
 - **這份文件也補上之前列的缺口 M5「題庫格式說明」**（progress 11-08 問題清單）。
@@ -48,6 +48,8 @@ upstream:
 2. E1 的 `bank_version` **大於**本機題庫的版本號，才呼叫 E2 下載。
 3. E2 下載完成後，**整份通過 §3 的檢查**才替換本機題庫；任何一項檢查沒過，就保留原本的題庫，下次檢查時再試（AC-13）。
 4. 沒有網路時跳過 1～3，直接用本機題庫出題（AC-12）。
+
+**階段 1 實際做法（`adr-003-cloud-data-service.md`，Proposed）：** E1 是題庫 repo 裡的題庫版本檔、E2 是整份題庫檔，程式用 GitHub 的 raw 網址下載。GitHub 有快取，push 後幾分鐘內可能讀到新版本檔、舊題庫檔，會被當成 `BANK_VERSION_MISMATCH`，下次再試即可。_TODO: 實際網址，等 Avi 建好 repo_。E3、E4 等階段 3+ 的雲端 ADR。
 
 ---
 
@@ -108,7 +110,7 @@ upstream:
 
 | Field | Type | Required | Validation | Confidence |
 |---|---|---|---|---|
-| `player_id`（路徑） | string | [YES] | 代表這位玩家的固定代號。_TODO: 怎麼產生、怎麼確認是本人，待「雲端資料服務」ADR（3C）_ | **[L]** |
+| `player_id`（路徑） | string | [YES] | 代表這位玩家的固定代號。_TODO: 怎麼產生、怎麼確認是本人，待階段 3+ 的雲端 ADR（3C）_ | **[L]** |
 | `nickname` | string | [YES] | 不能空白。_TODO: 長度上限、能不能和別人重複，待 Owner 決定_ | **[L]** |
 | `xp` | integer | [YES] | ≥ 0 | **[M]** |
 | `level` | integer | [YES] | 1～9（v1 上限 9 級），而且要等於 `min(9, 1 + INT(xp / 20))` | **[M]** |
@@ -181,11 +183,11 @@ _TODO: 每個 message key 實際要顯示的文字，待 Owner 提供（AC-12 �
   - E4 一次讀取全部同學、不分頁，因為一個班大約 35 人。如果之後開放給其他班，要再考慮分頁。
   - `player_id` 和 `nickname` 分開，是為了讓暱稱可以改而資料不會亂掉；實際怎麼做要等 3C。
   - 路徑前面的 `/v1` 只是表示格式的版本，不代表實際網址。
-- **Highest-value next input:** 「雲端資料服務」ADR：選定服務後，把 E1～E4 對應到實際的網址、登入方式和錯誤代碼。
+- **Highest-value next input:** Avi 建好 GitHub 題庫 repo 後的實際網址，填進 E1、E2（ADR-003）；E3、E4 等階段 3+ 的雲端 ADR。
 
 ### TODO（缺資料）
 
-- _TODO: 選定雲端服務，把 E1～E4 對應到實際做法（「雲端資料服務」ADR）_
+- ~~E1、E2 的雲端服務~~ → GitHub 公開題庫 repo（ADR-003）；_TODO: E1、E2 的實際網址；E3、E4 的實際做法（階段 3+ 的雲端 ADR）_
 - _TODO: 上傳時的身分確認、要不要防止竄改經驗值（3C；c4-diagram R6）_
 - _TODO: 題目 `id` 的正式編號格式_
 - _TODO: 暱稱長度上限、能不能和別人重複_
@@ -193,4 +195,4 @@ _TODO: 每個 message key 實際要顯示的文字，待 Owner 提供（AC-12 �
 - _TODO: 檢查新題目的時機（AC-11）_
 - _TODO: 每個錯誤 message key 的顯示文字；沒網路時要不要提示_
 - _TODO: 題庫格式和經驗值格式的凍結時間_
-- _TODO: Avi 怎麼把題庫上傳到雲端（c4-diagram §12）_
+- ~~Avi 怎麼把題庫上傳到雲端~~ → 編輯檔案、跑檢查程式、push（ADR-003，4A）

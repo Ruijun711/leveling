@@ -4,7 +4,7 @@
 
 ## 在新電腦接續時，貼給 Claude 的話
 
-> 請先讀取 `progress.md`、`project-brief.md`、`persona.md`、`jtbd.md`、`questionnaire.md`、`responses.csv`、`value-hypothesis.md`、`prd.md`、`roadmap.md`、`acceptance-criteria.md`、`adr-001-desktop-framework.md`、`adr-002-local-storage.md`、`c4-diagram.md`、`api-spec.md`、`data-model.md`、`practice-questions-stage0.md`，了解目前進度後再繼續。各 `*-quick.md` 工作包等要用到時再讀。**新增或修改任何檔案前，都必須先經過我同意。**
+> 請先讀取 `progress.md`、`project-brief.md`、`persona.md`、`jtbd.md`、`questionnaire.md`、`responses.csv`、`value-hypothesis.md`、`prd.md`、`roadmap.md`、`acceptance-criteria.md`、`adr-001-desktop-framework.md`、`adr-002-local-storage.md`、`adr-003-cloud-data-service.md`、`c4-diagram.md`、`api-spec.md`、`data-model.md`、`practice-questions-stage0.md`，了解目前進度後再繼續。各 `*-quick.md` 工作包等要用到時再讀。**新增或修改任何檔案前，都必須先經過我同意。**
 
 ---
 
@@ -25,6 +25,7 @@
 | `roadmap.md` | v1 分階段開發規劃 v0.3（階段 0～5，含每階段的試用方式與門檻；階段 1 加上下載題庫；階段 0 的出題表與 G1 算法） |
 | `adr-001-desktop-framework.md` | ADR-001：桌面程式的語言和框架（Proposed；先做 PySide6、Godot 小試驗再決定，試驗共 4 項） |
 | `adr-002-local-storage.md` | ADR-002：本機資料怎麼存（Proposed；暫定 SQLite，等 ADR-001 小試驗第 4 項確認；作答紀錄匯出 CSV；v1 不備份） |
+| `adr-003-cloud-data-service.md` | ADR-003：階段 1 的題庫放在哪個雲端服務（Proposed；GitHub 公開題庫 repo、只用免費方案、push 前跑檢查程式；階段 3+ 另寫 ADR） |
 | `adr-quick.md` | ADR 工作包：撰寫架構決策紀錄的規則與範本 |
 | `c4-diagram.md` | C4 架構圖 v0.2（Level 1、2，圖用 Mermaid flowchart；v1 完整版，標出各元素從哪個階段開始；題庫下載在階段 1、上傳經驗值在階段 3+；技術大多待 ADR） |
 | `c4-diagram-quick.md` | C4 圖工作包：撰寫 `c4-diagram.md` 的規則與範本 |
@@ -136,6 +137,7 @@
 | 11-08 | 個資 | 暱稱不能用真名，維持輕量版資料模型（2B）；階段 0 表單和 `roadmap.md` 加上「不要用真名」 |
 | 11-08 | 資料模型寫法 | 邏輯模型，不綁定儲存方式，索引寫成需要支援的查詢（3A） |
 | 11-08 | 本機存資料（ADR-002） | 暫定 SQLite（1A）；先寫成 Proposed，ADR-001 小試驗加第 4 項「經驗值存起來、重開後讀回」（2A）；試用資料由同學自己匯出 CSV 傳給 Avi，新增 AC-14（3A）；v1 不備份（4A） |
+| 11-08 | 雲端資料服務（ADR-003） | 只決定階段 1 題庫放哪，階段 3+ 另寫 ADR（1B）；題庫放 GitHub 公開 repo，和專案資料夾分開（2A）；只用免費方案（3A）；直接編輯 JSON 檔，push 前跑檢查程式（4A） |
 
 ---
 
@@ -181,6 +183,7 @@
 - [x] 依 `api-spec-quick.md` 完成 `api-spec.md` v0.1（Avi 決定 1B 2A 3C 4A，2026-11-08）
 - [x] 依 `data-model-quick.md` 完成 `data-model.md` v0.1（Avi 決定 1C 2B 3A，2026-11-08）
 - [x] 依 `adr-quick.md` 撰寫 `adr-002-local-storage.md`（Proposed，Avi 決定 1A 2A 3A 4A，2026-11-08）
+- [x] 依 `adr-quick.md` 撰寫 `adr-003-cloud-data-service.md`（Proposed，Avi 決定 1B 2A 3A 4A，2026-11-08）
 - [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林＋經驗值存進 SQLite」
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [ ] 階段 0：在 script.google.com 執行 `createStage0Form()`、找 ≥ 8 位 P1 同學、依出題表執行 `releaseBatch1()`～`4()`、追蹤 2 週
@@ -205,7 +208,7 @@
 
 1. **執行階段 0**：執行 `createStage0Form()`，把連結記到 `連結.txt`；確認表單「設定 → 測驗」裡「公布成績：每次提交後立即公布」、同學可以看到答錯的題目和正確答案；找 ≥ 8 位 P1 同學，在「統計」工作表 H2 填入人數
 2. **ADR-001**：試驗時間差多少才算「明顯比較快」
-3. **題庫檔案放在哪個雲端服務**（階段 1 前；「雲端資料服務」ADR 的一部分）
+3. **申請 GitHub 帳號、建立公開題庫 repo**（階段 1 前；確認下載得到後，ADR-003 改成 Accepted；repo 只放題庫，不放專案資料夾的其他檔案）
 4. **AC-11 檢查新題目的時機**（開機時或每天，`acceptance-criteria.md`）
 5. **提供 `prd.md` 的 TODO**（見下方）
 6. **作答紀錄的保留期限、要不要做「重設進度」**（`data-model.md` §12，不急）
@@ -229,8 +232,8 @@
 1. **開始階段 0**（見 `roadmap.md` §3「階段 0 細節」）：執行 `create-stage0-form.gs`，2 週後把結果寫回 `value-hypothesis.md`（A1 第二次測試）
 2. **ADR-001 小試驗**（可以和階段 0 同時進行）：PySide6、Godot 各做一個小版本（共 4 項），結果寫回 `adr-001-desktop-framework.md`；第 4 項（SQLite）寫回 `adr-002-local-storage.md`；兩份一起改成 Accepted
 3. Avi 提供 PRD 剩下的 TODO 後，Claude 填入 `prd.md`
-4. **決定題庫檔案放在哪個雲端服務**（階段 1 前要定，屬於「雲端資料服務」ADR 的一部分；見 `roadmap.md` §2、`c4-diagram.md` §12）
-5. 之後要另寫的 ADR：雲端資料服務、AI 服務、程式碼批改（見 `c4-diagram.md` §12）
+4. **建立 GitHub 公開題庫 repo**（階段 1 前；見 `adr-003-cloud-data-service.md` §6 Follow-up）
+5. 之後要另寫的 ADR：階段 3+ 的雲端（上傳經驗值、身分確認、防竄改）、AI 服務、程式碼批改（見 `c4-diagram.md` §12）
 6. （選做）之後要做 JTBD-002 時，再訂它的成功標準
 7. ~~concierge 測試~~ → 已完成（2026-11-05，8 人），結果寫在 `value-hypothesis.md` §5「測試結果」
 8. （選做）追問 P1 新手：「現在怎麼判斷自己有沒有進步？」
