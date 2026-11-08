@@ -81,6 +81,7 @@ upstream:
 - **怎麼確認（Owner 決定 2A）：** 在 ADR-001 小試驗加第 4 項「把經驗值存進 SQLite，關掉程式重開，讀回來是對的」。PySide6、Godot 都要試。
   - 選定的框架做得到：本 ADR 改成 Accepted，Confidence 改成 **[H]**。
   - 選了 Godot 但 SQLite 外掛不好用：改用 Option B，並重寫本 ADR 的 §6。
+  - **PySide6 結果（2026-11-08）：** ✅ 通過。Python 內建 `sqlite3`，作答紀錄和經驗值用同一個 transaction 寫入，關掉程式重開後經驗值還在（Avi 確認）；試驗資料庫在 `%APPDATA%\學習精靈-試驗\spike.db`。Godot 待試。
 - **存放位置（Claude 提議）：** `%APPDATA%\學習精靈\` 底下的一個資料庫檔案。不需要管理員權限；移除程式時可以選擇保留資料。**[M]**
 - **安全存檔：** 作答紀錄和經驗值放在同一個 transaction 裡寫入（AC-10）；新題目和新的題庫版本號也放在同一個 transaction（AC-13）。**[H]**
 - **試用資料（Owner 決定 3A）：** 程式有「匯出作答紀錄」按鈕，產生 CSV 檔，由同學自己決定要不要傳給 Avi。程式本身不上傳任何資料，符合 AC §4 Privacy。驗收條件見 AC-14。**[M]**
@@ -123,7 +124,7 @@ upstream:
 
 ### TODO（缺資料）
 
-- _TODO: 需要 ADR-001 小試驗第 4 項的結果，才能改成 Accepted_
+- _TODO: PySide6 第 4 項已通過；等 ADR-001 選定框架（Godot 待試），才能改成 Accepted_
 - _TODO: 匯出檔用什麼方式傳給 Avi（Email、Line、雲端硬碟），試用前決定_
 - _TODO: 資料表版本怎麼記（`user_version`），開發時確認_
 - _TODO: 作答紀錄保留期限（data-model §12）_

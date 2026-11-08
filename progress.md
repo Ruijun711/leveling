@@ -146,6 +146,7 @@
 | 11-08 | **不再做問卷或表單** | 停止產生問卷；之前的問卷和回覆都保留；需要資料時直接問 Avi |
 | 11-08 | 跳過階段 0 | 用舊資料部分完成（1C）：反指標 25/40 = 62.5%；G1、G2 改由階段 1 試用第一次驗證；階段 0 檔案保留、標未使用，12 題改當階段 1 題庫（2A）；其他問卷、訪談步驟標跳過（3A）；階段 1 之後的程式試用保留（4A） |
 | 11-08 | 整理資料夾 | 依類別分成 01-研究、02-產品、03-架構（含 adr）、04-測試、05-階段0-未使用、工作包；中文資料夾名（1A）；檔名不改、文件內提到的檔名不改，只更新 progress（2A）；用 `git mv` 保留紀錄（3A） |
+| 11-08 | PySide6 小試驗 | 4 項都通過：哥布林透明、9.9 毫秒、約 15 分鐘、SQLite 重開後還在；Avi 看得懂、改得動。Godot 也要試（1A）；結果先寫進 ADR-001、002，維持 Proposed（2A）；比較規則：時間不到一半才算明顯快，否則看好不好懂（3A） |
 
 ---
 
@@ -196,7 +197,8 @@
 - [x] 依 `adr-quick.md` 撰寫 ADR-004（AI 服務）、ADR-005（程式碼批改）、ADR-006（階段 3 雲端），都是 Proposed（Avi 決定 1A 2B 3A 4A 5A，2026-11-08）
 - [x] 依 `code-review-checklist-quick.md` review `create-stage0-form.gs`，新增 `code-review-stage0-form.md`（Avi 決定 1A 2A 3A 4A，2026-11-08）
 - [x] 依 `unit-test-quick.md` 完成 `unit-test-stage1.md` v0.1（Avi 決定 1A 2A 3A 4A，2026-11-08）
-- [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林＋經驗值存進 SQLite」
+- [x] ADR-001 小試驗 PySide6 版：4 項都通過（2026-11-08，`spike/pyside6/main.py`）
+- [ ] ADR-001 小試驗 Godot 版：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林＋經驗值存進 SQLite」
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [x] ~~階段 0：執行表單、找同學、追蹤 2 週~~ → 跳過，用舊資料部分完成（Owner 決定 2026-11-08，1C）
 
