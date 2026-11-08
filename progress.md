@@ -4,7 +4,7 @@
 
 ## 在新電腦接續時，貼給 Claude 的話
 
-> 請先讀取 `progress.md`、`project-brief.md`、`persona.md`、`jtbd.md`、`questionnaire.md`、`responses.csv`、`value-hypothesis.md`、`prd.md`、`roadmap.md`、`acceptance-criteria.md`、`adr-001-desktop-framework.md`、`c4-diagram.md`、`practice-questions-stage0.md`，了解目前進度後再繼續。各 `*-quick.md` 工作包等要用到時再讀。**新增或修改任何檔案前，都必須先經過我同意。**
+> 請先讀取 `progress.md`、`project-brief.md`、`persona.md`、`jtbd.md`、`questionnaire.md`、`responses.csv`、`value-hypothesis.md`、`prd.md`、`roadmap.md`、`acceptance-criteria.md`、`adr-001-desktop-framework.md`、`c4-diagram.md`、`api-spec.md`、`data-model.md`、`practice-questions-stage0.md`，了解目前進度後再繼續。各 `*-quick.md` 工作包等要用到時再讀。**新增或修改任何檔案前，都必須先經過我同意。**
 
 ---
 
@@ -35,6 +35,8 @@
 | `create-form.gs` | Google Apps Script，在 script.google.com 執行 `createForm()` 可自動建立 Google 表單 |
 | `api-spec.md` | 雲端資料介面 v0.1（4 個邏輯介面：題庫版本、下載題庫〔階段 1〕、上傳和讀取經驗值〔階段 3+〕；含題庫格式） |
 | `api-spec-quick.md` | API Spec 工作包：撰寫 `api-spec.md` 的規則與範本 |
+| `data-model.md` | 資料模型 v0.1（邏輯模型：階段 1 本機 5 個 entity 完整欄位＋階段 3+ 雲端玩家進度；階段 2～5 只畫關係；暱稱不能用真名） |
+| `data-model-quick.md` | Data Model 工作包：撰寫 `data-model.md` 的規則與範本 |
 | `practice-questions-stage0.md` | 階段 0 的 12 題選擇題（4 個觀念 × 3 題，分 4 次出），附出題表、答案與解說 |
 | `create-stage0-form.gs` | Google Apps Script：`createStage0Form()` 建立測驗模式表單和試算表；`releaseBatch1()`～`releaseBatch4()` 分次加題；「經驗值」工作表給同學看，「統計」工作表算 G1 和反指標 |
 | `連結.txt` | 問卷填寫連結 |
@@ -129,6 +131,9 @@
 | 11-08 | 題目能不能改 | 發布後不能改，只能新增；要改就停用舊題、發新題號（4A） |
 | 11-08 | 文件整理 | 依 Claude 列出的問題清單全部同意修改（H1～H6、D1～D12、L1～L5、L8 git init） |
 | 11-08 | 題庫下載時機 | 階段 1 就從雲端下載題庫，只下載、不上傳玩家資料；安裝檔附基本題庫；上傳經驗值和等級維持階段 3 之後（C）；`roadmap.md`、`acceptance-criteria.md` 更新為 v0.2 |
+| 11-08 | 資料模型範圍 | 階段 1 寫完整欄位，階段 2～5 只畫關係，加上 api-spec 的雲端玩家進度（1C） |
+| 11-08 | 個資 | 暱稱不能用真名，維持輕量版資料模型（2B）；階段 0 表單和 `roadmap.md` 加上「不要用真名」 |
+| 11-08 | 資料模型寫法 | 邏輯模型，不綁定儲存方式，索引寫成需要支援的查詢（3A） |
 
 ---
 
@@ -172,6 +177,7 @@
 - [x] 依 `c4-diagram-quick.md` 完成 `c4-diagram.md` v0.1（Avi 決定 1A 2B 3B，2026-11-08）
 - [x] 全面檢查文件，依 Avi 同意修正（2026-11-08）：`prd.md` v0.7、`acceptance-criteria.md` v0.3、`roadmap.md` v0.3、`value-hypothesis.md` v0.4、`c4-diagram.md` v0.2 等
 - [x] 依 `api-spec-quick.md` 完成 `api-spec.md` v0.1（Avi 決定 1B 2A 3C 4A，2026-11-08）
+- [x] 依 `data-model-quick.md` 完成 `data-model.md` v0.1（Avi 決定 1C 2B 3A，2026-11-08）
 - [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林」
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [ ] 階段 0：在 script.google.com 執行 `createStage0Form()`、找 ≥ 8 位 P1 同學、依出題表執行 `releaseBatch1()`～`4()`、追蹤 2 週
@@ -199,6 +205,7 @@
 3. **題庫檔案放在哪個雲端服務**（階段 1 前；「雲端資料服務」ADR 的一部分）
 4. **AC-11 檢查新題目的時機**（開機時或每天，`acceptance-criteria.md`）
 5. **提供 `prd.md` 的 TODO**（見下方）
+6. **作答紀錄的保留期限、要不要做「重設進度」**（`data-model.md` §12，不急）
 
 ### PRD 待補（`prd.md` v0.7，2026-11-08）
 
@@ -219,7 +226,7 @@
 2. **ADR-001 小試驗**（可以和階段 0 同時進行）：PySide6、Godot 各做一個小版本，結果寫回 `adr-001-desktop-framework.md`，選定後改成 Accepted
 3. Avi 提供 PRD 剩下的 TODO 後，Claude 填入 `prd.md`
 4. **決定題庫檔案放在哪個雲端服務**（階段 1 前要定，屬於「雲端資料服務」ADR 的一部分；見 `roadmap.md` §2、`c4-diagram.md` §12）
-5. 之後要另寫的 ADR：本機存資料（階段 1 要用）、雲端資料服務、AI 服務、程式碼批改（見 `c4-diagram.md` §12）
+5. 之後要另寫的 ADR：本機存資料（階段 1 要用；需要支援的查詢見 `data-model.md` §6）、雲端資料服務、AI 服務、程式碼批改（見 `c4-diagram.md` §12）
 6. （選做）之後要做 JTBD-002 時，再訂它的成功標準
 7. ~~concierge 測試~~ → 已完成（2026-11-05，8 人），結果寫在 `value-hypothesis.md` §5「測試結果」
 8. （選做）追問 P1 新手：「現在怎麼判斷自己有沒有進步？」

@@ -142,14 +142,14 @@ function createStage0Form() {
     '・答對一題得 ' + XP_PER_PROBLEM + ' 點經驗值，' + XP_PER_LEVEL + ' 點升一級，從 1 級開始\n' +
     '・每題只算你「第一次作答」的答案；已經做過的題目留空就好\n' +
     '・交卷後可以看到每題的對錯和解說\n\n' +
-    '每次都要填「完全一樣」的暱稱（大小寫、空白都要一樣），經驗值才會累積在一起。'
+    '每次都要填「完全一樣」的暱稱（大小寫、空白都要一樣），經驗值才會累積在一起。請不要用真名，因為暱稱和經驗值會公開給同學看。'
   );
   form.setCollectEmail(false);
   form.setAllowResponseEdits(false);
 
   form.addTextItem()
     .setTitle(NICK_TITLE)
-    .setHelpText('每次都填完全一樣的暱稱（大小寫、空白都要一樣）')
+    .setHelpText('請不要用真名；每次都填完全一樣的暱稱（大小寫、空白都要一樣）')
     .setRequired(true);
 
   form.addMultipleChoiceItem()
