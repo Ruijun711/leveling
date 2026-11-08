@@ -143,7 +143,8 @@ function createStage0Form() {
     '・接下來 2 週會分 4 次加新題目（每週一、四各 3 題），都用這個連結\n' +
     '・答對一題得 ' + XP_PER_PROBLEM + ' 點經驗值，' + XP_PER_LEVEL + ' 點升一級，從 1 級開始\n' +
     '・每題只算你「第一次作答」的答案；已經做過的題目留空就好\n' +
-    '・交卷後可以看到每題的對錯和解說\n\n' +
+    '・交卷後可以看到每題的對錯和解說\n' +
+    '・題目程式碼開頭的空白是特殊字元（為了讓縮排顯示出來）；想自己執行的話，請在 Python 裡重新打縮排\n\n' +
     '每次都要填「完全一樣」的暱稱（大小寫、空白都要一樣），經驗值才會累積在一起。請不要用真名，因為暱稱和經驗值會公開給同學看。'
   );
   form.setCollectEmail(false);
@@ -240,7 +241,7 @@ function addProblem_(form, p) {
 
   var item = form.addMultipleChoiceItem();
   item.setTitle(p.title)
-    .setHelpText(p.code + '\n\n這段程式會印出什麼？')
+    .setHelpText(keepIndent_(p.code) + '\n\n這段程式會印出什麼？')
     .setChoices(p.choices.map(function (c) {
       return item.createChoice(c, c === p.answer);
     }))
@@ -260,6 +261,16 @@ function addProblem_(form, p) {
       break;
     }
   }
+}
+
+/**
+ * 把每行開頭的空白換成不換行空白（U+00A0），避免表單把縮排吃掉（code review F-001）。
+ * 只換開頭的空白，程式碼中間的空白不動。
+ */
+function keepIndent_(code) {
+  return code.replace(/^ +/gm, function (s) {
+    return new Array(s.length + 1).join(' ');
+  });
 }
 
 // ---------- 3. 試算表公式 ----------

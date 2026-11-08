@@ -46,7 +46,7 @@
 | `data-model-quick.md` | Data Model 工作包：撰寫 `data-model.md` 的規則與範本 |
 | `practice-questions-stage0.md` | 階段 0 的 12 題選擇題（4 個觀念 × 3 題，分 4 次出），附出題表、答案與解說 |
 | `create-stage0-form.gs` | Google Apps Script：`createStage0Form()` 建立測驗模式表單和試算表；`releaseBatch1()`～`releaseBatch4()` 分次加題；「經驗值」工作表給同學看，「統計」工作表算 G1 和反指標 |
-| `code-review-stage0-form.md` | `create-stage0-form.gs` 的 code review v0.1（7 條：1 must_block 縮排、6 should_fix；附試跑步驟；F-002～F-006 已修，F-001 等試跑） |
+| `code-review-stage0-form.md` | `create-stage0-form.gs` 的 code review v0.1（7 條：1 must_block 縮排、6 should_fix；附試跑步驟；F-001～F-006 都已修，等 Avi 試跑） |
 | `code-review-checklist-quick.md` | Code Review 工作包：撰寫 code review checklist 的規則與範本 |
 | `unit-test-stage1.md` | 階段 1 核心規則的單元測試計畫 v0.1（7 個 target、38 條 test case；不綁定語言，ADR-001 選定後再寫成 pytest 或 GUT） |
 | `unit-test-quick.md` | Unit Test 工作包：撰寫單元測試計畫的規則與範本 |
@@ -152,7 +152,7 @@
 | 11-08 | Code review | 只 review `create-stage0-form.gs`（1A）；用專案文件當標準（2A）；靜態檢查＋試跑步驟（3A）；先只列問題，要修再逐項問（4A） |
 | 11-08 | 單元測試 | 測階段 1 核心規則，先寫計畫、函式名稱由 Claude 提議（1A）；不綁定語言（2A）；提醒的「24 小時內」不含剛好 24 小時，固定每 12 小時一則，已補進 AC-4（3A）；只寫計畫、不寫測試程式（4A） |
 | 11-08 | 單元測試 TODO | 答案不在選項裡時報錯、不用掉第一次作答（1A，補進 AC-7）；和作答同一刻的提醒不算（2A）；還沒作答過時，從第一次開啟起算 24 小時提醒（3A，補進 AC-4）；`unit-test-stage1.md` 增為 38 條 |
-| 11-08 | 階段 0 腳本修正 | 修 code review F-002～F-006（暱稱不分大小寫、60 列、重跑不重複加題、用試算表時區、H1 用 DATEVALUE）；F-001 縮排等試跑；空白交卷不算交卷（2A），`roadmap.md` §3 已更新 |
+| 11-08 | 階段 0 腳本修正 | 修 code review F-002～F-006（暱稱不分大小寫、60 列、重跑不重複加題、用試算表時區、H1 用 DATEVALUE）；F-001 縮排改用不換行空白並在說明提醒（B）；空白交卷不算交卷（2A），`roadmap.md` §3 已更新 |
 
 ---
 
@@ -225,7 +225,7 @@
 
 ## 待 Avi 處理
 
-1. **執行階段 0**：先照 `code-review-stage0-form.md` F-007 的試跑步驟，用另一個專案試跑一次（**F-001 縮排沒確認前不要發給同學**）；F-001 縮排確認後告訴 Claude；然後執行 `createStage0Form()`，把連結記到 `連結.txt`；確認表單「設定 → 測驗」裡「公布成績：每次提交後立即公布」、同學可以看到答錯的題目和正確答案；找 ≥ 8 位 P1 同學，在「統計」工作表 H2 填入人數
+1. **執行階段 0**：先照 `code-review-stage0-form.md` F-007 的試跑步驟，用另一個專案試跑一次（**F-001 縮排沒確認前不要發給同學**）；確認縮排有顯示；然後執行 `createStage0Form()`，把連結記到 `連結.txt`；確認表單「設定 → 測驗」裡「公布成績：每次提交後立即公布」、同學可以看到答錯的題目和正確答案；找 ≥ 8 位 P1 同學，在「統計」工作表 H2 填入人數
 2. **ADR-001**：試驗時間差多少才算「明顯比較快」
 3. **申請 GitHub 帳號、建立公開題庫 repo**（階段 1 前；確認下載得到後，ADR-003 改成 Accepted；repo 只放題庫，不放專案資料夾的其他檔案）
 4. **AC-11 檢查新題目的時機**（開機時或每天，`acceptance-criteria.md`）
