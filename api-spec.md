@@ -40,8 +40,8 @@ upstream:
 |---|---|---|---|---|---|---|---|---|
 | E1 | GET | `/v1/question-bank/manifest` | getBankManifest | 讀取雲端題庫的版本號，判斷有沒有新題目 | 不用登入（2A） | n/a（只讀取） | 1 | **[M]** |
 | E2 | GET | `/v1/question-bank` | getQuestionBank | 下載整份題庫 | 不用登入（2A） | n/a（只讀取） | 1 | **[M]** |
-| E3 | PUT | `/v1/players/{player_id}/progress` | putMyProgress | 上傳自己的暱稱、經驗值、等級（整筆覆蓋） | _TODO（3C）_ | **required**：同樣內容重送，結果相同；用 `player_id` 決定要覆蓋哪一筆 | 3+ | **[L]** |
-| E4 | GET | `/v1/players/progress` | listClassProgress | 讀取同學的暱稱、經驗值、等級 | _TODO（3C）_ | n/a（只讀取） | 3+ | **[L]** |
+| E3 | PUT | `/v1/players/{player_id}/progress` | putMyProgress | 上傳自己的暱稱、經驗值、等級（整筆覆蓋） | 匿名登入，只能寫自己那一筆（ADR-006） | **required**：同樣內容重送，結果相同；用 `player_id` 決定要覆蓋哪一筆 | 3+ | **[L]** |
+| E4 | GET | `/v1/players/progress` | listClassProgress | 讀取同學的暱稱、經驗值、等級 | 匿名登入（ADR-006） | n/a（只讀取） | 3+ | **[L]** |
 
 **使用流程（依據：AC-11～AC-13）：**
 1. 桌面程式檢查題庫時呼叫 E1。_TODO: 開機時檢查還是每天檢查，待 Owner 決定（AC-11 TODO）_
@@ -110,7 +110,7 @@ upstream:
 
 | Field | Type | Required | Validation | Confidence |
 |---|---|---|---|---|
-| `player_id`（路徑） | string | [YES] | 代表這位玩家的固定代號。_TODO: 怎麼產生、怎麼確認是本人，待階段 3+ 的雲端 ADR（3C）_ | **[L]** |
+| `player_id`（路徑） | string | [YES] | 代表這位玩家的固定代號。就是雲端服務匿名登入拿到的代號；雲端規則只允許寫入自己代號的那一筆（`adr-006-stage3-cloud.md`，Proposed） | **[L]** |
 | `nickname` | string | [YES] | 不能空白。_TODO: 長度上限、能不能和別人重複，待 Owner 決定_ | **[L]** |
 | `xp` | integer | [YES] | ≥ 0 | **[M]** |
 | `level` | integer | [YES] | 1～9（v1 上限 9 級），而且要等於 `min(9, 1 + INT(xp / 20))` | **[M]** |
