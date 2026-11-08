@@ -88,7 +88,7 @@ upstream:
 | `code` | string | [YES] | 題目的 Python 程式碼，保留換行和縮排 | **[H]** | practice-questions-stage0 |
 | `prompt` | string | [YES] | 題目文字，例如「這段程式會印出什麼？」 | **[H]** | practice-questions-stage0 |
 | `choices` | array of string | 選擇題 [YES] | 選擇題剛好 4 個、不能重複；程式填空不用 | **[M]** | prd Counter「4 選 1」；practice-questions-stage0 |
-| `answer` | string | [YES] | 選擇題：必須是 `choices` 其中一個。程式填空：_TODO: 答案格式和批改方式待「程式碼批改」ADR_ | **[M]** / **[L]** | prd FR-1；AC-1 |
+| `answer` | string | [YES] | 選擇題：必須是 `choices` 其中一個。程式填空：批改方式是執行後比對輸出（ADR-005）；_TODO: 要加「程式範本」「預期輸出」欄位，階段 5 前凍結_ | **[M]** / **[L]** | prd FR-1；AC-1 |
 | `explanation` | string | [YES] | 不能空白；答錯時顯示，也是沒網路時的備用說明 | **[H]** | prd FR-3（4-4A）；AC-3 |
 | `status` | string | [YES] | `active`（會出題）或 `retired`（停用，不再出題，但保留給舊的作答紀錄對照） | **[M]** | Owner 決定 4A |
 | `added_in_version` | integer | [YES] | 這題在哪個 `bank_version` 加入；≤ `bank_version` | **[M]** | 依 4A 推得 |
@@ -124,7 +124,7 @@ upstream:
 |---|---|---|
 | `200` | `PlayerProgress` | 和 Request 相同的 `nickname`、`xp`、`level`、`updated_at` |
 | `400` | `ValidationError` | `xp` 是負數、`level` 和 `xp` 對不上。錯誤代碼：`PROGRESS_INVALID` |
-| `401` | `AuthError` | 不能確認身分，或想改別人的資料。錯誤代碼：`AUTH_REQUIRED`（實際行為要等 3C 決定） |
+| `401` | `AuthError` | 不能確認身分，或想改別人的資料。錯誤代碼：`AUTH_REQUIRED`（匿名登入的代號和 `player_id` 不符時拒絕，ADR-006） |
 | `500` | `InternalError` | 雲端服務出錯。錯誤代碼：`SERVICE_ERROR` |
 
 上傳失敗時，本機的經驗值和等級不受影響，畫面照常 3 秒內更新，之後再上傳。（依據：c4-diagram §9 R2；prd §6 Latency）
@@ -138,7 +138,7 @@ upstream:
 | Status | Schema | Notes |
 |---|---|---|
 | `200` | array of `PlayerProgress` | 每筆**只有** `nickname`、`xp`、`level`、`updated_at`，不含 `player_id` 和任何作答資料（prd §6 Privacy） |
-| `401` | `AuthError` | 錯誤代碼：`AUTH_REQUIRED`（實際行為要等 3C 決定） |
+| `401` | `AuthError` | 錯誤代碼：`AUTH_REQUIRED`（沒有匿名登入時拒絕，ADR-006） |
 | `500` | `InternalError` | 錯誤代碼：`SERVICE_ERROR` |
 
 ---
@@ -188,7 +188,7 @@ _TODO: 每個 message key 實際要顯示的文字，待 Owner 提供（AC-12 �
 ### TODO（缺資料）
 
 - ~~E1、E2 的雲端服務~~ → GitHub 公開題庫 repo（ADR-003）；_TODO: E1、E2 的實際網址；E3、E4 的實際做法（階段 3+ 的雲端 ADR）_
-- _TODO: 上傳時的身分確認、要不要防止竄改經驗值（3C；c4-diagram R6）_
+- ~~上傳時的身分確認、防竄改~~ → 匿名登入＋基本檢查（ADR-006，Owner 決定 3A、4A）；_TODO: E3、E4 對應到實際服務（ADR-006 小試驗後）_
 - _TODO: 題目 `id` 的正式編號格式_
 - _TODO: 暱稱長度上限、能不能和別人重複_
 - _TODO: 程式填空題的 `answer` 格式（「程式碼批改」ADR，階段 5）_
