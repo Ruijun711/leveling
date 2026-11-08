@@ -16,3 +16,8 @@ window/size/viewport_height=500
 window/subwindows/embed_subwindows=false
 ; 允許視窗背景透明（哥布林用）
 window/per_pixel_transparency/allowed=true
+
+[rendering]
+
+; 修正第 1 項：Vulkan 在 Windows 上透明視窗會變黑框，改用 Compatibility（OpenGL）
+renderer/rendering_method="gl_compatibility"
