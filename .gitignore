@@ -2,3 +2,8 @@
 .venv/
 __pycache__/
 *.db
+
+# Godot 小試驗：引擎執行檔、匯入快取、SQLite 外掛（都可重新下載，見 progress.md）
+spike/godot/.tools/
+spike/godot/.godot/
+spike/godot/addons/
