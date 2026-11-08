@@ -48,7 +48,7 @@
 | `create-stage0-form.gs` | Google Apps Script：`createStage0Form()` 建立測驗模式表單和試算表；`releaseBatch1()`～`releaseBatch4()` 分次加題；「經驗值」工作表給同學看，「統計」工作表算 G1 和反指標 |
 | `code-review-stage0-form.md` | `create-stage0-form.gs` 的 code review v0.1（7 條：1 must_block 縮排、6 should_fix；附 10 步試跑步驟；腳本尚未修改） |
 | `code-review-checklist-quick.md` | Code Review 工作包：撰寫 code review checklist 的規則與範本 |
-| `unit-test-stage1.md` | 階段 1 核心規則的單元測試計畫 v0.1（7 個 target、37 條 test case；不綁定語言，ADR-001 選定後再寫成 pytest 或 GUT） |
+| `unit-test-stage1.md` | 階段 1 核心規則的單元測試計畫 v0.1（7 個 target、38 條 test case；不綁定語言，ADR-001 選定後再寫成 pytest 或 GUT） |
 | `unit-test-quick.md` | Unit Test 工作包：撰寫單元測試計畫的規則與範本 |
 | `連結.txt` | 問卷填寫連結 |
 
@@ -151,6 +151,7 @@
 | 11-08 | AI、批改、階段 3 雲端（ADR-004～006） | AI 金鑰放雲端代理（1A）；AI 服務先寫選擇標準，階段 4 前實測 20 題再選（2B）；階段 3 用 Firebase 或 Supabase 類＋匿名登入，AI 代理也放同一家（3A）；防竄改只做基本檢查（4A）；寫程式題在本機用獨立程式執行、比對輸出（5A） |
 | 11-08 | Code review | 只 review `create-stage0-form.gs`（1A）；用專案文件當標準（2A）；靜態檢查＋試跑步驟（3A）；先只列問題，要修再逐項問（4A） |
 | 11-08 | 單元測試 | 測階段 1 核心規則，先寫計畫、函式名稱由 Claude 提議（1A）；不綁定語言（2A）；提醒的「24 小時內」不含剛好 24 小時，固定每 12 小時一則，已補進 AC-4（3A）；只寫計畫、不寫測試程式（4A） |
+| 11-08 | 單元測試 TODO | 答案不在選項裡時報錯、不用掉第一次作答（1A，補進 AC-7）；和作答同一刻的提醒不算（2A）；還沒作答過時，從第一次開啟起算 24 小時提醒（3A，補進 AC-4）；`unit-test-stage1.md` 增為 38 條 |
 
 ---
 

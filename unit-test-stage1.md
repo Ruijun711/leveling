@@ -26,12 +26,12 @@ upstream:
 
 ## 1. Executive Summary
 
-- **7 個 target**、**37 條 test case**：happy 9 條、boundary 17 條、error 11 條。
+- **7 個 target**、**38 條 test case**：happy 9 條、boundary 18 條、error 11 條。
 - 最容易寫錯的地方都有邊界測試：升級的 19／20 點、9 級上限的 160／170 點、提醒的「剛好 24 小時」、題庫的版本號和題數。
 - 提醒規則已依 Owner 決定（3A）定清楚：「任何 24 小時內」**不含**剛好 24 小時，所以提醒固定在 T+24、T+36、T+48……小時。
 - 這份計畫只能測「規則算得對不對」；存檔真的「全部成功才算數」要另外用真的 SQLite 檔做整合測試（§9 R2）。
 
-> **TL;DR:** 先把經驗值、等級、提醒、題庫檢查的規則寫成 37 條測試，以後寫程式、改程式時，跑一次就知道有沒有改壞。
+> **TL;DR:** 先把經驗值、等級、提醒、題庫檢查的規則寫成 38 條測試，以後寫程式、改程式時，跑一次就知道有沒有改壞。
 
 ---
 
@@ -44,7 +44,7 @@ upstream:
 | T1 | function | `level_from_xp` | `(xp: int) → int` | true | **[M]** |
 | T2 | function | `xp_for_answer` | `(is_correct: bool, is_first_attempt: bool) → int` | true | **[M]** |
 | T3 | function | `submit_answer` | `(store: ProgressStore, question: Question, selected_choice: str or 空值, now: datetime) → SubmitResult`；`SubmitResult` 有 `is_correct`、`is_first_attempt`、`xp_gained`、`total_xp`、`level`、`leveled_up` | true | **[M]** |
-| T4 | function | `next_reminder_at` | `(last_answered_at: datetime, reminders_since_last_answer: int) → datetime` | true | **[M]** |
+| T4 | function | `next_reminder_at` | `(last_answered_at: datetime, reminders_since_last_answer: int) → datetime`；還沒作答過時，`last_answered_at` 傳第一次開啟的時間 | true | **[M]** |
 | T5 | function | `count_reminders_since` | `(shown_at: list of datetime, last_answered_at: datetime) → int` | true | **[M]** |
 | T6 | function | `needs_download` | `(remote_version: int, local_version: int) → bool` | true | **[M]** |
 | T7 | function | `validate_bank` | `(manifest: BankManifest, bank: QuestionBank) → 通過，或丟出 BankError(code)` | true | **[M]** |
@@ -181,12 +181,12 @@ upstream:
 - **Edge rationale:** 存檔失敗的那次不能算「已作答」
 - **Source:** AC-10「寫入恢復正常後再送出，仍算第一次作答」
 
-#### TC-018 · Category **error** · **[L]**
+#### TC-018 · Category **error** · **[H]**
 - **Target:** `submit_answer`
-- **Input:** 第 1 題；`selected_choice` 是不在 4 個選項裡的文字
-- **Expected:** _TODO: 規格沒寫；畫面上不可能發生，但程式要決定是丟出錯誤還是算答錯（見 §12）_
-- **Edge rationale:** 不合法的輸入
-- **Source:** signature 推導
+- **Input:** store：經驗值 0；第 1 題；`selected_choice` 是不在 4 個選項裡的文字
+- **Expected:** 丟出「答案不在選項裡」的錯誤；經驗值仍是 0；不新增作答紀錄；之後送出合法答案，`is_first_attempt = true`（處理方式和 TC-015 空白答案一樣）
+- **Edge rationale:** 畫面上不會發生，發生就是程式或題庫資料有 bug；不能讓 bug 用掉玩家的第一次作答
+- **Source:** AC-7；Owner 決定 2026-11-08（unit-test TODO 1A）
 
 ### T4 `next_reminder_at`（T = 最後作答時間）
 
@@ -232,6 +232,13 @@ upstream:
 - **Edge rationale:** 不合法的輸入
 - **Source:** signature 推導
 
+#### TC-038 · Category **boundary** · **[H]**
+- **Target:** `next_reminder_at`
+- **Input:** 剛安裝、還沒有任何作答紀錄；第一次開啟時間是 `C`（data-model PlayerProgress `created_at`）。呼叫的人傳入 `last_answered_at = C`、`reminders_since_last_answer = 0`
+- **Expected:** `C + 24 小時`；之後的規則和 AC-4 一樣（`C + 36 小時`……）
+- **Edge rationale:** 裝了程式卻從沒練習，也要被提醒
+- **Source:** AC-4；Owner 決定 2026-11-08（unit-test TODO 3A）
+
 ### T5 `count_reminders_since`
 
 #### TC-025 · Category **happy** · **[H]**
@@ -248,12 +255,12 @@ upstream:
 - **Edge rationale:** 再作答後從頭計算
 - **Source:** AC-4「下一次提醒改從這次作答的時間重新計算」
 
-#### TC-027 · Category **boundary** · **[L]**
+#### TC-027 · Category **boundary** · **[H]**
 - **Target:** `count_reminders_since`
 - **Input:** `shown_at = [T+24h]`、`last_answered_at = T+24h`（作答和提醒在同一刻）
-- **Expected:** _TODO: 同一刻算不算「之後」，規格沒寫；Claude 建議不算（回傳 0）_
-- **Edge rationale:** 時間剛好相等
-- **Source:** signature 推導
+- **Expected:** `0`（只算時間**晚於**最後作答的提醒）
+- **Edge rationale:** 時間剛好相等；使用者已經回來作答，提醒從 0 重新計算
+- **Source:** AC-4「再作答就重新計算」；Owner 決定 2026-11-08（unit-test TODO 2A）
 
 ### T6 `needs_download`
 
@@ -346,7 +353,7 @@ upstream:
 
 ## 9. Risks（top 3）
 
-> **R1：函式名稱和參數是先提議的，真正的程式可能長得不一樣** — 寫程式時如果改了參數（例如提醒改成傳整個紀錄清單），測試就要跟著改，改的時候可能漏掉規則。 — **Mitigation:** ADR-001 選定後，寫程式前先把這 37 條翻成 pytest 或 GUT，規則（輸入 → 預期）不動，只改名稱和參數。 — **Owner:** Avi
+> **R1：函式名稱和參數是先提議的，真正的程式可能長得不一樣** — 寫程式時如果改了參數（例如提醒改成傳整個紀錄清單），測試就要跟著改，改的時候可能漏掉規則。 — **Mitigation:** ADR-001 選定後，寫程式前先把這 38 條翻成 pytest 或 GUT，規則（輸入 → 預期）不動，只改名稱和參數。 — **Owner:** Avi
 >
 > **R2：假的 store 證明不了「全部成功才算數」** — TC-016 只證明程式「有處理」存檔失敗；SQLite 的 transaction 是不是真的沒存一半，要用真的資料庫檔測（AC-10、AC-13）。 — **Mitigation:** 另外寫整合測試，用暫存的 SQLite 檔，在存檔中途讓它失敗，確認經驗值和紀錄都沒變；可以和 ADR-001 小試驗第 4 項一起做。 — **Owner:** Avi
 >
@@ -357,7 +364,7 @@ upstream:
 ## 12. Confidence & Sources & TODO
 
 - **整份 plan 最低 confidence 項：**
-  - **[L]**：TC-018（選項以外的答案）、TC-027（作答和提醒同一刻）——規格沒寫，預期結果是 TODO。
+  - **[L]**：無（TC-018、TC-027 已由 Owner 決定，2026-11-08）。
   - **[M]**：§2 全部 7 個 target 的名稱和參數；TC-006、TC-014、TC-023、TC-024、TC-030、TC-037。
 - **Fabricated assumptions（推測但 input 未明說）：**
   - 7 個函式的名稱、參數、`SubmitResult` 的欄位是 Claude 提議。
@@ -368,8 +375,6 @@ upstream:
 
 ### TODO（缺資料）
 
-- _TODO: TC-018 選項以外的答案要丟出錯誤還是算答錯（Owner 或開發時決定）_
-- _TODO: TC-027 作答和提醒同一刻，算不算「作答之後」的提醒_
-- _TODO: 從來沒有作答過（剛安裝）要不要提醒、從什麼時候開始算（AC-4 只寫「最後一次作答的時間」）_
+- ~~TC-018、TC-027、還沒作答過的提醒~~ → Owner 決定 2026-11-08（1A 2A 3A），見 TC-018、TC-027、TC-038
 - _TODO: AC-10、AC-13 的整合測試（真的 SQLite 檔，見 R2）_
 - _TODO: 階段 5 寫程式題的遞減經驗值（10→8→6→4→2）和 ADR-005 的批改，到階段 5 再加_
