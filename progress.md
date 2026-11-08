@@ -32,7 +32,7 @@
 | | `data-model.md` | 資料模型 v0.1（階段 1 本機 5 個 entity＋雲端玩家進度） |
 | `03-架構/adr/` | `adr-001-desktop-framework.md` | 桌面框架：**PySide6（Accepted）**；兩個小試驗都通過 |
 | | `adr-002-local-storage.md` | 本機資料：**SQLite（Accepted）** |
-| | `adr-003-cloud-data-service.md` | 階段 1 題庫放 GitHub 公開 repo（Proposed） |
+| | `adr-003-cloud-data-service.md` | 階段 1 題庫：**GitHub 公開 repo（Accepted）**，第 1 版 17 題 |
 | | `adr-004-ai-service.md` | AI 服務：雲端代理保管金鑰（Proposed） |
 | | `adr-005-code-grading.md` | 寫程式題：本機獨立程式執行、比對輸出（Proposed） |
 | | `adr-006-stage3-cloud.md` | 階段 3 雲端：Firebase／Supabase＋匿名登入（Proposed） |
@@ -149,6 +149,7 @@
 | 11-08 | 整理資料夾 | 依類別分成 01-研究、02-產品、03-架構（含 adr）、04-測試、05-階段0-未使用、工作包；中文資料夾名（1A）；檔名不改、文件內提到的檔名不改，只更新 progress（2A）；用 `git mv` 保留紀錄（3A） |
 | 11-08 | PySide6 小試驗 | 4 項都通過：哥布林透明、9.9 毫秒、約 15 分鐘、SQLite 重開後還在；Avi 看得懂、改得動。Godot 也要試（1A）；結果先寫進 ADR-001、002，維持 Proposed（2A）；比較規則：時間不到一半才算明顯快，否則看好不好懂（3A） |
 | 11-08 | **選定 PySide6** | Godot 也通過 4 項（第一次黑框，改 Compatibility 繪圖方式後透明；14.2 毫秒；約 12 分鐘）；時間沒差一半、Avi 覺得都好懂，依已知代價選 PySide6（1A）；ADR-001、002 改成 Accepted；試驗程式碼保留、刪掉 Godot 下載檔（2A） |
+| 11-08 | **建立題庫 repo** | Avi 在網頁建 repo、Claude 準備檔案、Avi 用 git push 上傳（1A）；`Ruijun711/leveling-question-bank`，本機在 `Desktop/leveling-question-bank`，和專案分開（2A）；題號改用流水號 Q001～（3B）；第 1 版 17 題＝階段 0 的 12 題＋concierge 的 5 題（4B）；實際下載並檢查通過，ADR-003 改成 Accepted |
 
 ---
 
@@ -224,7 +225,7 @@
 
 1. ~~執行階段 0~~ → 跳過（Owner 決定 2026-11-08：不再做問卷或表單）
 2. ~~ADR-001 試驗時間差~~ → 已決定，並已選定 PySide6
-3. **申請 GitHub 帳號、建立公開題庫 repo**（階段 1 前；確認下載得到後，ADR-003 改成 Accepted；repo 只放題庫，不放專案資料夾的其他檔案）
+3. ~~建立公開題庫 repo~~ → 完成（2026-11-08）。之後加題目：改本機 `Desktop/leveling-question-bank` 的檔案，照 README 的規則檢查後 push
 4. **AC-11 檢查新題目的時機**（開機時或每天，`acceptance-criteria.md`）
 5. **提供 `prd.md` 的 TODO**（見下方）
 6. **作答紀錄的保留期限、要不要做「重設進度」**（`data-model.md` §12，不急）
@@ -246,10 +247,10 @@
 ## 下一步
 
 1. ~~開始階段 0~~ → 跳過；G1 改由階段 1 試用第一次驗證
-2. ~~ADR-001 小試驗~~ → 完成，選定 PySide6；**下一步：建立 GitHub 題庫 repo（第 4 項），然後開始階段 1**
+2. ~~ADR-001 小試驗~~ → 完成，選定 PySide6
 3. Avi 提供 PRD 剩下的 TODO 後，Claude 填入 `prd.md`
-4. **建立 GitHub 公開題庫 repo**（階段 1 前；見 `adr-003-cloud-data-service.md` §6 Follow-up）
-5. 所有規劃中的 ADR 都寫完了（001～006，都是 Proposed）。各自定案的時機：001、002 **已 Accepted**；003 等建好題庫 repo；006 階段 3 前試驗；004 階段 4 前實測；005 階段 5 前定時間上限
+4. ~~建立 GitHub 公開題庫 repo~~ → 完成，ADR-003 Accepted。**下一步：開始階段 1 的程式**
+5. 所有規劃中的 ADR 都寫完了（001～006，都是 Proposed）。各自定案的時機：001、002、003 **已 Accepted**；006 階段 3 前試驗；004 階段 4 前實測；005 階段 5 前定時間上限
 6. （選做）之後要做 JTBD-002 時，再訂它的成功標準
 7. ~~concierge 測試~~ → 已完成（2026-11-05，8 人），結果寫在 `value-hypothesis.md` §5「測試結果」
 8. ~~（選做）追問 P1 新手~~ → 跳過（不再做問卷）

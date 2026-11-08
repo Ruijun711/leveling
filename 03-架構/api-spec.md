@@ -49,7 +49,7 @@ upstream:
 3. E2 下載完成後，**整份通過 §3 的檢查**才替換本機題庫；任何一項檢查沒過，就保留原本的題庫，下次檢查時再試（AC-13）。
 4. 沒有網路時跳過 1～3，直接用本機題庫出題（AC-12）。
 
-**階段 1 實際做法（`adr-003-cloud-data-service.md`，Proposed）：** E1 是題庫 repo 裡的題庫版本檔、E2 是整份題庫檔，程式用 GitHub 的 raw 網址下載。GitHub 有快取，push 後幾分鐘內可能讀到新版本檔、舊題庫檔，會被當成 `BANK_VERSION_MISMATCH`，下次再試即可。_TODO: 實際網址，等 Avi 建好 repo_。E3、E4 等階段 3+ 的雲端 ADR。
+**階段 1 實際做法（`adr-003-cloud-data-service.md`，Accepted）：** E1 是題庫 repo 裡的題庫版本檔、E2 是整份題庫檔，程式用 GitHub 的 raw 網址下載。GitHub 有快取，push 後幾分鐘內可能讀到新版本檔、舊題庫檔，會被當成 `BANK_VERSION_MISMATCH`，下次再試即可。實際網址：E1 `https://raw.githubusercontent.com/Ruijun711/leveling-question-bank/main/manifest.json`、E2 `https://raw.githubusercontent.com/Ruijun711/leveling-question-bank/main/question-bank.json`（2026-11-08 已上傳第 1 版，17 題）。E3、E4 等階段 3+ 的雲端 ADR。
 
 ---
 
@@ -82,7 +82,7 @@ upstream:
 
 | Field | Type | Required | Validation | Confidence | 依據 |
 |---|---|---|---|---|---|
-| `id` | string | [YES] | 整個題庫唯一；**發布後永遠不改、不重複使用**（4A）。_TODO: 正式的編號格式待 Owner 決定（階段 0 用 A1～D3）_ | **[M]** | Owner 決定 4A；AC-5「題號」 |
+| `id` | string | [YES] | 整個題庫唯一；**發布後永遠不改、不重複使用**（4A）。格式是流水號 `Q001`、`Q002`……，不包含觀念（觀念另外記在 `concept`）（Owner 決定 2026-11-08） | **[M]** | Owner 決定 4A；AC-5「題號」 |
 | `concept` | string | [YES] | 不能空白，例如「字串與數字」；同一個觀念的題目要用完全相同的文字 | **[M]** | prd G2、§12 假設；AC-5「觀念」 |
 | `type` | string | [YES] | `multiple_choice`（選擇題）或 `code_fill`（程式填空，階段 5） | **[M]** / **[L]**（`code_fill`） | prd FR-1 |
 | `code` | string | [YES] | 題目的 Python 程式碼，保留換行和縮排 | **[H]** | practice-questions-stage0 |
@@ -187,9 +187,9 @@ _TODO: 每個 message key 實際要顯示的文字，待 Owner 提供（AC-12 �
 
 ### TODO（缺資料）
 
-- ~~E1、E2 的雲端服務~~ → GitHub 公開題庫 repo（ADR-003）；_TODO: E1、E2 的實際網址；E3、E4 的實際做法（階段 3+ 的雲端 ADR）_
+- ~~E1、E2 的雲端服務和實際網址~~ → GitHub 公開題庫 repo（ADR-003，見 §2）；_TODO: E3、E4 的實際做法（階段 3+ 的雲端 ADR）_
 - ~~上傳時的身分確認、防竄改~~ → 匿名登入＋基本檢查（ADR-006，Owner 決定 3A、4A）；_TODO: E3、E4 對應到實際服務（ADR-006 小試驗後）_
-- _TODO: 題目 `id` 的正式編號格式_
+- ~~題目 `id` 的正式編號格式~~ → `Q001` 流水號（Owner 決定 2026-11-08）
 - _TODO: 暱稱長度上限、能不能和別人重複_
 - _TODO: 程式填空題的 `answer` 格式（「程式碼批改」ADR，階段 5）_
 - _TODO: 檢查新題目的時機（AC-11）_

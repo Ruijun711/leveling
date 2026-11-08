@@ -1,7 +1,7 @@
 ---
 doc_type: "adr"
 variant: "light"
-status: "proposed"
+status: "accepted"
 owner: "Avi"
 last_updated: "2026-11-08"
 upstream:
@@ -11,7 +11,7 @@ upstream:
 
 # ADR-003: 階段 1 的題庫放在哪個雲端服務
 
-**Status:** Proposed · **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Accepted（2026-11-08）· **Owner:** Avi · **Last updated:** 2026-11-08
 
 > [!NOTE]
 > 依據：`api-spec.md` v0.1（E1、E2、2A、4A、§5）、`c4-diagram.md` v0.2（§2 雲端資料服務、§9 R3、§12 TODO）、`roadmap.md` v0.3（§2 階段 1、3+）、`prd.md` v0.7（§6 題目更新、§9 R2、Decision Log 3B、C）、`acceptance-criteria.md` v0.4（AC-11～AC-13）。範圍、服務、費用、更新題庫的方式由 Owner 決定（2026-11-08：1B 2A 3A 4A）。
@@ -75,13 +75,18 @@ upstream:
 
 ## 6. Decision & Consequences
 
-### Chosen: **Option A（GitHub 公開題庫 repo）** · **[M]**
+### Chosen: **Option A（GitHub 公開題庫 repo）** · **[H]**
+
+> 2026-11-08 已建好 repo `https://github.com/Ruijun711/leveling-question-bank`，用 raw 網址實際下載 2 個檔案、照 api-spec §3 檢查都通過，和本機檔案完全一致，依 §6 Follow-up 改成 Accepted。
 
 - **Scope:** 只適用於階段 1 起的題庫下載（api-spec E1、E2）。**不適用**於階段 3+ 的經驗值上傳和讀取（E3、E4）、身分確認、防竄改——階段 3 前另寫 ADR。
 - **做法：**
-  - 另外開一個**公開**的 GitHub repo，只放題庫，不放專案資料夾的任何其他檔案（避免同學真名外流）。_TODO: repo 名稱，Claude 提議 `leveling-question-bank`_
+  - 另外開一個**公開**的 GitHub repo，只放題庫，不放專案資料夾的任何其他檔案（避免同學真名外流）。repo：`Ruijun711/leveling-question-bank`（Owner 決定 2026-11-08）。
   - repo 裡放 2 個檔案：題庫版本檔（對應 E1）和整份題庫檔（對應 E2），格式照 `api-spec.md` §3。
-  - 程式用 GitHub 的 raw 網址下載這 2 個檔案。_TODO: 實際網址，等 Owner 建好 repo_
+  - 程式用 GitHub 的 raw 網址下載這 2 個檔案：
+    - E1：`https://raw.githubusercontent.com/Ruijun711/leveling-question-bank/main/manifest.json`
+    - E2：`https://raw.githubusercontent.com/Ruijun711/leveling-question-bank/main/question-bank.json`
+  - **第 1 版（2026-11-08）：** 17 題（Q001～Q012 是階段 0 的題目，Q013～Q017 是 concierge 測試的題目），每題答案都用 Python 實際執行確認過。
 - **費用（Owner 決定 3A）：** 只用免費方案。
 - **更新題庫（Owner 決定 4A）：** Owner 直接編輯題庫檔，push 前先跑檢查程式，確認：
   - 版本號比上一版大 1
@@ -117,17 +122,17 @@ upstream:
 
 ## 12. Confidence & Sources & TODO
 
-- **整份文件最低 confidence 欄位：** §6 Chosen **[M]**（還沒建 repo、還沒試過下載）；§10 第 2 條 **[M]**。
+- **整份文件最低 confidence 欄位：** §10 第 2 條 **[M]**（當時還沒試）。§6 Chosen 已實際下載確認，改成 **[H]**。
 - **Fabricated assumptions（推測但 input 未明說）：**
   - GitHub 的 raw 網址可以不用登入直接下載、快取大約幾分鐘、一個班 35 人的下載量不會被限制，是 Claude 依一般資料判斷，還沒實際試過。
   - Google 雲端硬碟直接下載連結不穩定，是 Claude 依一般經驗判斷。
   - repo 名稱 `leveling-question-bank` 是 Claude 提議。
   - 題庫檔用 JSON 格式（Owner 在 4A 選了「編輯 JSON 檔」；api-spec 沒有指定檔案格式）。
-- **Highest-value next input:** Owner 建好題庫 repo 後，實際用程式下載一次的結果。
+- **Highest-value next input:** push 新版題庫後，同學的程式多久下載得到（GitHub 快取的實際時間，NFR A5）。
 
 ### TODO（缺資料）
 
-- _TODO: 題庫 repo 的名稱和實際下載網址，等 Owner 建好 repo_
+- ~~題庫 repo 的名稱和實際下載網址~~ → 見 §6（2026-11-08）
 - _TODO: 題庫檢查程式的檔名和位置，開發時決定_
 - _TODO: 檢查新題目的時機（開機時或每天，AC-11）_
 - _TODO: 階段 3+ 的雲端 ADR：上傳和讀取經驗值、身分確認（3C）、防止竄改（R6）_
