@@ -4,7 +4,7 @@
 
 ## 在新電腦接續時，貼給 Claude 的話
 
-> 請先讀取 `progress.md`、`project-brief.md`、`persona.md`、`jtbd.md`、`questionnaire.md`、`responses.csv`、`value-hypothesis.md`、`prd.md`、`roadmap.md`、`acceptance-criteria.md`、`adr-001-desktop-framework.md`、`adr-002-local-storage.md`、`adr-003-cloud-data-service.md`、`c4-diagram.md`、`api-spec.md`、`data-model.md`、`practice-questions-stage0.md`，了解目前進度後再繼續。各 `*-quick.md` 工作包等要用到時再讀。**新增或修改任何檔案前，都必須先經過我同意。**
+> 請先讀取 `progress.md`、`project-brief.md`、`persona.md`、`jtbd.md`、`questionnaire.md`、`responses.csv`、`value-hypothesis.md`、`prd.md`、`roadmap.md`、`acceptance-criteria.md`、`adr-001-desktop-framework.md`、`adr-002-local-storage.md`、`adr-003-cloud-data-service.md`、`non-functional-reqs.md`、`c4-diagram.md`、`api-spec.md`、`data-model.md`、`practice-questions-stage0.md`，了解目前進度後再繼續。各 `*-quick.md` 工作包等要用到時再讀。**新增或修改任何檔案前，都必須先經過我同意。**
 
 ---
 
@@ -19,8 +19,10 @@
 | `value-hypothesis.md` | 價值假設卡草稿 v0.4（已有測試結果：A1 依門檻成立，但只驗證到一次性作答；階段 0 當作 A1 的第二次測試） |
 | `value-hypothesis-quick.md` | 價值假設卡工作包：撰寫 `value-hypothesis.md` 的規則與範本 |
 | `prd-quick.md` | PRD 工作包：撰寫 `prd.md` 的規則與範本 |
-| `prd.md` | PRD 草稿 v0.7（v1 做完整產品概念的 Windows 桌面程式，含 AI 解釋錯題與鼓勵，6 個 P0 FR；技能數值、血量傷害、寶物清單、AI 服務與費用待 Avi 提供） |
-| `acceptance-criteria.md` | 階段 1 核心循環的驗收條件 v0.4（user story ＋ 14 條 AC，不含 AI；含下載題庫、匯出作答紀錄） |
+| `prd.md` | PRD 草稿 v0.8（§6 NFR 移到 `non-functional-reqs.md`；v1 做完整產品概念的 Windows 桌面程式，含 AI 解釋錯題與鼓勵，6 個 P0 FR；技能數值、血量傷害、寶物清單、AI 服務與費用待 Avi 提供） |
+| `acceptance-criteria.md` | 階段 1 核心循環的驗收條件 v0.5（user story ＋ 14 條 AC，不含 AI；含下載題庫、匯出作答紀錄；Latency、Privacy 已有量測方法） |
+| `non-functional-reqs.md` | 非功能需求 v0.1（NFR 唯一來源：速度、可用性、隱私、無障礙、AI 品質、平台，每條有 SLI＋目標＋量測方法；合規） |
+| `non-functional-reqs-quick.md` | NFR 工作包：撰寫 `non-functional-reqs.md` 的規則與範本 |
 | `acceptance-criteria-quick.md` | 驗收條件工作包：撰寫 `acceptance-criteria.md` 的規則與範本 |
 | `roadmap.md` | v1 分階段開發規劃 v0.3（階段 0～5，含每階段的試用方式與門檻；階段 1 加上下載題庫；階段 0 的出題表與 G1 算法） |
 | `adr-001-desktop-framework.md` | ADR-001：桌面程式的語言和框架（Proposed；先做 PySide6、Godot 小試驗再決定，試驗共 4 項） |
@@ -138,6 +140,7 @@
 | 11-08 | 資料模型寫法 | 邏輯模型，不綁定儲存方式，索引寫成需要支援的查詢（3A） |
 | 11-08 | 本機存資料（ADR-002） | 暫定 SQLite（1A）；先寫成 Proposed，ADR-001 小試驗加第 4 項「經驗值存起來、重開後讀回」（2A）；試用資料由同學自己匯出 CSV 傳給 Avi，新增 AC-14（3A）；v1 不備份（4A） |
 | 11-08 | 雲端資料服務（ADR-003） | 只決定階段 1 題庫放哪，階段 3+ 另寫 ADR（1B）；題庫放 GitHub 公開 repo，和專案資料夾分開（2A）；只用免費方案（3A）；直接編輯 JSON 檔，push 前跑檢查程式（4A） |
+| 11-08 | 非功能需求 | 新增 `non-functional-reqs.md` 當唯一來源，prd §6 只留摘要（1A）；可用性量「沒網路照常練、資料 0 遺失、提醒 15 分鐘內」（2A）；無障礙做 3 項基本檢查：對錯不只用顏色、只用鍵盤能作答、Boss 不快速閃爍（3A）；3 秒內更新由程式記錄、隨匯出檔交回（4A）；用資源監視器檢查不上傳（5A） |
 
 ---
 
@@ -184,6 +187,7 @@
 - [x] 依 `data-model-quick.md` 完成 `data-model.md` v0.1（Avi 決定 1C 2B 3A，2026-11-08）
 - [x] 依 `adr-quick.md` 撰寫 `adr-002-local-storage.md`（Proposed，Avi 決定 1A 2A 3A 4A，2026-11-08）
 - [x] 依 `adr-quick.md` 撰寫 `adr-003-cloud-data-service.md`（Proposed，Avi 決定 1B 2A 3A 4A，2026-11-08）
+- [x] 依 `non-functional-reqs-quick.md` 完成 `non-functional-reqs.md` v0.1（Avi 決定 1A 2A 3A 4A 5A，2026-11-08）
 - [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林＋經驗值存進 SQLite」
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [ ] 階段 0：在 script.google.com 執行 `createStage0Form()`、找 ≥ 8 位 P1 同學、依出題表執行 `releaseBatch1()`～`4()`、追蹤 2 週

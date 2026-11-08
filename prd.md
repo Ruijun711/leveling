@@ -11,7 +11,7 @@ upstream:
 
 # Product Requirements: 學習精靈
 
-**Status:** Draft v0.7 · **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Draft v0.8 · **Owner:** Avi · **Last updated:** 2026-11-08
 
 > [!NOTE]
 > 證據來源：`project-brief.md`、`persona.md` v0.4、`jtbd.md` v0.2、`value-hypothesis.md` v0.3（concierge 測試 8 人）、`responses.csv`（4 份問卷）。v1 範圍、JTBD 取捨、題型、latency 由 Owner 決定（2026-11-07：1C 2A 3C 5A）；G1、Counter 數字，以及職業、技能、Boss、寶物的設計也由 Owner 提供（2026-11-07）。
@@ -27,6 +27,8 @@ upstream:
 > **v0.6 變更：** v1 等級上限暫定 9 級，只有 3 隻 Boss（取代「9 級之後每 3 級一隻新 Boss」）；未來規劃 99 級、33 隻 Boss，列為 Non-Goal（未來考慮）。剩下的技能點數先保留；9 級之後經驗值繼續累積。更新 R1。
 >
 > **v0.7 變更（2026-11-08）：** 新增「題目更新」NFR（從雲端下載題庫，只下載）；Privacy NFR 註明 AI 部分從階段 4 開始；R2 補上雲端資料服務、Mitigation 改為已分階段；§12 兩條已決定的假設（開機自動執行、v1 同學互看等級）移到 Decision Log；新增 Decision Log「題庫與雲端」。
+>
+> **v0.8 變更（2026-11-08）：** §6 NFR 移到 `non-functional-reqs.md`（以它為準，Owner 決定 1A），§6 只留摘要。
 
 ---
 
@@ -183,8 +185,9 @@ upstream:
 
 ## 6. NFR
 
-| Dimension | Target | Rationale | Confidence |
-|---|---|---|---|
+> **詳見 `non-functional-reqs.md`（以它為準，Owner 決定 2026-11-08，1A）。** 摘要：**Latency** 作答後 p95 < 3 秒更新經驗值和等級；**Privacy** 階段 1～3 作答資料不離開電腦，只公開暱稱、經驗值、等級，階段 4 送 AI 前先告知；**Platform** Windows 桌面程式、Boss 出現在桌面、開機自動執行；**題目更新** 階段 1 起從雲端下載題庫、沒網路也能練；**AI 說明正確性** 每週抽查 20 則、錯誤 < 10%；另有可用性（提醒 15 分鐘內）和無障礙（3 項基本檢查）。
+
+---|---|---|---|
 | **Latency** | 從送出答案到看到經驗值和等級更新，p95 < 3 秒 | Owner 要求「馬上」看到更新（2026-11-07，5A）；JTBD-001「清楚看到自己累積了多少」。現有的「發布到網路」要幾分鐘才更新，不符合 | **[H]** |
 | **Privacy** | 其他使用者只看得到經驗值和等級，看不到別人的答案、程式碼和「卡在哪裡」的回答。從階段 4 開始，使用者的答案和程式碼會送給 AI 服務產生說明，使用前要先告知使用者；階段 1～3 不傳出任何作答資料 | 延續 concierge 測試的做法：只公開「經驗值」工作表（Owner 決定 2026-11-05）；AI 部分來自 Owner 決定加入 AI 功能（2026-11-07） | **[H]** |
 | **Platform** | Windows 桌面程式，Boss 能出現在電腦桌面上；開機自動執行 | Owner 決定 Boss 出現在桌面（2026-11-07，3-1A）；開機自動執行（2026-11-07，5B） | **[H]** |

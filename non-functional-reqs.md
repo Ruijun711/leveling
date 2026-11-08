@@ -1,0 +1,142 @@
+---
+doc_type: "non-functional-reqs"
+variant: "light"
+status: "draft"
+owner: "Avi"
+last_updated: "2026-11-08"
+upstream:
+  required: ["prd"]
+  optional: ["platform-baseline", "competitive-baseline"]
+---
+
+# Non-Functional Requirements: 學習精靈
+
+**Status:** Draft v0.1 · **Owner:** Avi（Claude 起草） · **Last updated:** 2026-11-08
+
+> [!NOTE]
+> **這份文件是非功能需求的唯一來源**（Owner 決定 2026-11-08，1A）。`prd.md` §6 只留摘要並指向這裡；`acceptance-criteria.md` §4 是階段 1 的驗收方式，數字以這份為準。
+>
+> 依據：`prd.md` v0.7 §6（原本的 NFR 表）、`acceptance-criteria.md` v0.4（AC-4、AC-9、AC-10、AC-12～AC-14、§4）、`c4-diagram.md` v0.2（R2、R3、R5、R6）、`adr-002-local-storage.md`、`adr-003-cloud-data-service.md`、`data-model.md`（2B）。可用性、無障礙、量測方法由 Owner 決定（2026-11-08：2A 3A 4A 5A）。
+
+---
+
+## 1. Executive Summary
+
+- **範圍：** 學習精靈 v1（Windows 桌面程式），重點是階段 1 核心循環；階段 3～5 的項目先列出，數字待之後的 ADR。
+- **不對外承諾 SLA：** 這是課堂個人專案，免費給同學試用，以下都是內部目標，用在每階段試用前後的檢查。
+- **Hard target（沒達到就不能開始試用，或試用後要修）：** 作答後 3 秒內更新、沒網路照常練、資料不遺失、作答資料不離開電腦、3 項無障礙檢查。
+- **Best-effort：** 題庫下載多快拿到新題（依賴 GitHub）、AI 說明正確性（階段 4，[L]）。
+- **最不確定的閾值：** 提醒誤差 15 分鐘（Claude 提議、Owner 同意，還沒有實際資料）；桌面 Boss「快速閃爍」怎麼判定（TODO）。
+
+> **TL;DR:** 速度、離線、資料不遺失、隱私、無障礙是 hard target；題庫下載速度和 AI 正確性是 best-effort。
+
+---
+
+## 2. Core NFR Matrix
+
+> 「量測」寫的是**誰、什麼時候、用什麼方法**檢查。「試用前」指每個階段發給同學之前（roadmap §3）。
+
+### Latency
+
+| # | Dimension | SLI | SLO target | Measurement | Confidence |
+|---|---|---|---|---|---|
+| L1 | **作答回饋** | 從按下「送出」到畫面顯示新的經驗值和等級，花了幾毫秒 | **p95 < 3000 毫秒**，以試用期間所有作答計算（依據：prd §6 Latency，Owner 決定 2026-11-07，5A；AC-1、AC-2） | 程式每次作答都在本機記錄這個時間，隨「匯出作答紀錄」一起匯出（AC-14）；試用結束後 Avi 合併所有同學的 CSV 算 p95（Owner 決定 2026-11-08，4A） | 目標 **[H]** · 量測 **[M]** |
+
+- 設計限制：經驗值和等級一律先在本機計算、存檔、顯示；上傳雲端和呼叫 AI 都在背景做，不讓畫面等（依據：c4-diagram R2）。**[H]**
+
+### Availability（桌面程式沒有「伺服器正常運作時間」，改量以下 4 項）
+
+| # | Dimension | SLI | SLO target | Measurement | Confidence |
+|---|---|---|---|---|---|
+| A1 | **沒網路照常練** | 沒網路時，練習流程（出題、判斷對錯、加經驗值、升級、顯示說明、提醒）能完成的比例 | **100%**（依據：AC-12；prd §6 題目更新「沒網路也能練」） | 試用前拔掉網路，跑一次 AC-12 | **[H]** |
+| A2 | **資料不遺失** | 弄丟或弄壞的作答紀錄、經驗值筆數 | **0 筆**（依據：AC-9、AC-10、AC-13；ADR-002 transaction） | 試用前跑 AC-9（重開機）、AC-10（存檔失敗）、AC-13（下載中斷）；試用期間同學回報「經驗值或紀錄不見」的次數要是 0 | **[M]** |
+| A3 | **提醒準時** | 提醒實際跳出的時間，比預定時間晚多少 | **每一則都在 15 分鐘內**；任何 24 小時內最多 2 則（依據：AC-4；15 分鐘是 Claude 提議，Owner 決定 2026-11-08，2A） | 開發時用測試設定把「24 小時、12 小時」縮短成幾分鐘，比對提醒紀錄（data-model ReminderLog）的跳出時間和預定時間 | **[M]** |
+| A4 | **開機自動執行** | 開機後學習精靈有沒有自動執行 | **每次開機都有**（依據：prd §6 Platform，Owner 決定 2026-11-07，5B；AC-9） | 試用前重開機一次，跑 AC-9 | **[H]** |
+
+**Best-effort（依賴外部服務，不設 hard target）：**
+
+| # | Dimension | SLI | SLO target | Measurement | Confidence |
+|---|---|---|---|---|---|
+| A5 | **拿到新題目** | Avi push 新題庫後，到同學的程式下載到，花多久 | _TODO: 需要 Owner 決定，以及 GitHub 快取的實際時間_（依據：ADR-003 Negative consequences） | 建好題庫 repo 後，push 一次，記錄多久下載得到 | **[L]** |
+
+### Security / Privacy
+
+| # | Dimension | SLI | SLO target | Measurement | Confidence |
+|---|---|---|---|---|---|
+| S1 | **作答資料不離開電腦（階段 1～3）** | 程式連到哪些網站 | **只有 GitHub 題庫的下載網址**；沒有任何上傳作答資料的連線（依據：prd §6 Privacy；AC §4；Owner 決定 2026-11-08，C；ADR-003） | 試用前，每個要發給同學的版本，用 Windows 內建「資源監視器」的「網路」分頁看程式的連線（Owner 決定 2026-11-08，5A） | **[H]** |
+| S2 | **作答紀錄只由使用者自己交出** | 作答紀錄離開電腦的方式 | **只有使用者自己按「匯出作答紀錄」**；匯出檔不含暱稱和玩家代號（依據：ADR-002 3A；AC-14） | 試用前跑 AC-14，打開 CSV 檢查欄位 | **[H]** |
+| S3 | **暱稱不是真名** | 公開的暱稱裡，用真名的數量 | **0 個**（依據：data-model 2B） | Avi 在階段 0「統計」工作表、階段 3 雲端資料裡看一次暱稱清單 | **[M]** |
+| S4 | **公開資料只有 3 欄（階段 3+）** | 同學讀得到的欄位 | **只有暱稱、經驗值、等級**（和更新時間）（依據：prd §6 Privacy；api-spec E4） | _TODO: 需要階段 3+ 的雲端 ADR 決定怎麼檢查_ | **[M]** |
+| S5 | **送給 AI 前先告知（階段 4）** | 第一次把答案送給 AI 之前，有沒有顯示告知 | **100%**（依據：prd §6 Privacy） | _TODO: 需要階段 4 的驗收條件_ | **[M]** |
+| S6 | **防止竄改經驗值（階段 3+）** | — | _TODO: 要不要防、怎麼防，待階段 3+ 的雲端 ADR（c4-diagram R6；api-spec 3C）_ | _TODO_ | **[L]** |
+| S7 | **執行玩家程式的安全（階段 5）** | — | _TODO: 執行時間上限、隔離方式，待「程式碼批改」ADR（c4-diagram R5）_ | _TODO_ | **[L]** |
+
+### A11y（無障礙，Owner 決定 2026-11-08，3A）
+
+| # | Dimension | SLI | SLO target | Measurement | Confidence |
+|---|---|---|---|---|---|
+| X1 | **對錯不只用顏色** | 顯示對錯的畫面，有沒有同時用文字或符號 | **所有畫面都有** | 試用前，Avi 照檢查清單看一次所有畫面 | **[M]** |
+| X2 | **只用鍵盤也能作答** | 只用鍵盤能不能完成「選答案 → 送出 → 看說明 → 下一題」 | **能** | 試用前，拔掉滑鼠作答一次 | **[M]** |
+| X3 | **桌面 Boss 不快速閃爍** | Boss 和特效有沒有快速閃爍 | **沒有**（階段 3 起）。_TODO: 「快速閃爍」的判定標準，待 Owner 決定_ | 階段 3 試用前，Avi 看一次 Boss 戰 | **[L]** |
+
+- 不採用 WCAG 2.2 AA：WCAG 是網頁的標準，套用到桌面程式和遊戲的工作量很大（見 §10）。
+
+### AI 品質（階段 4）
+
+| # | Dimension | SLI | SLO target | Measurement | Confidence |
+|---|---|---|---|---|---|
+| Q1 | **AI 說明正確性** | 每週抽查的 AI 說明裡，錯誤的比例 | **抽查 20 則，錯誤 < 10%**；超過就調整給 AI 的指示，或改用事先寫好的說明（依據：prd §6，Owner 決定 2026-11-07，4-3A） | Avi 每週人工抽查。_TODO: AI 說明存在哪裡讓 Avi 取得（c4-diagram §12）_ | **[L]** |
+
+### Platform
+
+| # | Dimension | SLI | SLO target | Measurement | Confidence |
+|---|---|---|---|---|---|
+| P1 | **Windows 桌面程式** | 能不能在 Windows 安裝、執行，Boss 出現在電腦桌面上 | **能**（依據：prd §6 Platform，Owner 決定 2026-11-07，3-1A） | ADR-001 小試驗第 1 項；試用前在 Avi 的電腦安裝一次。_TODO: 同學用什麼作業系統、Windows 版本（ADR-001 TODO）_ | **[H]** |
+
+---
+
+## 4. Compliance（核心）
+
+| Regime | Applicable | Notes |
+|---|---|---|
+| 台灣個人資料保護法 | [YES]（範圍很小） | 學習精靈不收真名（S3）；作答紀錄存在使用者自己的電腦，只有使用者自己匯出才會交給 Avi（S2）；階段 3+ 只公開暱稱、經驗值、等級（S4）。專案資料夾裡的問卷和 concierge 測試資料有同學真名，只留在 Avi 電腦，不放進題庫 repo（ADR-003）。_TODO: 試用前要不要給同學一段文字，說明匯出檔用來算什麼、保留多久，待 Owner 決定_ |
+| GDPR | [NO] | 使用者是台灣的 aipe05 同學，不對歐盟提供服務 |
+| SOC 2 | [NO] | 不提供線上服務給其他公司使用 |
+| PCI DSS | [NO] | 免費，不收錢、不處理信用卡 |
+
+---
+
+## 10. Decision Log
+
+| Date | Decision | Options | Chosen | Rejected why | Confidence |
+|---|---|---|---|---|---|
+| 2026-11-08 | 這份文件和 prd §6 的關係（**Owner 決定** 1A） | A 以這份為準，prd §6 只留摘要 / B 兩邊都完整 / C 這份只寫 prd 沒有的 | A | B：兩份要一起改，容易對不上；C：要看兩份才知道完整的 NFR | **[H]** |
+| 2026-11-08 | 可用性量什麼（**Owner 決定** 2A） | A 沒網路照常練＋資料不遺失＋提醒 15 分鐘內 / B 再加當機次數 / C 提醒誤差留 TODO | A | B：當機次數沒有依據可以訂目標；C：提醒是 FR-6 的核心，沒有誤差標準就沒辦法驗收 | **[M]** |
+| 2026-11-08 | 無障礙程度（**Owner 決定** 3A） | A 3 項基本檢查 / B WCAG 2.2 AA / C 留 TODO | A | B：網頁標準，套到桌面程式和遊戲工作量大；C：工作包要求必須有 a11y | **[H]** |
+| 2026-11-08 | 3 秒內更新怎麼量（**Owner 決定** 4A） | A 程式記錄、隨匯出檔交回 / B 開發時自己測 20 次 / C 留 TODO | A | B：只量到 Avi 的電腦，同學的電腦可能比較慢；C：工作包要求每條都有量測方法 | **[H]** |
+| 2026-11-08 | 作答資料不上傳怎麼檢查（**Owner 決定** 5A） | A 資源監視器看連線 / B 看程式碼 / C 留 TODO | A | B：看程式碼可能漏看（例如用到的套件自己連網）；C：工作包要求每條都有量測方法 | **[H]** |
+
+---
+
+## 12. Confidence & Sources & TODO
+
+- **整份文件最低 confidence 欄位：**
+  - **[L]**：A5 拿到新題目、S6 防竄改、S7 執行玩家程式、X3 不閃爍、Q1 AI 說明正確性。
+  - **[M]**：L1 的量測方法、A2、A3、S3、S4、S5、X1、X2。
+- **Fabricated assumptions（推測但 input 未明說）：**
+  - 提醒誤差 15 分鐘是 Claude 提議，Owner 同意，但還沒有實際資料。
+  - 「試用前」檢查一次就夠，是依 roadmap §3「每階段做完找同學試用」推得。
+  - 台灣個資法適用、GDPR／SOC 2／PCI DSS 不適用，是 Claude 依使用者和用途判斷，不是法律意見。
+  - 資源監視器看得到程式的所有連線，是 Claude 依一般資料判斷，還沒實際試過。
+- **Highest-value next input:** ADR-001 小試驗的結果（P1、L1 的第一次實測），其次是建好題庫 repo 後的 A5 實測。
+
+### TODO（缺資料）
+
+- _TODO: A5 拿到新題目的目標時間（Owner 決定，並實測 GitHub 快取時間）_
+- _TODO: X3「快速閃爍」的判定標準（Owner 決定）_
+- _TODO: S4 公開欄位的檢查方法、S6 防竄改（階段 3+ 雲端 ADR）_
+- _TODO: S5 AI 告知的驗收條件（階段 4）_
+- _TODO: S7 執行玩家程式的安全（「程式碼批改」ADR，階段 5）_
+- _TODO: Q1 AI 說明存在哪裡讓 Avi 抽查_
+- _TODO: 給試用同學的資料用途說明（個資法）_
+- _TODO: 同學用的作業系統和 Windows 版本_
