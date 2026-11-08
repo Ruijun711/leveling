@@ -1,0 +1,4 @@
+# 試驗用的 Python 虛擬環境和資料庫檔（spike 1A、4A）
+.venv/
+__pycache__/
+*.db
