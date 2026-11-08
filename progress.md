@@ -46,6 +46,8 @@
 | `data-model-quick.md` | Data Model 工作包：撰寫 `data-model.md` 的規則與範本 |
 | `practice-questions-stage0.md` | 階段 0 的 12 題選擇題（4 個觀念 × 3 題，分 4 次出），附出題表、答案與解說 |
 | `create-stage0-form.gs` | Google Apps Script：`createStage0Form()` 建立測驗模式表單和試算表；`releaseBatch1()`～`releaseBatch4()` 分次加題；「經驗值」工作表給同學看，「統計」工作表算 G1 和反指標 |
+| `code-review-stage0-form.md` | `create-stage0-form.gs` 的 code review v0.1（7 條：1 must_block 縮排、6 should_fix；附 10 步試跑步驟；腳本尚未修改） |
+| `code-review-checklist-quick.md` | Code Review 工作包：撰寫 code review checklist 的規則與範本 |
 | `連結.txt` | 問卷填寫連結 |
 
 > `persona-quick.md`（Persona 工作包）與 `responses.pdf`（問卷 PDF 版）已於 2026-11-04 由 Avi 刪除。`persona.md` 已完成，問卷資料以 `responses.csv` 為準。
@@ -145,6 +147,7 @@
 | 11-08 | 雲端資料服務（ADR-003） | 只決定階段 1 題庫放哪，階段 3+ 另寫 ADR（1B）；題庫放 GitHub 公開 repo，和專案資料夾分開（2A）；只用免費方案（3A）；直接編輯 JSON 檔，push 前跑檢查程式（4A） |
 | 11-08 | 非功能需求 | 新增 `non-functional-reqs.md` 當唯一來源，prd §6 只留摘要（1A）；可用性量「沒網路照常練、資料 0 遺失、提醒 15 分鐘內」（2A）；無障礙做 3 項基本檢查：對錯不只用顏色、只用鍵盤能作答、Boss 不快速閃爍（3A）；3 秒內更新由程式記錄、隨匯出檔交回（4A）；用資源監視器檢查不上傳（5A） |
 | 11-08 | AI、批改、階段 3 雲端（ADR-004～006） | AI 金鑰放雲端代理（1A）；AI 服務先寫選擇標準，階段 4 前實測 20 題再選（2B）；階段 3 用 Firebase 或 Supabase 類＋匿名登入，AI 代理也放同一家（3A）；防竄改只做基本檢查（4A）；寫程式題在本機用獨立程式執行、比對輸出（5A） |
+| 11-08 | Code review | 只 review `create-stage0-form.gs`（1A）；用專案文件當標準（2A）；靜態檢查＋試跑步驟（3A）；先只列問題，要修再逐項問（4A） |
 
 ---
 
@@ -193,6 +196,7 @@
 - [x] 依 `adr-quick.md` 撰寫 `adr-003-cloud-data-service.md`（Proposed，Avi 決定 1B 2A 3A 4A，2026-11-08）
 - [x] 依 `non-functional-reqs-quick.md` 完成 `non-functional-reqs.md` v0.1（Avi 決定 1A 2A 3A 4A 5A，2026-11-08）
 - [x] 依 `adr-quick.md` 撰寫 ADR-004（AI 服務）、ADR-005（程式碼批改）、ADR-006（階段 3 雲端），都是 Proposed（Avi 決定 1A 2B 3A 4A 5A，2026-11-08）
+- [x] 依 `code-review-checklist-quick.md` review `create-stage0-form.gs`，新增 `code-review-stage0-form.md`（Avi 決定 1A 2A 3A 4A，2026-11-08）
 - [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林＋經驗值存進 SQLite」
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [ ] 階段 0：在 script.google.com 執行 `createStage0Form()`、找 ≥ 8 位 P1 同學、依出題表執行 `releaseBatch1()`～`4()`、追蹤 2 週
@@ -215,7 +219,7 @@
 
 ## 待 Avi 處理
 
-1. **執行階段 0**：執行 `createStage0Form()`，把連結記到 `連結.txt`；確認表單「設定 → 測驗」裡「公布成績：每次提交後立即公布」、同學可以看到答錯的題目和正確答案；找 ≥ 8 位 P1 同學，在「統計」工作表 H2 填入人數
+1. **執行階段 0**：先照 `code-review-stage0-form.md` F-007 的試跑步驟，用另一個專案試跑一次（**F-001 縮排沒確認前不要發給同學**）；決定要修哪幾條 finding、空白交卷算不算交卷（R2）；然後執行 `createStage0Form()`，把連結記到 `連結.txt`；確認表單「設定 → 測驗」裡「公布成績：每次提交後立即公布」、同學可以看到答錯的題目和正確答案；找 ≥ 8 位 P1 同學，在「統計」工作表 H2 填入人數
 2. **ADR-001**：試驗時間差多少才算「明顯比較快」
 3. **申請 GitHub 帳號、建立公開題庫 repo**（階段 1 前；確認下載得到後，ADR-003 改成 Accepted；repo 只放題庫，不放專案資料夾的其他檔案）
 4. **AC-11 檢查新題目的時機**（開機時或每天，`acceptance-criteria.md`）
