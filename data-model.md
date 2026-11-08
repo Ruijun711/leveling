@@ -41,7 +41,7 @@ upstream:
 
 | Field | Type | Nullable | Constraints | Notes |
 |---|---|---|---|---|
-| `id` | text | [NO] | PK | 玩家固定代號，第一次開啟時產生；階段 3 上傳時當 `player_id`。_TODO: 產生方式待「雲端資料服務」ADR（api-spec 3C）_ **[L]** |
+| `id` | text | [NO] | PK | 玩家固定代號，第一次開啟時在本機產生（階段 1 沒有雲端）。階段 3 起，雲端的 `player_id` 改用匿名登入拿到的代號（ADR-006）。_TODO: 匿名代號存在哪個欄位、和這個 `id` 怎麼對應，階段 3 前決定_ **[L]** |
 | `nickname` | text | [YES] | 不能空白；**不能用真名**（2B） | 階段 1 用不到，可以先空著；階段 3 上傳前要填。_TODO: 長度上限、能不能和別人重複（api-spec TODO）_ **[L]** |
 | `xp` | integer | [NO] | ≥ 0，預設 0 | 9 級之後繼續累積（依據：prd FR-2；progress 11-07「9 級之後的經驗值」）。要等於所有作答紀錄 `xp_gained` 的總和 **[H]** |
 | `created_at` | datetime | [NO] | audit | 第一次開啟的時間 |
@@ -135,7 +135,7 @@ upstream:
 
 | Field | Type | Nullable | Constraints | Notes |
 |---|---|---|---|---|
-| `player_id` | text | [NO] | PK；等於本機 PlayerProgress `id` | E4 不回傳這欄（api-spec E4） |
+| `player_id` | text | [NO] | PK；匿名登入拿到的代號（ADR-006） | E4 不回傳這欄（api-spec E4） |
 | `nickname` | text | [NO] | 不能空白；**不能用真名**（2B） | |
 | `xp` | integer | [NO] | ≥ 0 | |
 | `level` | integer | [NO] | 1～9，要等於 `min(9, 1+INT(xp/20))` | 雲端存一份，因為 E4 要直接讀 |
@@ -144,7 +144,7 @@ upstream:
 | `version` | integer | [NO] | audit | |
 | `deleted_at` | datetime | [YES] | audit, soft delete | _TODO: 同學不想再被看到時怎麼處理（刪除或隱藏），待 Owner 決定_ |
 
-- _TODO: 怎麼確認上傳的是本人、要不要防止竄改經驗值（api-spec 3C；c4-diagram R6）_
+- 確認本人：匿名登入，雲端規則只允許寫入自己代號的那一筆；防竄改：只做基本檢查（經驗值只增不減、等級符合公式、不超過題數 × 10），不合格就拒絕（`adr-006-stage3-cloud.md`，Owner 決定 2026-11-08，3A、4A）
 
 ### 階段 2～5 · 只列名稱和用途（欄位待 PRD TODO 補齊）· **[L]**
 
@@ -247,7 +247,7 @@ erDiagram
 - _TODO: 作答紀錄、提醒紀錄的保留期限（例如永久保留，或試用結束後刪除），待 Owner 決定_
 - _TODO: 要不要做「重設進度」功能（PlayerProgress `deleted_at`）_
 - _TODO: 同學不想再被看到時，雲端資料要刪除還是隱藏（CloudPlayerProgress `deleted_at`）_
-- _TODO: 玩家代號怎麼產生、怎麼確認是本人、要不要防止竄改（api-spec 3C；c4-diagram R6）_
+- ~~玩家代號怎麼產生、怎麼確認是本人、要不要防止竄改~~ → 匿名登入＋基本檢查（ADR-006）；_TODO: 匿名代號和本機 `id` 怎麼對應（階段 3 前）_
 - _TODO: 暱稱長度上限、能不能和別人重複（api-spec TODO）_
 - _TODO: 題目正式編號格式（api-spec TODO）_
 - _TODO: 檢查新題目的時機（AC-11）_
