@@ -15,13 +15,15 @@
  *   一題 10 點；等級從 1 級開始 = 1 + INT(經驗值 / 20)；每題只算第一次作答。
  *   G1：從第 1 次出題那天起算，第 1～7 天是第 1 週、第 8～14 天是第 2 週，
  *       兩週都至少交卷 1 次的人 ÷ 答應參加的人數。
+ *       「交卷」指至少答 1 題；只填暱稱的空白交卷不算（Owner 決定 2026-11-08）。
+ *   暱稱不分大小寫、忽略前後空白：Avi 和 avi 算同一人（code review F-002）。
  *
  * 題目內容對應 practice-questions-stage0.md，修改時兩邊要一起改。
  */
 
 var XP_PER_PROBLEM = 10;
 var XP_PER_LEVEL = 20;
-var XP_ROWS = 30;          // 預留的人數列
+var XP_ROWS = 60;          // 預留的人數列；暱稱超過這個數量時，執行紀錄會提醒
 
 var NICK_TITLE = '你的暱稱';
 var EXP_TITLE = '你學寫程式大約多久了？';
@@ -207,17 +209,18 @@ function releaseBatch_(n) {
   }
 
   var form = FormApp.openById(formId);
+  var ss = SpreadsheetApp.openById(props.getProperty('SHEET_ID'));
   BATCHES[n - 1].forEach(function (p) {
     addProblem_(form, p);
   });
 
   if (n === 1) {
+    // 用試算表的時區，和交卷時間一致（code review F-005）
     props.setProperty('START_DATE',
-      Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'));
+      Utilities.formatDate(new Date(), ss.getSpreadsheetTimeZone(), 'yyyy-MM-dd'));
   }
   props.setProperty('RELEASED', String(n));
 
-  var ss = SpreadsheetApp.openById(props.getProperty('SHEET_ID'));
   SpreadsheetApp.flush();
   buildSheets_(ss, n);
 
@@ -226,6 +229,15 @@ function releaseBatch_(n) {
 }
 
 function addProblem_(form, p) {
+  // 上次執行到一半出錯、重新執行時，已經加過的題目就跳過（code review F-004）
+  var existing = form.getItems();
+  for (var k = 0; k < existing.length; k++) {
+    if (existing[k].getTitle() === p.title) {
+      Logger.log('「' + p.title + '」已經在表單裡，跳過。');
+      return;
+    }
+  }
+
   var item = form.addMultipleChoiceItem();
   item.setTitle(p.title)
     .setHelpText(p.code + '\n\n這段程式會印出什麼？')
@@ -293,12 +305,17 @@ function buildSheets_(ss, released) {
 
   var tsCol = rs + 'A2:A';
   var nickRaw = col(NICK_TITLE);
-  var nick = 'TRIM(' + nickRaw + ')';
+  // 不分大小寫：UNIQUE 分大小寫、= 不分，兩邊都轉小寫才不會一人變兩列（code review F-002）
+  var nick = 'LOWER(TRIM(' + nickRaw + '))';
   var expCol = col(EXP_TITLE);
   var problems = [];
   for (var b = 0; b < released; b++) {
     problems = problems.concat(BATCHES[b]);
   }
+  // 這次交卷至少答了 1 題（空白交卷不算「交卷」，Owner 決定 2026-11-08）
+  var answeredAny = '((' + problems.map(function (p) {
+    return '(' + col(p.title) + '<>"")';
+  }).join('+') + ')>0)';
   var uniqueNick = '=IFERROR(UNIQUE(FILTER(' + nick + ',' + nickRaw + '<>"")),"")';
 
   // ----- 經驗值（發布給同學看）-----
@@ -336,7 +353,7 @@ function buildSheets_(ss, released) {
   var participants = st.getRange('H2').getValue();   // Avi 手動填的人數，重建時保留
   st.clear();
   st.getRange(1, 1, 1, 5)
-    .setValues([['暱稱', '學程式多久', '第 1 週交卷次數', '第 2 週交卷次數', '兩週都有交卷']])
+    .setValues([['暱稱', '學程式多久', '第 1 週交卷次數（至少答 1 題）', '第 2 週交卷次數（至少答 1 題）', '兩週都有交卷']])
     .setFontWeight('bold');
   st.setFrozenRows(1);
   st.getRange('A2').setFormula(uniqueNick);
@@ -345,8 +362,8 @@ function buildSheets_(ss, released) {
     var n = 'A' + s;
     st.getRange(s, 2, 1, 4).setFormulas([[
       '=IF(' + n + '="","",IFERROR(INDEX(FILTER(' + expCol + ',' + nick + '=' + n + '),1),""))',
-      '=IF(' + n + '="","",SUMPRODUCT((' + nick + '=' + n + ')*(' + tsCol + '>=$H$1)*(' + tsCol + '<$H$1+7)))',
-      '=IF(' + n + '="","",SUMPRODUCT((' + nick + '=' + n + ')*(' + tsCol + '>=$H$1+7)*(' + tsCol + '<$H$1+14)))',
+      '=IF(' + n + '="","",SUMPRODUCT((' + nick + '=' + n + ')*(' + tsCol + '>=$H$1)*(' + tsCol + '<$H$1+7)*' + answeredAny + '))',
+      '=IF(' + n + '="","",SUMPRODUCT((' + nick + '=' + n + ')*(' + tsCol + '>=$H$1+7)*(' + tsCol + '<$H$1+14)*' + answeredAny + '))',
       '=IF(' + n + '="","",IF(AND(C' + s + '>0,D' + s + '>0),"是","否"))'
     ]]);
   }
@@ -359,11 +376,40 @@ function buildSheets_(ss, released) {
     ['第一次作答答對率（反指標，< 40% 要檢查）'],
     ['目前已出到第幾次']
   ]).setFontWeight('bold');
-  st.getRange('H1').setValue(PropertiesService.getScriptProperties().getProperty('START_DATE'));
+  // 用 DATEVALUE 確保 H1 是日期，不靠試算表自動轉換（code review F-006）
+  st.getRange('H1')
+    .setFormula('=DATEVALUE("' + PropertiesService.getScriptProperties().getProperty('START_DATE') + '")')
+    .setNumberFormat('yyyy-mm-dd');
   st.getRange('H2').setValue(participants);
   st.getRange('H3').setFormula('=COUNTIF(E2:E,"是")');
   st.getRange('H4').setFormula('=IF(H2="","",H3/H2)').setNumberFormat('0%');
   st.getRange('H5').setFormula("=IFERROR(SUM('經驗值'!C2:C)/SUM('經驗值'!B2:B),\"\")").setNumberFormat('0%');
   st.getRange('H6').setValue(released);
   st.autoResizeColumns(1, 8);
+
+  warnIfTooManyNicknames_(responseSheet, header);
+}
+
+/** 不同暱稱超過 XP_ROWS 時，多出來的人不會被計算，提醒 Avi（code review F-003）。 */
+function warnIfTooManyNicknames_(responseSheet, header) {
+  var lastRow = responseSheet.getLastRow();
+  if (lastRow < 2) {
+    return;
+  }
+  var values = responseSheet
+    .getRange(2, header.indexOf(NICK_TITLE) + 1, lastRow - 1, 1)
+    .getValues();
+  var seen = {};
+  var count = 0;
+  values.forEach(function (row) {
+    var key = String(row[0]).trim().toLowerCase();
+    if (key && !seen[key]) {
+      seen[key] = true;
+      count++;
+    }
+  });
+  if (count > XP_ROWS) {
+    Logger.log('注意：目前有 ' + count + ' 個不同暱稱，超過 ' + XP_ROWS +
+      ' 列，多出來的人不會被計算。請把 XP_ROWS 調大後執行 rebuildSheets()。');
+  }
 }

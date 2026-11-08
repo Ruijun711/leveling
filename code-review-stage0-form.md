@@ -11,7 +11,7 @@ upstream:
 
 # Code Review Checklist: create-stage0-form.gs（階段 0 表單腳本）
 
-**Status:** Draft v0.1 · **Owner:** Avi（Claude first-pass） · **Last updated:** 2026-11-08
+**Status:** Draft v0.2 · **Owner:** Avi（Claude first-pass） · **Last updated:** 2026-11-08
 
 > [!NOTE]
 > **範圍（Owner 決定 2026-11-08，1A）：** 只 review `create-stage0-form.gs` 全檔 369 行（git `64adcf7` 建立、`4fffd84` 修改；沒有 PR，視為「從空白到現在」的整份改動）。`create-form.gs`、`create-practice-form.gs` 已執行完畢，不在範圍內。
@@ -21,6 +21,8 @@ upstream:
 > **方法（3A）：** Claude 讀程式碼＋用 node 做語法和資料檢查；**沒有在 Google 上執行**。所以另附「試跑步驟」（F-007），請 Avi 發給同學前做一次。
 >
 > **修改（4A）：** 這份只列問題，不改 `.gs`；要修哪一條，Claude 再逐項問 Avi。
+>
+> **處理結果（Owner 決定 2026-11-08）：** F-002～F-006 **已修**（改完重新做語法檢查、12 題資料檢查，並用假資料跑一次 `buildSheets_` 確認公式）；F-001 **等試跑**確認縮排會不會不見再決定（原本的修法會讓同學複製程式碼時出現看不見的字元）；F-007 由 Avi 試跑。R2 已決定：空白交卷**不算**交卷。
 
 ---
 
@@ -51,7 +53,7 @@ upstream:
 
 ## 5. Findings
 
-### F-001 · Severity **must_block** · **[L]**
+### F-001 · Severity **must_block** · **[L]** · ⏳ 等試跑
 
 - **File:line:** `create-stage0-form.gs:231`（題目資料：B1 第 42 行、C1 第 49 行、B2 第 73 行、C2 第 83 行、C3 第 114 行）
 - **Dimension:** correctness
@@ -59,7 +61,7 @@ upstream:
 - **Suggested fix:** 執行 `releaseBatch1()` 前，先在表單「預覽」看 B1、C1 有沒有縮排。如果縮排不見，把開頭的空白換成不會被吃掉的空白：`p.code.replace(/^ +/gm, function (s) { return ' '.repeat(s.length); })`（修改前再問 Avi）。
 - **Source:** diff `create-stage0-form.gs:231`；standard `practice-questions-stage0.md` C3 解說「有縮排的兩行都在 if 裡面」
 
-### F-002 · Severity **should_fix** · **[M]**
+### F-002 · Severity **should_fix** · ✅ 已修（2026-11-08） · **[M]**
 
 - **File:line:** `create-stage0-form.gs:296`、`:302`
 - **Dimension:** correctness
@@ -67,7 +69,7 @@ upstream:
 - **Suggested fix:** 把第 296 行改成 `'LOWER(TRIM(' + nickRaw + '))'`，第 302 行的 `UNIQUE` 也用同一個 `nick`，讓大小寫不同的暱稱合併成同一人。
 - **Source:** diff `create-stage0-form.gs:296,302`；standard `roadmap.md` §3 G1 算法。`UNIQUE` 分大小寫、`=` 不分，是 Claude 依一般資料判斷，試跑步驟 6 會確認。
 
-### F-003 · Severity **should_fix** · **[H]**
+### F-003 · Severity **should_fix** · ✅ 已修（2026-11-08） · **[H]**
 
 - **File:line:** `create-stage0-form.gs:24`（使用處 `:313`、`:344`）
 - **Dimension:** correctness
@@ -75,7 +77,7 @@ upstream:
 - **Suggested fix:** 把 `XP_ROWS` 改成 60；或在 `buildSheets_` 最後檢查暱稱數量，超過 `XP_ROWS` 時用 Logger 提醒 Avi。
 - **Source:** diff `create-stage0-form.gs:24,313,344`；standard `roadmap.md` §3（受測 ≥ 8 人，班上 35 人）
 
-### F-004 · Severity **should_fix** · **[M]**
+### F-004 · Severity **should_fix** · ✅ 已修（2026-11-08） · **[M]**
 
 - **File:line:** `create-stage0-form.gs:209-218`
 - **Dimension:** correctness
@@ -83,7 +85,7 @@ upstream:
 - **Suggested fix:** `addProblem_` 開頭先檢查表單裡有沒有同標題的題目，有就跳過。
 - **Source:** diff `create-stage0-form.gs:209-218`、`:286`
 
-### F-005 · Severity **should_fix** · **[L]**
+### F-005 · Severity **should_fix** · ✅ 已修（2026-11-08） · **[L]**
 
 - **File:line:** `create-stage0-form.gs:216`
 - **Dimension:** correctness
@@ -91,7 +93,7 @@ upstream:
 - **Suggested fix:** 改用試算表的時區 `ss.getSpreadsheetTimeZone()`（要把開啟試算表移到這行前面）；或試跑時確認「專案設定」和「試算表設定」的時區都是 `(GMT+08:00) Taipei`。
 - **Source:** diff `create-stage0-form.gs:216`、`:348-349`；standard `roadmap.md` §3「第 1～7 天是第 1 週」
 
-### F-006 · Severity **should_fix** · **[M]**
+### F-006 · Severity **should_fix** · ✅ 已修（2026-11-08） · **[M]**
 
 - **File:line:** `create-stage0-form.gs:362`
 - **Dimension:** correctness
@@ -110,9 +112,10 @@ upstream:
   3. 在表單「預覽」看 B1、C1 的程式碼有沒有縮排（**F-001**）。
   4. 確認「設定 → 測驗」：每次提交後立即公布成績、看得到答錯的題目和正確答案。
   5. 用暱稱 `測試甲` 交卷：A1 選 34（對）、B1 選 1 2 3（錯）、C1 留空。「經驗值」應該是：已作答 2、答對 1、經驗值 10、等級 1、距離下一級 10。
-  6. 用暱稱 `TestB` 交一次、`testb` 再交一次：「經驗值」只應該有 1 列 TestB（F-002）。
+  6. 用暱稱 `TestB` 交一次、`testb` 再交一次：「經驗值」只應該有 1 列 `testb`（暱稱一律顯示成小寫，F-002）。
   7. 用 `測試甲` 再交一次、A1 改選 7：答對題數仍是 1（只算第一次作答）。
   8. 看「統計」：H1 是日期且靠右對齊（F-006）；第 1 週交卷次數 `測試甲` 是 2；在 H2 填 2，H4 會算出比例。
+  8-1. 用暱稱 `空白丙` 只填暱稱、不答任何題就交卷：「統計」裡 `空白丙` 的第 1 週交卷次數是 0（空白交卷不算，R2）。
   9. 執行 `releaseBatch2()`：表單變成 6 題，「選填」題仍在最後；再執行一次 `releaseBatch2()` 應該出現錯誤訊息，不會加題。
   10. 試跑完把測試表單和試算表刪掉，正式用的專案再執行 `createStage0Form()`。
 - **Source:** standard `roadmap.md` §3；progress「待 Avi 處理」第 1 項（確認立即公布成績）
