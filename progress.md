@@ -4,53 +4,43 @@
 
 ## 在新電腦接續時，貼給 Claude 的話
 
-> 請先讀取 `progress.md`、`project-brief.md`、`persona.md`、`jtbd.md`、`questionnaire.md`、`responses.csv`、`value-hypothesis.md`、`prd.md`、`roadmap.md`、`acceptance-criteria.md`、`adr-001-desktop-framework.md`、`adr-002-local-storage.md`、`adr-003-cloud-data-service.md`、`adr-004-ai-service.md`、`adr-005-code-grading.md`、`adr-006-stage3-cloud.md`、`non-functional-reqs.md`、`c4-diagram.md`、`api-spec.md`、`data-model.md`、`practice-questions-stage0.md`，了解目前進度後再繼續。各 `*-quick.md` 工作包等要用到時再讀。**新增或修改任何檔案前，都必須先經過我同意。**
+> 請先讀取 `progress.md`，再依它的「檔案說明」讀取：`01-研究/` 的 `project-brief.md`、`persona.md`、`jtbd.md`、`value-hypothesis.md`（問卷原始資料在 `01-研究/問卷與測試資料/`）；`02-產品/` 全部；`03-架構/` 全部（含 `adr/`）；`04-測試/unit-test-stage1.md`。了解目前進度後再繼續。`工作包/` 的 `*-quick.md` 等要用到時再讀；`05-階段0-未使用/` 不用讀。**新增或修改任何檔案前，都必須先經過我同意。**
 
 ---
 
 ## 檔案說明
 
-| 檔案 | 用途 |
-|---|---|
-| `project-brief.md` | 專案種子簡報：目標受眾、產品概念、痛點、期望成果、約束、成功指標 |
-| `persona.md` | 使用者輪廓草稿 v0.4（狀態：draft，已依 4 份問卷更新，已填入 JTBD ref） |
-| `jtbd.md` | JTBD 草稿 v0.2（5 條 JTBD；JTBD-001、003 成功標準已訂，002 先保留 TODO） |
-| `jtbd-quick.md` | JTBD 工作包：撰寫 `jtbd.md` 的規則與範本 |
-| `value-hypothesis.md` | 價值假設卡草稿 v0.4（已有測試結果：A1 依門檻成立，但只驗證到一次性作答；階段 0 已跳過，A1 第二次測試取消；補算反指標 62.5%） |
-| `value-hypothesis-quick.md` | 價值假設卡工作包：撰寫 `value-hypothesis.md` 的規則與範本 |
-| `prd-quick.md` | PRD 工作包：撰寫 `prd.md` 的規則與範本 |
-| `prd.md` | PRD 草稿 v0.8（§6 NFR 移到 `non-functional-reqs.md`；v1 做完整產品概念的 Windows 桌面程式，含 AI 解釋錯題與鼓勵，6 個 P0 FR；技能數值、血量傷害、寶物清單、AI 服務與費用待 Avi 提供） |
-| `acceptance-criteria.md` | 階段 1 核心循環的驗收條件 v0.5（user story ＋ 14 條 AC，不含 AI；含下載題庫、匯出作答紀錄；Latency、Privacy 已有量測方法） |
-| `non-functional-reqs.md` | 非功能需求 v0.1（NFR 唯一來源：速度、可用性、隱私、無障礙、AI 品質、平台，每條有 SLI＋目標＋量測方法；合規） |
-| `non-functional-reqs-quick.md` | NFR 工作包：撰寫 `non-functional-reqs.md` 的規則與範本 |
-| `acceptance-criteria-quick.md` | 驗收條件工作包：撰寫 `acceptance-criteria.md` 的規則與範本 |
-| `roadmap.md` | v1 分階段開發規劃 v0.4（階段 0 已跳過；階段 0～5，含每階段的試用方式與門檻；階段 1 加上下載題庫；階段 0 的出題表與 G1 算法） |
-| `adr-001-desktop-framework.md` | ADR-001：桌面程式的語言和框架（Proposed；先做 PySide6、Godot 小試驗再決定，試驗共 4 項） |
-| `adr-002-local-storage.md` | ADR-002：本機資料怎麼存（Proposed；暫定 SQLite，等 ADR-001 小試驗第 4 項確認；作答紀錄匯出 CSV；v1 不備份） |
-| `adr-003-cloud-data-service.md` | ADR-003：階段 1 的題庫放在哪個雲端服務（Proposed；GitHub 公開題庫 repo、只用免費方案、push 前跑檢查程式；階段 3+ 另寫 ADR） |
-| `adr-004-ai-service.md` | ADR-004：階段 4 的 AI 服務怎麼接（Proposed；雲端代理保管金鑰、限制次數；哪一家待階段 4 前實測 20 題再選） |
-| `adr-005-code-grading.md` | ADR-005：階段 5 寫程式題怎麼批改（Proposed；本機獨立 Python 程式執行、限時、比對輸出） |
-| `adr-006-stage3-cloud.md` | ADR-006：階段 3 同學互看等級的雲端服務（Proposed；Firebase 或 Supabase 類＋匿名登入，階段 3 前試驗；防竄改只做基本檢查） |
-| `adr-quick.md` | ADR 工作包：撰寫架構決策紀錄的規則與範本 |
-| `c4-diagram.md` | C4 架構圖 v0.2（Level 1、2，圖用 Mermaid flowchart；v1 完整版，標出各元素從哪個階段開始；題庫下載在階段 1、上傳經驗值在階段 3+；技術大多待 ADR） |
-| `c4-diagram-quick.md` | C4 圖工作包：撰寫 `c4-diagram.md` 的規則與範本 |
-| `questionnaire.md` | 12 題問卷，文末附「題號 ↔ persona 欄位」對照表 |
-| `responses.csv` | 問卷回覆，共 4 份（從 Google 試算表匯出，主要資料來源） |
-| `practice-questions.md` | concierge 測試的 5 題 Python 基礎語法選擇題，附答案與解說（答案只給 Avi） |
-| `create-practice-form.gs` | Google Apps Script，執行 `createPracticeForm()` 會建立作答表單＋自動批改、算經驗值的試算表 |
-| `學習精靈 · 第 1 週經驗值 - 表單回覆 1.csv` | concierge 測試的作答資料，8 份（2026-11-05 匯出） |
-| `create-form.gs` | Google Apps Script，在 script.google.com 執行 `createForm()` 可自動建立 Google 表單 |
-| `api-spec.md` | 雲端資料介面 v0.1（4 個邏輯介面：題庫版本、下載題庫〔階段 1〕、上傳和讀取經驗值〔階段 3+〕；含題庫格式） |
-| `api-spec-quick.md` | API Spec 工作包：撰寫 `api-spec.md` 的規則與範本 |
-| `data-model.md` | 資料模型 v0.1（邏輯模型：階段 1 本機 5 個 entity 完整欄位＋階段 3+ 雲端玩家進度；階段 2～5 只畫關係；暱稱不能用真名） |
-| `data-model-quick.md` | Data Model 工作包：撰寫 `data-model.md` 的規則與範本 |
-| `practice-questions-stage0.md` | 階段 0 的 12 題選擇題（4 個觀念 × 3 題，分 4 次出），附出題表、答案與解說（**未使用**：階段 0 已跳過，12 題改當階段 1 題庫） |
-| `create-stage0-form.gs` | **未使用**（階段 0 已跳過）。Google Apps Script：`createStage0Form()` 建立測驗模式表單和試算表；`releaseBatch1()`～`releaseBatch4()` 分次加題；「經驗值」工作表給同學看，「統計」工作表算 G1 和反指標 |
-| `code-review-stage0-form.md` | **未使用**（階段 0 已跳過）。`create-stage0-form.gs` 的 code review v0.1（7 條：1 must_block 縮排、6 should_fix；附試跑步驟；F-001～F-006 都已修，等 Avi 試跑） |
-| `code-review-checklist-quick.md` | Code Review 工作包：撰寫 code review checklist 的規則與範本 |
-| `unit-test-stage1.md` | 階段 1 核心規則的單元測試計畫 v0.1（7 個 target、38 條 test case；不綁定語言，ADR-001 選定後再寫成 pytest 或 GUT） |
-| `unit-test-quick.md` | Unit Test 工作包：撰寫單元測試計畫的規則與範本 |
-| `連結.txt` | 問卷填寫連結 |
+> 2026-11-08 依 Owner 同意整理成資料夾（1A 2A 3A）。檔名都沒改，文件裡提到的檔名照舊，用 VS Code 搜尋檔名就找得到。
+
+| 位置 | 檔案 | 用途 |
+|---|---|---|
+| 最外層 | `progress.md` | 專案進度（入口） |
+| `01-研究/` | `project-brief.md` | 專案種子簡報：目標受眾、產品概念、痛點、期望成果、約束、成功指標 |
+| | `persona.md` | 使用者輪廓草稿 v0.4（依 4 份問卷，已填 JTBD ref） |
+| | `jtbd.md` | JTBD 草稿 v0.2（5 條；001、003 成功標準已訂，002 TODO） |
+| | `value-hypothesis.md` | 價值假設卡 v0.5（A1 依門檻成立但只驗證到一次性作答；階段 0 已跳過；補算反指標 62.5%） |
+| `01-研究/問卷與測試資料/` | `questionnaire.md`、`responses.csv` | 12 題問卷與 4 份回覆（主要資料來源） |
+| | `create-form.gs`、`連結.txt` | 建立問卷表單的腳本、問卷連結 |
+| | `practice-questions.md`、`create-practice-form.gs` | concierge 測試的 5 題與建立表單的腳本 |
+| | `學習精靈 · 第 1 週經驗值 - 表單回覆 1.csv` | concierge 測試作答資料，8 份（2026-11-05） |
+| `02-產品/` | `prd.md` | PRD v0.9（6 個 P0 FR；技能數值、血量、寶物、AI 費用待 Avi） |
+| | `roadmap.md` | 分階段規劃 v0.4（階段 0 已跳過；階段 1～5 與試用方式） |
+| | `acceptance-criteria.md` | 階段 1 驗收條件 v0.5（14 條 AC） |
+| | `non-functional-reqs.md` | 非功能需求 v0.1（NFR 唯一來源） |
+| `03-架構/` | `c4-diagram.md` | C4 架構圖 v0.2（Mermaid flowchart） |
+| | `api-spec.md` | 雲端資料介面 v0.1（E1～E4、題庫格式） |
+| | `data-model.md` | 資料模型 v0.1（階段 1 本機 5 個 entity＋雲端玩家進度） |
+| `03-架構/adr/` | `adr-001-desktop-framework.md` | 桌面框架（Proposed；PySide6 小試驗已通過，Godot 未試） |
+| | `adr-002-local-storage.md` | 本機資料：暫定 SQLite（Proposed） |
+| | `adr-003-cloud-data-service.md` | 階段 1 題庫放 GitHub 公開 repo（Proposed） |
+| | `adr-004-ai-service.md` | AI 服務：雲端代理保管金鑰（Proposed） |
+| | `adr-005-code-grading.md` | 寫程式題：本機獨立程式執行、比對輸出（Proposed） |
+| | `adr-006-stage3-cloud.md` | 階段 3 雲端：Firebase／Supabase＋匿名登入（Proposed） |
+| `04-測試/` | `unit-test-stage1.md` | 階段 1 單元測試計畫 v0.1（7 個 target、38 條） |
+| `05-階段0-未使用/` | `practice-questions-stage0.md` | 12 題選擇題（**未使用**；改當階段 1 題庫第一批題目） |
+| | `create-stage0-form.gs`、`code-review-stage0-form.md` | 階段 0 表單腳本和它的 code review（**未使用**，保留參考） |
+| `spike/pyside6/` | `main.py` | ADR-001 小試驗 PySide6 版（題目、經驗值、SQLite、桌面哥布林）；`.venv/` 不進 git |
+| `工作包/` | `*-quick.md`（11 個） | Launch Atlas 工作包：prd、jtbd、value-hypothesis、acceptance-criteria、adr、c4-diagram、api-spec、data-model、non-functional-reqs、code-review-checklist、unit-test |
 
 > `persona-quick.md`（Persona 工作包）與 `responses.pdf`（問卷 PDF 版）已於 2026-11-04 由 Avi 刪除。`persona.md` 已完成，問卷資料以 `responses.csv` 為準。
 
@@ -155,6 +145,7 @@
 | 11-08 | 階段 0 腳本修正 | 修 code review F-002～F-006（暱稱不分大小寫、60 列、重跑不重複加題、用試算表時區、H1 用 DATEVALUE）；F-001 縮排改用不換行空白並在說明提醒（B）；空白交卷不算交卷（2A），`roadmap.md` §3 已更新 |
 | 11-08 | **不再做問卷或表單** | 停止產生問卷；之前的問卷和回覆都保留；需要資料時直接問 Avi |
 | 11-08 | 跳過階段 0 | 用舊資料部分完成（1C）：反指標 25/40 = 62.5%；G1、G2 改由階段 1 試用第一次驗證；階段 0 檔案保留、標未使用，12 題改當階段 1 題庫（2A）；其他問卷、訪談步驟標跳過（3A）；階段 1 之後的程式試用保留（4A） |
+| 11-08 | 整理資料夾 | 依類別分成 01-研究、02-產品、03-架構（含 adr）、04-測試、05-階段0-未使用、工作包；中文資料夾名（1A）；檔名不改、文件內提到的檔名不改，只更新 progress（2A）；用 `git mv` 保留紀錄（3A） |
 
 ---
 
