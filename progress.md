@@ -33,6 +33,8 @@
 | `create-practice-form.gs` | Google Apps Script，執行 `createPracticeForm()` 會建立作答表單＋自動批改、算經驗值的試算表 |
 | `學習精靈 · 第 1 週經驗值 - 表單回覆 1.csv` | concierge 測試的作答資料，8 份（2026-11-05 匯出） |
 | `create-form.gs` | Google Apps Script，在 script.google.com 執行 `createForm()` 可自動建立 Google 表單 |
+| `api-spec.md` | 雲端資料介面 v0.1（4 個邏輯介面：題庫版本、下載題庫〔階段 1〕、上傳和讀取經驗值〔階段 3+〕；含題庫格式） |
+| `api-spec-quick.md` | API Spec 工作包：撰寫 `api-spec.md` 的規則與範本 |
 | `practice-questions-stage0.md` | 階段 0 的 12 題選擇題（4 個觀念 × 3 題，分 4 次出），附出題表、答案與解說 |
 | `create-stage0-form.gs` | Google Apps Script：`createStage0Form()` 建立測驗模式表單和試算表；`releaseBatch1()`～`releaseBatch4()` 分次加題；「經驗值」工作表給同學看，「統計」工作表算 G1 和反指標 |
 | `連結.txt` | 問卷填寫連結 |
@@ -121,6 +123,10 @@
 | 11-08 | 階段 0 G1 算法 | 第 1～7 天第 1 週、第 8～14 天第 2 週；兩週都至少交卷 1 次的人 ÷ 答應參加的受測者 ≥ 50%（H4） |
 | 11-08 | 階段 0 表單 | 加「學程式多久」必填題；暱稱維持自填，說明強調每次要完全一樣（H5）；新增 `create-stage0-form.gs`，同一個表單分 4 次加題，舊腳本保留（M2） |
 | 11-08 | C4 圖畫法 | Level 1、2 的圖改用 Mermaid `flowchart`，不用 C4 語法（C4 語法文字會重疊）；Level 2 表格縮成 5 欄，詳細說明移到表格下方 |
+| 11-08 | API Spec 範圍 | 題庫下載（階段 1）＋上傳和讀取經驗值、等級（階段 3+），寫成不綁定服務的邏輯介面（1B） |
+| 11-08 | 題庫要不要登入 | 不用登入（2A）；代價是同學看得到答案，用反指標觀察 |
+| 11-08 | 上傳時的身分確認 | 先留 TODO，和「防止竄改經驗值」一起在雲端服務 ADR 決定（3C） |
+| 11-08 | 題目能不能改 | 發布後不能改，只能新增；要改就停用舊題、發新題號（4A） |
 | 11-08 | 文件整理 | 依 Claude 列出的問題清單全部同意修改（H1～H6、D1～D12、L1～L5、L8 git init） |
 | 11-08 | 題庫下載時機 | 階段 1 就從雲端下載題庫，只下載、不上傳玩家資料；安裝檔附基本題庫；上傳經驗值和等級維持階段 3 之後（C）；`roadmap.md`、`acceptance-criteria.md` 更新為 v0.2 |
 
@@ -165,6 +171,7 @@
 - [x] 依 `adr-quick.md` 撰寫 `adr-001-desktop-framework.md`（Proposed，2026-11-07）
 - [x] 依 `c4-diagram-quick.md` 完成 `c4-diagram.md` v0.1（Avi 決定 1A 2B 3B，2026-11-08）
 - [x] 全面檢查文件，依 Avi 同意修正（2026-11-08）：`prd.md` v0.7、`acceptance-criteria.md` v0.3、`roadmap.md` v0.3、`value-hypothesis.md` v0.4、`c4-diagram.md` v0.2 等
+- [x] 依 `api-spec-quick.md` 完成 `api-spec.md` v0.1（Avi 決定 1B 2A 3C 4A，2026-11-08）
 - [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林」
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [ ] 階段 0：在 script.google.com 執行 `createStage0Form()`、找 ≥ 8 位 P1 同學、依出題表執行 `releaseBatch1()`～`4()`、追蹤 2 週
