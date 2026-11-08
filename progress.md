@@ -48,6 +48,8 @@
 | `create-stage0-form.gs` | Google Apps Script：`createStage0Form()` 建立測驗模式表單和試算表；`releaseBatch1()`～`releaseBatch4()` 分次加題；「經驗值」工作表給同學看，「統計」工作表算 G1 和反指標 |
 | `code-review-stage0-form.md` | `create-stage0-form.gs` 的 code review v0.1（7 條：1 must_block 縮排、6 should_fix；附 10 步試跑步驟；腳本尚未修改） |
 | `code-review-checklist-quick.md` | Code Review 工作包：撰寫 code review checklist 的規則與範本 |
+| `unit-test-stage1.md` | 階段 1 核心規則的單元測試計畫 v0.1（7 個 target、37 條 test case；不綁定語言，ADR-001 選定後再寫成 pytest 或 GUT） |
+| `unit-test-quick.md` | Unit Test 工作包：撰寫單元測試計畫的規則與範本 |
 | `連結.txt` | 問卷填寫連結 |
 
 > `persona-quick.md`（Persona 工作包）與 `responses.pdf`（問卷 PDF 版）已於 2026-11-04 由 Avi 刪除。`persona.md` 已完成，問卷資料以 `responses.csv` 為準。
@@ -148,6 +150,7 @@
 | 11-08 | 非功能需求 | 新增 `non-functional-reqs.md` 當唯一來源，prd §6 只留摘要（1A）；可用性量「沒網路照常練、資料 0 遺失、提醒 15 分鐘內」（2A）；無障礙做 3 項基本檢查：對錯不只用顏色、只用鍵盤能作答、Boss 不快速閃爍（3A）；3 秒內更新由程式記錄、隨匯出檔交回（4A）；用資源監視器檢查不上傳（5A） |
 | 11-08 | AI、批改、階段 3 雲端（ADR-004～006） | AI 金鑰放雲端代理（1A）；AI 服務先寫選擇標準，階段 4 前實測 20 題再選（2B）；階段 3 用 Firebase 或 Supabase 類＋匿名登入，AI 代理也放同一家（3A）；防竄改只做基本檢查（4A）；寫程式題在本機用獨立程式執行、比對輸出（5A） |
 | 11-08 | Code review | 只 review `create-stage0-form.gs`（1A）；用專案文件當標準（2A）；靜態檢查＋試跑步驟（3A）；先只列問題，要修再逐項問（4A） |
+| 11-08 | 單元測試 | 測階段 1 核心規則，先寫計畫、函式名稱由 Claude 提議（1A）；不綁定語言（2A）；提醒的「24 小時內」不含剛好 24 小時，固定每 12 小時一則，已補進 AC-4（3A）；只寫計畫、不寫測試程式（4A） |
 
 ---
 
@@ -197,6 +200,7 @@
 - [x] 依 `non-functional-reqs-quick.md` 完成 `non-functional-reqs.md` v0.1（Avi 決定 1A 2A 3A 4A 5A，2026-11-08）
 - [x] 依 `adr-quick.md` 撰寫 ADR-004（AI 服務）、ADR-005（程式碼批改）、ADR-006（階段 3 雲端），都是 Proposed（Avi 決定 1A 2B 3A 4A 5A，2026-11-08）
 - [x] 依 `code-review-checklist-quick.md` review `create-stage0-form.gs`，新增 `code-review-stage0-form.md`（Avi 決定 1A 2A 3A 4A，2026-11-08）
+- [x] 依 `unit-test-quick.md` 完成 `unit-test-stage1.md` v0.1（Avi 決定 1A 2A 3A 4A，2026-11-08）
 - [ ] ADR-001 小試驗：PySide6、Godot 各做「1 題選擇題＋經驗值＋桌面哥布林＋經驗值存進 SQLite」
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [ ] 階段 0：在 script.google.com 執行 `createStage0Form()`、找 ≥ 8 位 P1 同學、依出題表執行 `releaseBatch1()`～`4()`、追蹤 2 週
