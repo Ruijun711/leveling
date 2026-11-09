@@ -3,7 +3,7 @@ doc_type: "data-model"
 variant: "light"
 status: "draft"
 owner: "Avi"
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 upstream:
   required: ["srs", "business-rules"]
   optional: ["existing-er"]
@@ -11,13 +11,13 @@ upstream:
 
 # Data Model: 學習精靈 · 本機進度與題庫（階段 1）＋雲端經驗值（階段 3+）
 
-**Status:** Draft · **Owner:** Avi（Claude 起草） · **Last updated:** 2026-11-08
+**Status:** Draft · **Owner:** Avi（Claude 起草） · **Last updated:** 2026-11-09
 
 > **說明：** 專案沒有 SRS 和 business-rules 文件，改用 `prd.md` v0.7、`acceptance-criteria.md` v0.3、`roadmap.md` v0.3、`api-spec.md` v0.1、`c4-diagram.md` v0.2 當依據。
 >
 > **寫法（Owner 決定 2026-11-08，3A）：** 這是**邏輯模型**，不綁定儲存方式（SQLite、JSON 檔或其他，待「本機存資料」ADR）。型別用通用名稱（text、integer、boolean、datetime、list）；§6 的索引寫成「需要支援的查詢」，等 ADR 選定後再對應到實際做法。
 >
-> **更新（2026-11-08）：** `adr-002-local-storage.md`（Proposed）暫定用 SQLite，存在 `%APPDATA%\學習精靈\`；ADR-001 小試驗第 4 項確認後，§6 的「待 ADR」改成 SQLite 索引。作答紀錄可以匯出成 CSV（AC-14），包含量 Latency 用的 `update_ms`（non-functional-reqs L1，2026-11-08 新增）。
+> **更新（2026-11-08）：** `adr-002-local-storage.md`（Accepted）選定 SQLite，存在 `%APPDATA%\學習精靈\`；§6 的索引已對應成 SQLite 索引。作答紀錄可以匯出成 CSV（AC-14），包含量 Latency 用的 `update_ms`（non-functional-reqs L1，2026-11-08 新增）。
 
 ---
 
@@ -57,7 +57,7 @@ upstream:
 
 | Field | Type | Nullable | Constraints | Notes |
 |---|---|---|---|---|
-| `id` | text | [NO] | PK；**發布後永遠不改、不重複使用** | 題號（依據：api-spec 4A）。_TODO: 正式編號格式（階段 0 用 A1～D3）_ |
+| `id` | text | [NO] | PK；**發布後永遠不改、不重複使用** | 題號（依據：api-spec 4A）。格式是流水號 `Q001`、`Q002`……（Owner 決定 2026-11-08） |
 | `concept` | text | [NO] | | 觀念，例如「range 和 for」；G2 要用 |
 | `type` | enum | [NO] | `multiple_choice` / `code_fill` | `code_fill` 從階段 5 開始 |
 | `code` | text | [YES] | | 題目裡的程式碼 |
@@ -81,7 +81,7 @@ upstream:
 | `id` | integer | [NO] | PK，固定是 1 | 只有一筆 |
 | `bank_version` | integer | [NO] | ≥ 1，只會變大 | 雲端的版本比這個大才下載 |
 | `question_count` | integer | [NO] | 要等於本機 Question 的筆數 | 用來檢查有沒有下載完整 |
-| `last_checked_at` | datetime | [YES] | | 上次問雲端有沒有新題庫的時間。_TODO: 檢查時機（AC-11 TODO）_ |
+| `last_checked_at` | datetime | [YES] | | 上次問雲端有沒有新題庫的時間。開機時檢查，之後距離上次檢查滿 24 小時再檢查一次（AC-11，Owner 決定 2026-11-09，1C） |
 | `created_at` | datetime | [NO] | audit | 安裝時 |
 | `updated_at` | datetime | [NO] | audit | 換新版題庫時 |
 | `version` | integer | [NO] | audit | |
@@ -206,15 +206,15 @@ erDiagram
 
 ## 6. Indexes（核心 query 覆蓋）
 
-> 邏輯模型，所以「Type」先寫「待 ADR」；「本機存資料」ADR 選定後再換成實際做法。資料量很小（一個人幾百筆），這些主要是說明**程式需要哪些查詢**，讓 ADR 判斷儲存方式夠不夠用。
+> ADR-002 已選定 SQLite（Accepted，2026-11-08），「Type」都是 SQLite 索引；唯一索引用 SQLite 的部分索引（`WHERE is_first_attempt = 1`）。資料量很小（一個人幾百筆），這些主要是說明**程式需要哪些查詢**，讓 ADR 判斷儲存方式夠不夠用。
 
 | Entity | Index name | Type | Columns | Covers query |
 |---|---|---|---|---|
-| AnswerRecord | `idx_answer_player_time` | 待 ADR | `(player_id, answered_at DESC)` | 最後一次作答時間（AC-4 提醒、AC-9 重開機）；G1 每週有沒有作答 |
-| AnswerRecord | `uq_answer_first_attempt` | 待 ADR（唯一） | `(player_id, question_id)`，只限 `is_first_attempt = true` | 這題是不是第一次作答（AC-1、AC-6）；反指標：第一次作答答對率 |
-| AnswerRecord | `idx_answer_concept_time` | 待 ADR | `(player_id, concept, answered_at)` | G2：答錯後，同一個觀念的題目答對率 |
-| ReminderLog | `idx_reminder_player_time` | 待 ADR | `(player_id, shown_at DESC)` | 過去 24 小時已經提醒幾次（最多 2 則） |
-| Question | `idx_question_status_concept` | 待 ADR | `(status, concept)` | 出題時只挑 `active` 的題目 |
+| AnswerRecord | `idx_answer_player_time` | SQLite 索引 | `(player_id, answered_at DESC)` | 最後一次作答時間（AC-4 提醒、AC-9 重開機）；G1 每週有沒有作答 |
+| AnswerRecord | `uq_answer_first_attempt` | SQLite 唯一部分索引 | `(player_id, question_id)`，只限 `is_first_attempt = true` | 這題是不是第一次作答（AC-1、AC-6）；反指標：第一次作答答對率 |
+| AnswerRecord | `idx_answer_concept_time` | SQLite 索引 | `(player_id, concept, answered_at)` | G2：答錯後，同一個觀念的題目答對率 |
+| ReminderLog | `idx_reminder_player_time` | SQLite 索引 | `(player_id, shown_at DESC)` | 過去 24 小時已經提醒幾次（最多 2 則） |
+| Question | `idx_question_status_concept` | SQLite 索引 | `(status, concept)` | 出題時只挑 `active` 的題目 |
 
 ---
 
@@ -233,7 +233,7 @@ erDiagram
 
 - **整份文件最低 confidence 欄位：**
   - **[L]**：CloudPlayerProgress 整個 entity；PlayerProgress `id`、`nickname`；階段 2～5 的 entity 和 on delete。
-  - **[M]**：PlayerProgress、Question、QuestionBank、AnswerRecord、ReminderLog（階段 1 的需求已有 AC，但儲存方式待 ADR）。
+  - **[M]**：PlayerProgress、Question、QuestionBank、AnswerRecord、ReminderLog（階段 1 的需求已有 AC，儲存方式已定為 SQLite（ADR-002））。
 - **Fabricated assumptions（推測但 input 未明說）：**
   - 等級不存在本機，每次從經驗值算（Claude 提議，避免兩個數字對不上）。
   - 下一次提醒時間不存，從最後作答時間和 ReminderLog 算（Claude 提議）。
@@ -249,6 +249,6 @@ erDiagram
 - _TODO: 同學不想再被看到時，雲端資料要刪除還是隱藏（CloudPlayerProgress `deleted_at`）_
 - ~~玩家代號怎麼產生、怎麼確認是本人、要不要防止竄改~~ → 匿名登入＋基本檢查（ADR-006）；_TODO: 匿名代號和本機 `id` 怎麼對應（階段 3 前）_
 - _TODO: 暱稱長度上限、能不能和別人重複（api-spec TODO）_
-- _TODO: 題目正式編號格式（api-spec TODO）_
-- _TODO: 檢查新題目的時機（AC-11）_
+- ~~題目正式編號格式~~ → `Q001` 流水號（Owner 決定 2026-11-08）
+- ~~檢查新題目的時機（AC-11）~~ → 開機時，之後每 24 小時（Owner 決定 2026-11-09，1C）
 - _TODO: 階段 2～5 的欄位：技能數值、外觀變化時機（FR-4）、Boss 血量和攻擊、寶物與 buff（FR-5）、AI 說明存哪裡和存多久（階段 4）、程式填空批改方式（階段 5）_

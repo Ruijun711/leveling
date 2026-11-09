@@ -2,7 +2,7 @@
 doc_type: "roadmap"
 status: "draft"
 owner: "Avi"
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 upstream:
   required: ["prd"]
   optional: ["value-hypothesis"]
@@ -10,7 +10,7 @@ upstream:
 
 # Roadmap: 學習精靈 v1 分階段開發
 
-**Status:** Draft v0.4 · **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Draft v0.4 · **Owner:** Avi · **Last updated:** 2026-11-09
 
 > [!NOTE]
 > 依據：`prd.md` v0.6（FR-1～FR-6、G1、G2、Counter、R1～R3）、`value-hypothesis.md` v0.3。階段順序、是否做階段 0、試用方式、同學互看等級的時間點，都由 Owner 決定（2026-11-07：1A 2A 3A 4B 5A）。
@@ -39,7 +39,7 @@ upstream:
 
 - **階段 1 的說明**：每一題都要事先寫好觀念說明。這些說明在階段 4 會給 AI 當參考，沒有網路時也是備用說明。（依據：prd FR-3、R2）
 - **階段 1 的提醒**：提醒直接影響 G1，所以不等 AI，先用固定文字做。
-- **階段 1 的題庫下載**：試用期間要能出新題目（階段 0 要驗證的做法），所以階段 1 就從網路下載題庫，但只下載、不上傳任何玩家資料；上傳經驗值和等級仍在階段 3 之後。題庫放在 GitHub 公開題庫 repo（`adr-003-cloud-data-service.md`，Proposed，Owner 決定 2026-11-08，2A）。（依據：Owner 決定 2026-11-08，C；`c4-diagram.md`）
+- **階段 1 的題庫下載**：試用期間要能出新題目（階段 0 要驗證的做法），所以階段 1 就從網路下載題庫，但只下載、不上傳任何玩家資料；上傳經驗值和等級仍在階段 3 之後。題庫放在 GitHub 公開題庫 repo（`adr-003-cloud-data-service.md`，Accepted，Owner 決定 2026-11-08，2A）。（依據：Owner 決定 2026-11-08，C；`c4-diagram.md`）
 - **同學互看等級**：Owner 決定等核心功能做好再加，放在階段 3 之後（4B）。桌面程式的資料如果只存在自己電腦，就看不到別人的，所以需要伺服器，會加重 R2 的技術難度。
 
 ---

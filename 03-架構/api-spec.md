@@ -3,7 +3,7 @@ doc_type: "api-spec"
 variant: "light"
 status: "draft"
 owner: "Avi"
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 upstream:
   required: ["srs", "user-story"]
   optional: ["api-style-guide", "error-taxonomy"]
@@ -11,7 +11,7 @@ upstream:
 
 # API Spec: 學習精靈 · 雲端資料介面 v0.1
 
-**Status:** Draft · **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Draft · **Owner:** Avi · **Last updated:** 2026-11-09
 
 > [!NOTE]
 > 依據：`prd.md` v0.7（§6 Privacy、題目更新；FR-1～FR-3；Counter）、`acceptance-criteria.md` v0.3（AC-5、AC-11～AC-13、§4 Privacy；User Story）、`c4-diagram.md` v0.2（§2、§3、§9 R6）、`roadmap.md` v0.3、`practice-questions-stage0.md`、`create-stage0-form.gs`。沒有 SRS，以 PRD 和驗收條件代替。範圍、題庫是否要登入、上傳時的身分確認、題目能不能修改由 Owner 決定（2026-11-08：1B 2A 3C 4A）。
@@ -25,7 +25,7 @@ upstream:
 - **用途：** 定義學習精靈桌面程式和雲端資料服務之間的資料格式。階段 1 下載題庫；階段 3 之後上傳自己的經驗值和等級，並讀取同學的經驗值和等級。（依據：c4-diagram §3；roadmap §2）
 - **使用者（consumer）：** 只有學習精靈桌面程式。題庫由 Avi 編輯 GitHub 公開題庫 repo 的檔案，跑檢查程式後 push（`adr-003-cloud-data-service.md`，Owner 決定 2026-11-08，4A）。
 - **共 4 個介面：** 2 個階段 1 用（**[M]**），2 個階段 3+ 用（**[L]**，身分確認方式還沒定）。
-- **凍結狀態：** 題庫格式（§3 的 Question）建議在階段 0 結束、開始寫階段 1 程式前凍結；經驗值的格式等階段 3 前再凍結。_TODO: 凍結時間待 Owner 確認_
+- **凍結狀態：** 題庫格式（§3 的 Question）在開始寫階段 1 程式前凍結（階段 0 已跳過；題庫 repo 第 1 版已照這個格式上傳，2026-11-08）；經驗值的格式等階段 3 前再凍結。
 - **這份文件也補上之前列的缺口 M5「題庫格式說明」**（progress 11-08 問題清單）。
 
 > **TL;DR:** 學習精靈從雲端下載不能修改、只能新增的題庫（不用登入）；階段 3 之後上傳和讀取「暱稱、經驗值、等級」三個欄位，其他作答資料都不離開玩家的電腦。
@@ -44,7 +44,7 @@ upstream:
 | E4 | GET | `/v1/players/progress` | listClassProgress | 讀取同學的暱稱、經驗值、等級 | 匿名登入（ADR-006） | n/a（只讀取） | 3+ | **[L]** |
 
 **使用流程（依據：AC-11～AC-13）：**
-1. 桌面程式檢查題庫時呼叫 E1。_TODO: 開機時檢查還是每天檢查，待 Owner 決定（AC-11 TODO）_
+1. 桌面程式檢查題庫時呼叫 E1：開機時檢查一次，之後距離上次檢查（data-model QuestionBank `last_checked_at`）滿 24 小時再檢查一次（AC-11，Owner 決定 2026-11-09，1C）。
 2. E1 的 `bank_version` **大於**本機題庫的版本號，才呼叫 E2 下載。
 3. E2 下載完成後，**整份通過 §3 的檢查**才替換本機題庫；任何一項檢查沒過，就保留原本的題庫，下次檢查時再試（AC-13）。
 4. 沒有網路時跳過 1～3，直接用本機題庫出題（AC-12）。
@@ -149,7 +149,7 @@ upstream:
 
 | Code | HTTP | Retryable | 什麼時候發生 | User message key | Confidence |
 |---|---|---|---|---|---|
-| `NETWORK_UNAVAILABLE` | — | [YES] | 沒有網路（AC-12） | _TODO: 要不要提示使用者，待 Owner 決定_ | **[M]** |
+| `NETWORK_UNAVAILABLE` | — | [YES] | 沒有網路（AC-12） | `status.offline`（不跳視窗，只在角落顯示小字） | **[M]** |
 | `BANK_DOWNLOAD_INTERRUPTED` | — | [YES] | 下載題庫到一半中斷（AC-13） | `error.bank.download_failed` | **[M]** |
 | `BANK_VERSION_MISMATCH` | 400 | [YES] | E1 和 E2 的版本號或題數對不上 | `error.bank.download_failed` | **[M]** |
 | `BANK_INVALID_FORMAT` | 400 | [NO] | 題庫內容不符合 §3 的規則；要等 Avi 修正雲端題庫 | `error.bank.invalid` | **[M]** |
@@ -157,7 +157,15 @@ upstream:
 | `AUTH_REQUIRED` | 401 | [NO] | 沒有權限讀寫（E3、E4；E1、E2 只有權限設錯時才會發生） | `error.auth.required` | **[L]** |
 | `SERVICE_ERROR` | 500 | [YES] | 雲端服務出錯 | `error.service.unavailable` | **[M]** |
 
-_TODO: 每個 message key 實際要顯示的文字，待 Owner 提供（AC-12 規定沒網路時要能照常練習，提示不能擋住作答）_
+**階段 1 的顯示文字（Owner 決定 2026-11-09，3A，照 Claude 草稿）：** 提示都不能擋住作答（AC-12）。
+
+| Message key | 顯示方式 | 文字 |
+|---|---|---|
+| `status.offline` | 不跳視窗，角落小字 | 離線中，使用本機題庫 |
+| `error.bank.download_failed` | 不跳視窗，角落小字 | 新題目這次沒下載到，下次會再試 |
+| `error.bank.invalid` | 訊息 | 雲端題庫有問題，先用本機題庫練習。請告訴 Avi。 |
+
+_TODO: `error.progress.invalid`、`error.auth.required`、`error.service.unavailable` 的文字（階段 3+）_
 
 ---
 
@@ -192,7 +200,7 @@ _TODO: 每個 message key 實際要顯示的文字，待 Owner 提供（AC-12 �
 - ~~題目 `id` 的正式編號格式~~ → `Q001` 流水號（Owner 決定 2026-11-08）
 - _TODO: 暱稱長度上限、能不能和別人重複_
 - _TODO: 程式填空題的 `answer` 格式（「程式碼批改」ADR，階段 5）_
-- _TODO: 檢查新題目的時機（AC-11）_
-- _TODO: 每個錯誤 message key 的顯示文字；沒網路時要不要提示_
-- _TODO: 題庫格式和經驗值格式的凍結時間_
+- ~~檢查新題目的時機（AC-11）~~ → 開機時，之後每 24 小時（Owner 決定 2026-11-09，1C）
+- ~~階段 1 錯誤 message key 的顯示文字；沒網路時要不要提示~~ → 見 §5（Owner 決定 2026-11-09，3A）；_TODO: 階段 3+ 的文字_
+- ~~題庫格式的凍結時間~~ → 開始寫階段 1 程式前；_TODO: 經驗值格式（E3、E4）階段 3 前凍結_
 - ~~Avi 怎麼把題庫上傳到雲端~~ → 編輯檔案、跑檢查程式、push（ADR-003，4A）

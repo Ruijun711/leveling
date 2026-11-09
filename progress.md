@@ -1,6 +1,6 @@
 # 學習精靈 · 專案進度
 
-**Owner:** Avi · **最後更新:** 2026-11-08
+**Owner:** Avi · **最後更新:** 2026-11-09
 
 ## 在新電腦接續時，貼給 Claude 的話
 
@@ -25,7 +25,7 @@
 | | `學習精靈 · 第 1 週經驗值 - 表單回覆 1.csv` | concierge 測試作答資料，8 份（2026-11-05） |
 | `02-產品/` | `prd.md` | PRD v0.9（6 個 P0 FR；技能數值、血量、寶物、AI 費用待 Avi） |
 | | `roadmap.md` | 分階段規劃 v0.4（階段 0 已跳過；階段 1～5 與試用方式） |
-| | `acceptance-criteria.md` | 階段 1 驗收條件 v0.5（14 條 AC） |
+| | `acceptance-criteria.md` | 階段 1 驗收條件 v0.6（14 條 AC；提醒文字、錯誤訊息已定） |
 | | `non-functional-reqs.md` | 非功能需求 v0.1（NFR 唯一來源） |
 | `03-架構/` | `c4-diagram.md` | C4 架構圖 v0.2（Mermaid flowchart） |
 | | `api-spec.md` | 雲端資料介面 v0.1（E1～E4、題庫格式） |
@@ -41,6 +41,7 @@
 | | `create-stage0-form.gs`、`code-review-stage0-form.md` | 階段 0 表單腳本和它的 code review（**未使用**，保留參考） |
 | `spike/pyside6/` | `main.py` | ADR-001 小試驗 PySide6 版（題目、經驗值、SQLite、桌面哥布林）；`.venv/` 不進 git |
 | `spike/godot/` | `main.gd`、`goblin_window.gd` 等 | ADR-001 小試驗 Godot 版（參考用；Godot 執行檔和外掛已刪，要再試需重新下載 Godot 4.7.2 和 godot-sqlite v4.9） |
+| `app/` | `leveling/`、`tests/`、`requirements.txt` | **階段 1 程式**：`leveling/` 是核心規則（`rules.py` 經驗值、等級、提醒；`bank.py` 題庫格式和檢查；`progress.py` 送出答案），`tests/` 是 pytest（49 個測試，對應 38 條 TC）；`.venv/` 不進 git。跑測試：在 `app/` 執行 `.venv\Scripts\python -m pytest` |
 | `工作包/` | `*-quick.md`（11 個） | Launch Atlas 工作包：prd、jtbd、value-hypothesis、acceptance-criteria、adr、c4-diagram、api-spec、data-model、non-functional-reqs、code-review-checklist、unit-test |
 
 > `persona-quick.md`（Persona 工作包）與 `responses.pdf`（問卷 PDF 版）已於 2026-11-04 由 Avi 刪除。`persona.md` 已完成，問卷資料以 `responses.csv` 為準。
@@ -150,6 +151,7 @@
 | 11-08 | PySide6 小試驗 | 4 項都通過：哥布林透明、9.9 毫秒、約 15 分鐘、SQLite 重開後還在；Avi 看得懂、改得動。Godot 也要試（1A）；結果先寫進 ADR-001、002，維持 Proposed（2A）；比較規則：時間不到一半才算明顯快，否則看好不好懂（3A） |
 | 11-08 | **選定 PySide6** | Godot 也通過 4 項（第一次黑框，改 Compatibility 繪圖方式後透明；14.2 毫秒；約 12 分鐘）；時間沒差一半、Avi 覺得都好懂，依已知代價選 PySide6（1A）；ADR-001、002 改成 Accepted；試驗程式碼保留、刪掉 Godot 下載檔（2A） |
 | 11-08 | **建立題庫 repo** | Avi 在網頁建 repo、Claude 準備檔案、Avi 用 git push 上傳（1A）；`Ruijun711/leveling-question-bank`，本機在 `Desktop/leveling-question-bank`，和專案分開（2A）；題號改用流水號 Q001～（3B）；第 1 版 17 題＝階段 0 的 12 題＋concierge 的 5 題（4B）；實際下載並檢查通過，ADR-003 改成 Accepted |
+| 11-09 | **階段 1 開始寫程式** | 檢查新題目：開機時，之後每 24 小時（1C）；提醒文字：Claude 寫 3 句、輪流顯示（2B）；錯誤訊息照 Claude 草稿，沒網路和下載失敗不跳視窗、只在角落顯示小字，存檔失敗不自動重試（3A）；先把 38 條 TC 寫成 pytest 再寫規則程式（4A）；程式放在專案的 `app/`（5A）；修好 6 項文件不一致（prd §6 殘段、c4／roadmap／data-model／AC／api-spec 的過時狀態） |
 
 ---
 
@@ -202,6 +204,8 @@
 - [x] 依 `unit-test-quick.md` 完成 `unit-test-stage1.md` v0.1（Avi 決定 1A 2A 3A 4A，2026-11-08）
 - [x] ADR-001 小試驗 PySide6 版：4 項都通過（2026-11-08，`spike/pyside6/main.py`）
 - [x] ADR-001 小試驗 Godot 版：4 項都通過（改繪圖方式後）；**選定 PySide6**，ADR-001、002 Accepted（2026-11-08）
+- [x] 階段 1 第二批：核心規則程式＋pytest，49 個測試全部通過（含真的題庫 repo 17 題通過檢查）；故意改壞 4 種規則，測試都抓得到（2026-11-09，`app/`）
+- [ ] 階段 1 第三批：SQLite 版 ProgressStore（含 AC-10、AC-13 整合測試）、下載題庫、PySide6 畫面、提醒、匯出 CSV
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [x] ~~階段 0：執行表單、找同學、追蹤 2 週~~ → 跳過，用舊資料部分完成（Owner 決定 2026-11-08，1C）
 
@@ -226,10 +230,11 @@
 1. ~~執行階段 0~~ → 跳過（Owner 決定 2026-11-08：不再做問卷或表單）
 2. ~~ADR-001 試驗時間差~~ → 已決定，並已選定 PySide6
 3. ~~建立公開題庫 repo~~ → 完成（2026-11-08）。之後加題目：改本機 `Desktop/leveling-question-bank` 的檔案，照 README 的規則檢查後 push
-4. **AC-11 檢查新題目的時機**（開機時或每天，`acceptance-criteria.md`）
+4. ~~AC-11 檢查新題目的時機~~ → 開機時，之後每 24 小時（2026-11-09，1C）
 5. **提供 `prd.md` 的 TODO**（見下方）
 6. **作答紀錄的保留期限、要不要做「重設進度」**（`data-model.md` §12，不急）
 7. **匯出檔用什麼方式傳給你**（Email、Line、雲端硬碟；階段 1 試用前決定，`adr-002-local-storage.md`）
+8. **`update_ms` 存在哪裡**（第三批前決定）：作答紀錄「只新增、不修改」，但「從送出到畫面更新的毫秒數」要等存檔、畫面更新之後才知道，存進同一筆會違反只新增的規則（data-model AnswerRecord、AC-14）
 
 ### PRD 待補（`prd.md` v0.7，2026-11-08）
 
@@ -249,7 +254,7 @@
 1. ~~開始階段 0~~ → 跳過；G1 改由階段 1 試用第一次驗證
 2. ~~ADR-001 小試驗~~ → 完成，選定 PySide6
 3. Avi 提供 PRD 剩下的 TODO 後，Claude 填入 `prd.md`
-4. ~~建立 GitHub 公開題庫 repo~~ → 完成，ADR-003 Accepted。**下一步：開始階段 1 的程式**
+4. ~~建立 GitHub 公開題庫 repo~~ → 完成，ADR-003 Accepted。**階段 1 程式進行中**（第二批完成，見「目前進度」）
 5. 所有規劃中的 ADR 都寫完了（001～006，都是 Proposed）。各自定案的時機：001、002、003 **已 Accepted**；006 階段 3 前試驗；004 階段 4 前實測；005 階段 5 前定時間上限
 6. （選做）之後要做 JTBD-002 時，再訂它的成功標準
 7. ~~concierge 測試~~ → 已完成（2026-11-05，8 人），結果寫在 `value-hypothesis.md` §5「測試結果」

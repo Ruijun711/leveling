@@ -3,7 +3,7 @@ doc_type: "c4-diagram"
 variant: "light"
 status: "draft"
 owner: "Avi"
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 upstream:
   required: ["codebase-structure", "adr"]
   optional: ["stakeholder-map"]
@@ -11,7 +11,7 @@ upstream:
 
 # C4 Architecture: 學習精靈 v1
 
-**Status:** Draft v0.2 · **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Draft v0.2 · **Owner:** Avi · **Last updated:** 2026-11-09
 
 > [!NOTE]
 > 依據：`prd.md` v0.6、`roadmap.md` v0.1、`acceptance-criteria.md` v0.1、`adr-001-desktop-framework.md`（Proposed）、`project-brief.md`。**目前沒有程式碼**（工作包要求的 `codebase-structure` 不存在），所以這是「v1 規劃中的架構」，不是現有系統的描述。範圍、題目來源、互看等級的伺服器、從哪個階段開始下載題目由 Owner 決定（2026-11-08：1A 2B 3B、C）。
@@ -25,7 +25,7 @@ upstream:
 - **給誰看：** Avi 自己開發時對照用，以及之後請老師、同學或 AI 協助時，快速看懂學習精靈由哪些部分組成、和哪些外部服務有關。**[M]**
 - **畫哪幾層：** Level 1（System Context）和 Level 2（Container）。範圍是 v1 完整版（階段 1～5，加上同學互看等級），每個元素標出從哪個階段開始才有。（依據：Owner 決定 2026-11-08，1A）
 - **不畫的部分：** Level 3（Component）和 Level 4（Code），因為還沒有程式碼（桌面程式框架已選 PySide6，ADR-001 Accepted）。階段 0 的 Google 表單＋試算表不在圖上，因為 v1 不沿用。（依據：prd §10 5A）
-- **最大的未知：** 桌面程式用 PySide6（ADR-001，Accepted）、本機存資料用 SQLite（ADR-002，Accepted）；階段 1 題庫放在 GitHub（ADR-003）、AI 服務（ADR-004）、程式碼批改（ADR-005）、階段 3+ 的雲端（ADR-006）都已有 ADR，但全部還是 Proposed，要等各自的小試驗或實測。**[L]**
+- **最大的未知：** 桌面程式用 PySide6（ADR-001）、本機存資料用 SQLite（ADR-002）、階段 1 題庫放在 GitHub（ADR-003），這三份都已 Accepted；AI 服務（ADR-004）、程式碼批改（ADR-005）、階段 3+ 的雲端（ADR-006）還是 Proposed，要等各自的小試驗或實測。**[L]**
 
 > **TL;DR:** 學習精靈是裝在玩家 Windows 電腦上的桌面程式，進度存在本機；它依賴三個外部系統：Windows（桌面 Boss、開機自動執行、提醒）、AI 服務（解釋錯題、鼓勵，階段 4）、雲端資料服務（下載新題目、同學互看等級）。
 
@@ -104,10 +104,10 @@ flowchart LR
 | 容器 | 做什麼 | 技術 | 階段 | 信心 |
 |---|---|---|---|---|
 | 桌面程式 | 出題、算經驗值、角色、Boss 戰、提醒 | Python + PySide6（ADR-001） | 1～5 | **[M]** |
-| 本機資料 | 存進度、作答紀錄、題庫 | SQLite（ADR-002，Proposed） | 1 | **[M]** |
+| 本機資料 | 存進度、作答紀錄、題庫 | SQLite（ADR-002，Accepted） | 1 | **[M]** |
 | 程式碼批改環境 | 執行玩家的程式、判斷對錯 | 本機獨立 Python 程式（ADR-005，Proposed） | 5 | **[L]** |
 
-「信心」指的是職責；三個容器的技術都還沒定，都是 **[L]**。
+「信心」指的是職責。技術欄位：桌面程式（ADR-001）和本機資料（ADR-002）已 Accepted，是 **[H]**；程式碼批改環境（ADR-005）還是 Proposed，是 **[L]**。
 
 ### 容器說明
 
@@ -128,7 +128,7 @@ flowchart LR
 - 來源：prd FR-1（寫程式題）、FR-2、§9 R2；adr-001 §2
 
 **分層說明**
-- Boss 戰、提醒、角色都算在「桌面程式」裡，沒有拆成獨立的容器。這些部分是不是獨立執行的程式，要等 ADR-001 選定框架後才知道；拆開屬於 Level 3（Component），本文件不畫。
+- Boss 戰、提醒、角色都算在「桌面程式」裡，沒有拆成獨立的容器。這些部分是不是獨立執行的程式，要等階段 1 的程式碼結構出來後才知道；拆開屬於 Level 3（Component），本文件不畫。
 - 「程式碼批改環境」最後可能併入桌面程式。先畫成獨立容器，是為了標出階段 5 的安全風險（見 §9 R5）。
 
 ---
@@ -153,7 +153,7 @@ flowchart LR
 
 ## 12. Confidence & Sources & TODO
 
-- **整份文件最低 confidence 欄位：** 雲端資料服務、程式碼批改環境、所有容器的技術欄位都是 **[L]**；桌面程式和本機資料的職責、Windows、AI 服務、兩個 actor 是 **[M]**。只有「學習精靈是 Windows 桌面程式」是 **[H]**。
+- **整份文件最低 confidence 欄位：** 雲端資料服務、程式碼批改環境（含它的技術欄位）都是 **[L]**；桌面程式和本機資料的職責、Windows、AI 服務、兩個 actor 是 **[M]**。只有「學習精靈是 Windows 桌面程式」是 **[H]**。
 - **已解決的 CONFLICT（Owner 決定 2026-11-08，C）：** 2B「從雲端下載新題目」原本和 roadmap（伺服器在階段 3 之後）、acceptance-criteria §4 Privacy（驗證「沒有任何對外連線」）不一致。決定：**階段 1 就從雲端下載題庫，但只下載、不上傳任何玩家資料**；安裝檔附一份基本題庫；上傳經驗值和等級、同學互看維持在階段 3 之後。roadmap 和 acceptance-criteria 已同步修改（v0.2）。
 - **Fabricated assumptions（推測但 input 未明說）：**
   - 下載的新題目會和基本題庫一起存在本機，讓沒網路時也能練、也能顯示備用說明（依 prd FR-3 4-4A 推得）。
@@ -167,9 +167,9 @@ flowchart LR
 
 ### TODO（缺資料）
 
-- ~~題庫檔案放在哪個雲端服務~~ → GitHub 公開題庫 repo（`adr-003-cloud-data-service.md`，Proposed）
+- ~~題庫檔案放在哪個雲端服務~~ → GitHub 公開題庫 repo（`adr-003-cloud-data-service.md`，Accepted）
 - ~~桌面程式的框架~~ → PySide6（ADR-001 Accepted）
-- ~~本機存資料的方式~~ → 已寫 `adr-002-local-storage.md`（Proposed，暫定 SQLite）
+- ~~本機存資料的方式~~ → SQLite（`adr-002-local-storage.md`，Accepted）
 - _TODO: 階段 3+ 選 Firebase 或 Supabase（ADR-006 小試驗）；階段 3 是否只用免費方案_
 - _TODO: 要用哪個 AI 服務、每月費用上限（ADR-004：階段 4 前實測 20 題再選）_
 - ~~程式碼批改的方式~~ → ADR-005（Proposed）；_TODO: 時間上限秒數_

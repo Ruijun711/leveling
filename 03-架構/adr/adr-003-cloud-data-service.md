@@ -3,7 +3,7 @@ doc_type: "adr"
 variant: "light"
 status: "accepted"
 owner: "Avi"
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 upstream:
   required: ["technical-discussion-notes"]
   optional: ["prd", "c4-diagram", "nfr"]
@@ -11,7 +11,7 @@ upstream:
 
 # ADR-003: 階段 1 的題庫放在哪個雲端服務
 
-**Status:** Accepted（2026-11-08）· **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Accepted（2026-11-08）· **Owner:** Avi · **Last updated:** 2026-11-09
 
 > [!NOTE]
 > 依據：`api-spec.md` v0.1（E1、E2、2A、4A、§5）、`c4-diagram.md` v0.2（§2 雲端資料服務、§9 R3、§12 TODO）、`roadmap.md` v0.3（§2 階段 1、3+）、`prd.md` v0.7（§6 題目更新、§9 R2、Decision Log 3B、C）、`acceptance-criteria.md` v0.4（AC-11～AC-13）。範圍、服務、費用、更新題庫的方式由 Owner 決定（2026-11-08：1B 2A 3A 4A）。
@@ -134,5 +134,5 @@ upstream:
 
 - ~~題庫 repo 的名稱和實際下載網址~~ → 見 §6（2026-11-08）
 - _TODO: 題庫檢查程式的檔名和位置，開發時決定_
-- _TODO: 檢查新題目的時機（開機時或每天，AC-11）_
+- ~~檢查新題目的時機（開機時或每天，AC-11）~~ → 開機時，之後每 24 小時（Owner 決定 2026-11-09，1C）
 - _TODO: 階段 3+ 的雲端 ADR：上傳和讀取經驗值、身分確認（3C）、防止竄改（R6）_

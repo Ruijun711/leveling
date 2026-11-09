@@ -3,7 +3,7 @@ doc_type: "prd"
 variant: "light"
 status: "draft"
 owner: "Avi"
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 upstream:
   required: ["project-brief", "jtbd"]
   optional: ["value-hypothesis"]
@@ -11,7 +11,7 @@ upstream:
 
 # Product Requirements: 學習精靈
 
-**Status:** Draft v0.9 · **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Draft v0.9 · **Owner:** Avi · **Last updated:** 2026-11-09
 
 > [!NOTE]
 > 證據來源：`project-brief.md`、`persona.md` v0.4、`jtbd.md` v0.2、`value-hypothesis.md` v0.3（concierge 測試 8 人）、`responses.csv`（4 份問卷）。v1 範圍、JTBD 取捨、題型、latency 由 Owner 決定（2026-11-07：1C 2A 3C 5A）；G1、Counter 數字，以及職業、技能、Boss、寶物的設計也由 Owner 提供（2026-11-07）。
@@ -188,13 +188,6 @@ upstream:
 ## 6. NFR
 
 > **詳見 `non-functional-reqs.md`（以它為準，Owner 決定 2026-11-08，1A）。** 摘要：**Latency** 作答後 p95 < 3 秒更新經驗值和等級；**Privacy** 階段 1～3 作答資料不離開電腦，只公開暱稱、經驗值、等級，階段 4 送 AI 前先告知；**Platform** Windows 桌面程式、Boss 出現在桌面、開機自動執行；**題目更新** 階段 1 起從雲端下載題庫、沒網路也能練；**AI 說明正確性** 每週抽查 20 則、錯誤 < 10%；另有可用性（提醒 15 分鐘內）和無障礙（3 項基本檢查）。
-
----|---|---|---|
-| **Latency** | 從送出答案到看到經驗值和等級更新，p95 < 3 秒 | Owner 要求「馬上」看到更新（2026-11-07，5A）；JTBD-001「清楚看到自己累積了多少」。現有的「發布到網路」要幾分鐘才更新，不符合 | **[H]** |
-| **Privacy** | 其他使用者只看得到經驗值和等級，看不到別人的答案、程式碼和「卡在哪裡」的回答。從階段 4 開始，使用者的答案和程式碼會送給 AI 服務產生說明，使用前要先告知使用者；階段 1～3 不傳出任何作答資料 | 延續 concierge 測試的做法：只公開「經驗值」工作表（Owner 決定 2026-11-05）；AI 部分來自 Owner 決定加入 AI 功能（2026-11-07） | **[H]** |
-| **Platform** | Windows 桌面程式，Boss 能出現在電腦桌面上；開機自動執行 | Owner 決定 Boss 出現在桌面（2026-11-07，3-1A）；開機自動執行（2026-11-07，5B） | **[H]** |
-| **題目更新** | 從階段 1 開始，程式從雲端資料服務下載新題庫（只下載，不上傳任何玩家資料）；安裝檔附基本題庫，沒網路也能練 | 試用期間要能出新題目（階段 0 要驗證的做法）；Owner 決定 2026-11-08（2B、3B、C） | **[M]** |
-| **AI 說明正確性** | 每週人工抽查 **20 則** AI 說明，錯誤的比例 **< 10%**；超過就調整給 AI 的指示，或改用事先寫好的說明（Owner 決定 2026-11-07，4-3A） | 新手很難分辨說明對不對，錯的說明會教錯觀念（見 R3） | **[L]** |
 
 ---
 
