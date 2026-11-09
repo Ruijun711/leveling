@@ -24,7 +24,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from .. import messages
+from .. import __version__, messages
 from ..export import export_csv
 from ..progress import InvalidChoiceError, NoChoiceError, SaveError, submit_answer
 from ..rules import MAX_LEVEL, XP_PER_LEVEL, level_from_xp, pick_question
@@ -47,7 +47,7 @@ class MainWindow(QWidget):
         self.answered = False      # 這題已經送出（下一個 Enter 是「下一題」）
         self.hide_on_close = False  # 有系統匣時，按 X 只是縮到系統匣（Owner 決定 2026-11-09，3A）
 
-        self.setWindowTitle("學習精靈")
+        self.setWindowTitle(f"學習精靈 {__version__}")
         self.resize(560, 600)
 
         self.progress_label = QLabel()

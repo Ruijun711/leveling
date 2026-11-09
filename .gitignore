@@ -10,3 +10,10 @@ spike/godot/addons/
 
 # 匯出的作答紀錄（有個人作答內容，不進 git；2026-11-09 Avi 決定 D1）
 app/*.csv
+
+# 打包產生的檔案（app/build.ps1）
+app/build/
+app/dist/
+
+# pytest 的暫存檔（app/tests/conftest.py）
+app/.pytest-tmp/

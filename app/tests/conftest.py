@@ -54,3 +54,13 @@ Q5 = _q("Q017", "list 索引", "nums = [10, 20, 30]\nnums.append(40)\nprint(nums
 @pytest.fixture
 def now():
     return T
+
+
+def pytest_configure(config):
+    """暫存檔放在 app\\.pytest-tmp，不用系統的暫存資料夾。
+
+    Avi 的電腦上 %TEMP%\\pytest-of-student 沒有權限，需要暫存檔的測試會全部失敗（2026-11-09）。
+    用 --basetemp 另外指定時，照指定的。
+    """
+    if not config.option.basetemp:
+        config.option.basetemp = str(Path(__file__).resolve().parents[1] / ".pytest-tmp")

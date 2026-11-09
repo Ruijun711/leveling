@@ -8,7 +8,7 @@
     LEVELING_REMINDER_TEST  設成 1：提醒的 24 小時改成 2 分鐘、12 小時改成 1 分鐘，每 5 秒檢查（NFR A3）
     LEVELING_OFFLINE        設成 1：不下載題庫，模擬沒網路（AC-12）
 
-還沒做（第四批）：打包成安裝檔、開機自動執行（AC-9）、只允許開一個學習精靈。
+打包：在 app 資料夾執行 .\\build.ps1（見 build.ps1）。
 """
 import os
 import sys
@@ -16,17 +16,20 @@ import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from PySide6.QtCore import QObject, QRectF, Qt, QTimer, Signal
+from PySide6.QtCore import QObject, QRectF, QSettings, Qt, QTimer, Signal
 from PySide6.QtGui import QAction, QIcon, QPainter, QPixmap
 from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 
-from leveling import messages
+from leveling import autostart, messages
 from leveling.bank_sync import OfflineError, SyncStatus, load_bundled_bank, should_check, sync_bank
+from leveling.single_instance import SingleInstance, instance_key
 from leveling.storage import SqliteStore
 from leveling.ui.main_window import MainWindow
 from leveling.ui.reminder import ReminderBubble, ReminderScheduler, draw_sprite
 
-APP_DIR = Path(__file__).resolve().parent
+MAIN_PY = Path(__file__).resolve()
+# 打包後，附的檔案（data/）在 PyInstaller 解開的資料夾（sys._MEIPASS）
+APP_DIR = Path(getattr(sys, "_MEIPASS", MAIN_PY.parent))
 
 
 def utcnow() -> datetime:
@@ -100,6 +103,12 @@ def main() -> int:
     icon = make_icon()
     app.setWindowIcon(icon)
 
+    # 只能開一個：已經有一個在跑，就請它把視窗叫出來，這個直接結束
+    single = SingleInstance(instance_key(data_dir()))
+    if single.notify_running_instance():
+        return 0
+    single.start_server()
+
     db_path = data_dir() / "leveling.db"
     store = SqliteStore(db_path, utcnow())
     load_bundled_bank(store, APP_DIR / "data", utcnow())  # 安裝檔附的基本題庫（AC-12）
@@ -116,11 +125,32 @@ def main() -> int:
         window.hide_on_close = False
         app.quit()
 
+    # 開機自動執行（AC-9）：打包後的版本第一次執行時開啟；使用者關掉後就不再自動開回來
+    command = autostart.launch_command(MAIN_PY)
+    settings = QSettings("學習精靈", "學習精靈")
+    if autostart.is_frozen() and not os.environ.get("LEVELING_DATA_DIR"):
+        if not settings.value("autostart_initialized", False, type=bool):
+            autostart.enable(command)
+            settings.setValue("autostart_initialized", True)
+        autostart.refresh(command)
+
+    def toggle_autostart(checked: bool) -> None:
+        if checked:
+            autostart.enable(command)
+        else:
+            autostart.disable()
+
     menu = QMenu()
     open_action = QAction("開啟學習精靈", menu, triggered=window.show_and_raise)
     export_action = QAction("匯出作答紀錄", menu, triggered=window.export_records)
+    autostart_action = QAction("開機時自動執行", menu, checkable=True)
+    autostart_action.setChecked(autostart.is_enabled())
+    autostart_action.toggled.connect(toggle_autostart)
+    menu.aboutToShow.connect(lambda: autostart_action.setChecked(autostart.is_enabled()))
     quit_action = QAction("結束", menu, triggered=quit_app)
     menu.addActions([open_action, export_action])
+    menu.addSeparator()
+    menu.addAction(autostart_action)
     menu.addSeparator()
     menu.addAction(quit_action)
     tray.setContextMenu(menu)
@@ -133,6 +163,7 @@ def main() -> int:
     # 提醒
     bubble = ReminderBubble()
     bubble.practice_clicked.connect(window.show_and_raise)
+    single.activated.connect(window.show_and_raise)  # 又被打開一次 → 叫出視窗
     if os.environ.get("LEVELING_REMINDER_TEST") == "1":
         scheduler = ReminderScheduler(store, bubble, timedelta(minutes=2), timedelta(minutes=1), check_ms=5_000)
     else:
