@@ -3,7 +3,7 @@ doc_type: "adr"
 variant: "light"
 status: "accepted"
 owner: "Avi"
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 upstream:
   required: ["technical-discussion-notes"]
   optional: ["prd", "c4-diagram", "nfr"]
@@ -11,7 +11,7 @@ upstream:
 
 # ADR-001: 階段 1 桌面程式要用哪個語言和框架
 
-**Status:** Accepted（2026-11-08）· **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Accepted（2026-11-08）· **Owner:** Avi · **Last updated:** 2026-11-09
 
 > [!NOTE]
 > 依據：`prd.md` v0.6（§6 NFR Platform、Latency；FR-5；§9 R2）、`roadmap.md` v0.1（階段 1、3、5）、`acceptance-criteria.md` v0.1（AC-1、AC-4、AC-9、AC-10）、`project-brief.md`（§主要約束）。範圍、Owner 技能、作業系統、是否考慮階段 3 由 Owner 決定（2026-11-07：1A 2B 3C 4A）；先做小試驗再決定由 Owner 決定（2026-11-07：1A、2 可以）。
@@ -104,7 +104,7 @@ upstream:
   | 4 | 經驗值存進 SQLite，重開後還在 | ✅ 通過（Python 內建 `sqlite3`） | ✅ 通過（要另裝 godot-sqlite v4.9 外掛；中文路徑沒問題） |
   | 加測 | Avi 自己改 `XP_PER_CORRECT` 10 → 20 | ✅ 看得懂、改得動 | ✅ 看得懂、改得動（Avi：「感覺都還好」） |
 
-  程式：`spike/pyside6/main.py`（commit `2d05fb9`）、`spike/godot/`（Godot 4.7.2，commit `74949f7`、`2cfc247`）。
+  程式：`spike/pyside6/main.py`（commit `07a6eba`）、`spike/godot/`（Godot 4.7.2，commit `7d98eaa`、`8c896cd`）。（2026-11-09 改寫 git 紀錄後的新代號，原本是 `2d05fb9`、`74949f7`、`2cfc247`）
 - **選 A 的代價：** 階段 3 的即時戰鬥動畫、血條、技能特效都要自己用 Qt 畫，比 Godot 慢；這次只證明「透明、最上層、會走動」做得到。
 
 - **Positive consequences:** 用實際做出來的結果決定，不用靠猜；如果 B 做得出來，階段 3 的動畫會比較好做；如果 A 做得出來，階段 5 執行 Python 程式比較直接。

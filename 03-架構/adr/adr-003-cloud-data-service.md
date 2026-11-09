@@ -26,7 +26,7 @@ upstream:
 - 題庫不用登入就能下載（api-spec 2A），題目發布後不能修改，只能新增、舊題停用（api-spec 4A）。
 - 程式先讀題庫版本（E1），版本比本機新才下載整份題庫（E2）；下載不完整就保留舊版（AC-13）。
 - 用現成服務，不自己寫伺服器（Owner 決定 3B）。題庫只有幾十到幾百題，資料量很小（api-spec §12）。
-- 專案資料夾裡有問卷回覆和 concierge 測試資料，有同學的真名，**不能公開**；題庫要放在另外的地方。
+- 專案資料夾裡有問卷回覆和 concierge 測試資料，當時以為有同學的真名，**不能公開**；題庫要放在另外的地方。（2026-11-09 Owner 確認：問卷是匿名的；concierge 測試只有暱稱，其中一個像真名的已改成「同學 E」，連同 git 紀錄一起改寫；專案 repo 公開在 `Ruijun711/leveling`）
 
 > **TL;DR:** 階段 1 開始寫程式前，要決定題庫檔案放在哪個雲端服務，程式才知道去哪裡下載新題目。
 
@@ -81,7 +81,7 @@ upstream:
 
 - **Scope:** 只適用於階段 1 起的題庫下載（api-spec E1、E2）。**不適用**於階段 3+ 的經驗值上傳和讀取（E3、E4）、身分確認、防竄改——階段 3 前另寫 ADR。
 - **做法：**
-  - 另外開一個**公開**的 GitHub repo，只放題庫，不放專案資料夾的任何其他檔案（避免同學真名外流）。repo：`Ruijun711/leveling-question-bank`（Owner 決定 2026-11-08）。
+  - 另外開一個**公開**的 GitHub repo，只放題庫，不放專案資料夾的任何其他檔案（當時是為了避免同學真名外流，見 §1）。repo：`Ruijun711/leveling-question-bank`（Owner 決定 2026-11-08）。
   - repo 裡放 2 個檔案：題庫版本檔（對應 E1）和整份題庫檔（對應 E2），格式照 `api-spec.md` §3。
   - 程式用 GitHub 的 raw 網址下載這 2 個檔案：
     - E1：`https://raw.githubusercontent.com/Ruijun711/leveling-question-bank/main/manifest.json`

@@ -24,7 +24,7 @@ upstream:
 ## 1. Executive Summary
 
 - **範圍（Owner 決定 2026-11-08，1C）：** 階段 1 核心循環寫完整欄位：玩家進度、題目、題庫版本、作答紀錄、提醒紀錄，加上作答回饋時間（AnswerLatency，2026-11-09 Owner 決定 A），共 6 個 entity，存在使用者自己的電腦；加上 `api-spec.md` E3/E4 的雲端玩家進度（階段 3+），共 7 個。階段 2～5（職業、技能、寶物、Boss、AI、寫程式題）只畫關係，欄位等 PRD 的 TODO 補齊後再寫（依據：roadmap 階段 1～5；prd FR-4、FR-5 TODO）。
-- **個資（Owner 決定 2026-11-08，2B）：** 維持輕量版，不升級到完整版。上傳到雲端的只有暱稱、經驗值、等級三個欄位，而且規定**暱稱不能用真名**；作答紀錄只存在自己的電腦（依據：prd §6 Privacy；acceptance-criteria §4 Privacy；api-spec E4）。注意：concierge 測試的資料（`學習精靈 · 第 1 週經驗值 - 表單回覆 1.csv`）有同學用真名當暱稱，這份資料只留在 Avi 的電腦，不匯入學習精靈。
+- **個資（Owner 決定 2026-11-08，2B）：** 維持輕量版，不升級到完整版。上傳到雲端的只有暱稱、經驗值、等級三個欄位，而且規定**暱稱不能用真名**；作答紀錄只存在自己的電腦（依據：prd §6 Privacy；acceptance-criteria §4 Privacy；api-spec E4）。注意：concierge 測試的資料（`學習精靈 · 第 1 週經驗值 - 表單回覆 1.csv`）不匯入學習精靈。（2026-11-09 Owner 確認：問卷是匿名的；concierge 測試只有暱稱，其中一個像真名的已改成「同學 E」，連同 git 紀錄一起改寫；專案 repo 公開在 `Ruijun711/leveling`）
 - **稽核欄位：** 依工作包規定，每個 entity 都有 `created_at`、`updated_at`、`version`、`deleted_at`。作答紀錄只新增、題目停用改用 `status`，所以有些稽核欄位在這裡的意思比較特別，寫在各 entity 的 Notes。
 
 > **TL;DR:** 7 個 entity：本機 6 個（階段 1 核心循環），雲端 1 個（階段 3+ 同學互看等級）；階段 2～5 另有 9 個 entity 只畫關係。

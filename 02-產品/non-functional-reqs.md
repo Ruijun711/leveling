@@ -3,7 +3,7 @@ doc_type: "non-functional-reqs"
 variant: "light"
 status: "draft"
 owner: "Avi"
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 upstream:
   required: ["prd"]
   optional: ["platform-baseline", "competitive-baseline"]
@@ -11,7 +11,7 @@ upstream:
 
 # Non-Functional Requirements: 學習精靈
 
-**Status:** Draft v0.1 · **Owner:** Avi（Claude 起草） · **Last updated:** 2026-11-08
+**Status:** Draft v0.1 · **Owner:** Avi（Claude 起草） · **Last updated:** 2026-11-09
 
 > [!NOTE]
 > **這份文件是非功能需求的唯一來源**（Owner 決定 2026-11-08，1A）。`prd.md` §6 只留摘要並指向這裡；`acceptance-criteria.md` §4 是階段 1 的驗收方式，數字以這份為準。
@@ -99,7 +99,7 @@ upstream:
 
 | Regime | Applicable | Notes |
 |---|---|---|
-| 台灣個人資料保護法 | [YES]（範圍很小） | 學習精靈不收真名（S3）；作答紀錄存在使用者自己的電腦，只有使用者自己匯出才會交給 Avi（S2）；階段 3+ 只公開暱稱、經驗值、等級（S4）。專案資料夾裡的問卷和 concierge 測試資料有同學真名，只留在 Avi 電腦，不放進題庫 repo（ADR-003）。_TODO: 試用前要不要給同學一段文字，說明匯出檔用來算什麼、保留多久，待 Owner 決定_ |
+| 台灣個人資料保護法 | [YES]（範圍很小） | 學習精靈不收真名（S3）；作答紀錄存在使用者自己的電腦，只有使用者自己匯出才會交給 Avi（S2）；階段 3+ 只公開暱稱、經驗值、等級（S4）。專案資料夾裡的問卷是匿名的，concierge 測試資料只有暱稱（2026-11-09 Owner 確認：問卷是匿名的；concierge 測試只有暱稱，其中一個像真名的已改成「同學 E」，連同 git 紀錄一起改寫；專案 repo 公開在 `Ruijun711/leveling`）。_TODO: 試用前要不要給同學一段文字，說明匯出檔用來算什麼、保留多久，待 Owner 決定_ |
 | GDPR | [NO] | 使用者是台灣的 aipe05 同學，不對歐盟提供服務 |
 | SOC 2 | [NO] | 不提供線上服務給其他公司使用 |
 | PCI DSS | [NO] | 免費，不收錢、不處理信用卡 |
