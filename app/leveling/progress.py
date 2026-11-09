@@ -43,6 +43,7 @@ class SubmitResult:
     total_xp: int
     level: int
     leveled_up: bool
+    answer_id: str | None = None  # 這筆作答紀錄的代號；畫面更新後用來記毫秒數（AnswerLatency）
 
 
 class ProgressStore(Protocol):
@@ -52,8 +53,8 @@ class ProgressStore(Protocol):
         """這題有沒有任何一筆作答紀錄（存檔失敗的那次不算）。"""
         ...
 
-    def save_answer(self, record: AnswerRecord, new_total_xp: int) -> None:
-        """作答紀錄和新的經驗值一起存；失敗丟出 SaveError，而且兩邊都不變。"""
+    def save_answer(self, record: AnswerRecord, new_total_xp: int) -> str | None:
+        """作答紀錄和新的經驗值一起存，回傳這筆紀錄的代號；失敗丟出 SaveError，而且兩邊都不變。"""
         ...
 
 
@@ -79,7 +80,7 @@ def submit_answer(store: ProgressStore, question: Question, selected_choice: str
         is_first_attempt=is_first_attempt,
         xp_gained=xp_gained,
     )
-    store.save_answer(record, new_xp)  # 失敗會丟出 SaveError，不會走到下面
+    answer_id = store.save_answer(record, new_xp)  # 失敗會丟出 SaveError，不會走到下面
 
     old_level, new_level = level_from_xp(old_xp), level_from_xp(new_xp)
     return SubmitResult(
@@ -89,4 +90,5 @@ def submit_answer(store: ProgressStore, question: Question, selected_choice: str
         total_xp=new_xp,
         level=new_level,
         leveled_up=new_level > old_level,
+        answer_id=answer_id,
     )

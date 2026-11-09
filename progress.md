@@ -41,7 +41,7 @@
 | | `create-stage0-form.gs`、`code-review-stage0-form.md` | 階段 0 表單腳本和它的 code review（**未使用**，保留參考） |
 | `spike/pyside6/` | `main.py` | ADR-001 小試驗 PySide6 版（題目、經驗值、SQLite、桌面哥布林）；`.venv/` 不進 git |
 | `spike/godot/` | `main.gd`、`goblin_window.gd` 等 | ADR-001 小試驗 Godot 版（參考用；Godot 執行檔和外掛已刪，要再試需重新下載 Godot 4.7.2 和 godot-sqlite v4.9） |
-| `app/` | `leveling/`、`tests/`、`requirements.txt` | **階段 1 程式**：`leveling/` 是核心規則（`rules.py` 經驗值、等級、提醒；`bank.py` 題庫格式和檢查；`progress.py` 送出答案），`tests/` 是 pytest（49 個測試，對應 38 條 TC）；`.venv/` 不進 git。跑測試：在 `app/` 執行 `.venv\Scripts\python -m pytest` |
+| `app/` | `main.py`、`leveling/`、`tests/`、`data/`、`requirements.txt` | **階段 1 程式**。執行：在 `app/` 執行 `.venv\Scripts\python main.py`（環境變數說明寫在 `main.py` 開頭）。`leveling/`：`rules.py` 規則、`bank.py` 題庫格式和檢查、`progress.py` 送出答案、`storage.py` SQLite、`bank_sync.py` 下載題庫、`export.py` 匯出 CSV、`messages.py` 畫面文字、`ui/` 畫面和提醒。`data/` 是安裝檔附的基本題庫（題庫 repo 第 1 版）。`tests/`：pytest 79 個（38 條 TC＋第三批 30 個）；跑測試：`.venv\Scripts\python -m pytest`。`.venv/` 不進 git |
 | `工作包/` | `*-quick.md`（11 個） | Launch Atlas 工作包：prd、jtbd、value-hypothesis、acceptance-criteria、adr、c4-diagram、api-spec、data-model、non-functional-reqs、code-review-checklist、unit-test |
 
 > `persona-quick.md`（Persona 工作包）與 `responses.pdf`（問卷 PDF 版）已於 2026-11-04 由 Avi 刪除。`persona.md` 已完成，問卷資料以 `responses.csv` 為準。
@@ -152,6 +152,8 @@
 | 11-08 | **選定 PySide6** | Godot 也通過 4 項（第一次黑框，改 Compatibility 繪圖方式後透明；14.2 毫秒；約 12 分鐘）；時間沒差一半、Avi 覺得都好懂，依已知代價選 PySide6（1A）；ADR-001、002 改成 Accepted；試驗程式碼保留、刪掉 Godot 下載檔（2A） |
 | 11-08 | **建立題庫 repo** | Avi 在網頁建 repo、Claude 準備檔案、Avi 用 git push 上傳（1A）；`Ruijun711/leveling-question-bank`，本機在 `Desktop/leveling-question-bank`，和專案分開（2A）；題號改用流水號 Q001～（3B）；第 1 版 17 題＝階段 0 的 12 題＋concierge 的 5 題（4B）；實際下載並檢查通過，ADR-003 改成 Accepted |
 | 11-09 | **階段 1 開始寫程式** | 檢查新題目：開機時，之後每 24 小時（1C）；提醒文字：Claude 寫 3 句、輪流顯示（2B）；錯誤訊息照 Claude 草稿，沒網路和下載失敗不跳視窗、只在角落顯示小字，存檔失敗不自動重試（3A）；先把 38 條 TC 寫成 pytest 再寫規則程式（4A）；程式放在專案的 `app/`（5A）；修好 6 項文件不一致（prd §6 殘段、c4／roadmap／data-model／AC／api-spec 的過時狀態） |
+| 11-09 | **階段 1 第三批** | `update_ms` 另存一張表 AnswerLatency，作答紀錄維持只新增（A）；提醒用程式畫的圓形小精靈＋文字泡泡（1A）；出題先出沒做過的，全部做過才隨機（2A）；按 X 縮到系統匣，右鍵「結束」才關（3A）；打包安裝檔、開機自動執行放第四批 |
+| 11-09 | 第三批試用修正 | Avi 試用：鍵盤作答 OK；系統匣「結束」關不掉（Qt 6 會先關所有視窗，被「按 X 縮到系統匣」擋下）→ 已修（1）；小精靈改成尖帽子、尖耳朵、翅膀的精靈（2B），作答畫面也放一隻，答對開心、答錯難過、升級冒星星（2C）；匯出的 CSV 不進 git（D1），匯出預設存到「文件」（D2） |
 
 ---
 
@@ -205,7 +207,8 @@
 - [x] ADR-001 小試驗 PySide6 版：4 項都通過（2026-11-08，`spike/pyside6/main.py`）
 - [x] ADR-001 小試驗 Godot 版：4 項都通過（改繪圖方式後）；**選定 PySide6**，ADR-001、002 Accepted（2026-11-08）
 - [x] 階段 1 第二批：核心規則程式＋pytest，49 個測試全部通過（含真的題庫 repo 17 題通過檢查）；故意改壞 4 種規則，測試都抓得到（2026-11-09，`app/`）
-- [ ] 階段 1 第三批：SQLite 版 ProgressStore（含 AC-10、AC-13 整合測試）、下載題庫、PySide6 畫面、提醒、匯出 CSV
+- [x] 階段 1 第三批：SQLite 存資料（含 AC-10、AC-13 整合測試）、下載題庫、作答畫面、桌面提醒、系統匣、匯出 CSV；pytest 79 個全部通過；用模擬按鍵跑完 17 題、實際從 GitHub 下載、沒網路模式都確認過（2026-11-09）。**待 Avi 實際操作確認**
+- [ ] 階段 1 第四批：打包成安裝檔、開機自動執行（AC-9）、只允許開一個學習精靈
 - [x] 階段 0：Avi 確認 12 題，建立 `practice-questions-stage0.md`、`create-stage0-form.gs`（2026-11-08）
 - [x] ~~階段 0：執行表單、找同學、追蹤 2 週~~ → 跳過，用舊資料部分完成（Owner 決定 2026-11-08，1C）
 
@@ -234,7 +237,8 @@
 5. **提供 `prd.md` 的 TODO**（見下方）
 6. **作答紀錄的保留期限、要不要做「重設進度」**（`data-model.md` §12，不急）
 7. **匯出檔用什麼方式傳給你**（Email、Line、雲端硬碟；階段 1 試用前決定，`adr-002-local-storage.md`）
-8. **`update_ms` 存在哪裡**（第三批前決定）：作答紀錄「只新增、不修改」，但「從送出到畫面更新的毫秒數」要等存檔、畫面更新之後才知道，存進同一筆會違反只新增的規則（data-model AnswerRecord、AC-14）
+8. ~~`update_ms` 存在哪裡~~ → 另存 AnswerLatency（2026-11-09，A）
+9. **實際操作階段 1 程式**，確認畫面、鍵盤作答、提醒（可用 `LEVELING_REMINDER_TEST=1` 測試模式）
 
 ### PRD 待補（`prd.md` v0.7，2026-11-08）
 

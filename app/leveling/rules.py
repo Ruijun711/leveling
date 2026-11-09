@@ -44,3 +44,33 @@ def count_reminders_since(shown_at: list[datetime], last_answered_at: datetime) 
 def needs_download(remote_version: int, local_version: int) -> bool:
     """雲端版本比本機大才下載；雲端比較舊（例如 GitHub 快取）時不換（TC-030）。"""
     return remote_version > local_version
+
+
+def reminder_due(now: datetime, last_answered_at: datetime, shown_at: list[datetime],
+                 first_after: timedelta = FIRST_REMINDER_AFTER,
+                 interval: timedelta = REMINDER_INTERVAL) -> bool:
+    """現在該不該跳提醒。
+
+    - 照 next_reminder_at 的預定時間（T+24h、T+36h……）。
+    - 電腦睡著或程式沒開，錯過好幾個預定時間時，醒來只補跳 1 則；
+      之後和上一則至少隔 interval（12 小時），所以任何 24 小時內仍然最多 2 則（AC-4）。
+    - first_after、interval 可以改小，用在開發時的測試模式（NFR A3）。
+    """
+    since = [t for t in shown_at if t > last_answered_at]
+    due_at = last_answered_at + first_after + len(since) * interval
+    if now < due_at:
+        return False
+    if since and now - max(since) < interval:
+        return False
+    return True
+
+
+def pick_question(active: list, answered_ids: set[str], rng) -> object | None:
+    """出題順序（Owner 決定 2026-11-09，2A）：先從還沒做過的題目隨機挑，全部做過後才從所有題目隨機挑。
+
+    active 是 status = active 的題目；rng 是 random.Random（測試時傳固定種子）。
+    """
+    if not active:
+        return None
+    fresh = [q for q in active if q.id not in answered_ids]
+    return rng.choice(fresh or active)

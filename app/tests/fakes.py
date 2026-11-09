@@ -17,10 +17,11 @@ class InMemoryStore:
     def has_answered(self, question_id: str) -> bool:
         return any(r.question_id == question_id for r in self.records)
 
-    def save_answer(self, record: AnswerRecord, new_total_xp: int) -> None:
+    def save_answer(self, record: AnswerRecord, new_total_xp: int) -> str:
         if self.fail_next_save:
             self.fail_next_save = False
             raise SaveError("模擬寫入失敗")
         # 作答紀錄和經驗值一起寫入（真的版本用同一個 transaction）
         self.records.append(record)
         self.xp = new_total_xp
+        return f"fake-{len(self.records)}"

@@ -3,7 +3,7 @@ doc_type: "adr"
 variant: "light"
 status: "accepted"
 owner: "Avi"
-last_updated: "2026-11-08"
+last_updated: "2026-11-09"
 upstream:
   required: ["technical-discussion-notes"]
   optional: ["prd", "c4-diagram", "nfr"]
@@ -11,7 +11,7 @@ upstream:
 
 # ADR-002: 本機資料怎麼存
 
-**Status:** Accepted（2026-11-08）· **Owner:** Avi · **Last updated:** 2026-11-08
+**Status:** Accepted（2026-11-08）· **Owner:** Avi · **Last updated:** 2026-11-09
 
 > [!NOTE]
 > 依據：`data-model.md` v0.1（§2 entity、§6 需要的查詢）、`acceptance-criteria.md` v0.3（AC-5、AC-9、AC-10、AC-13、§4 Privacy）、`c4-diagram.md` v0.2（§3 本機資料、§9 R1、R2）、`adr-001-desktop-framework.md`（Proposed）、`roadmap.md` v0.3（§3 試用方式）。格式、決定方式、試用資料怎麼收、備份由 Owner 決定（2026-11-08：1A 2A 3A 4A）。
@@ -86,7 +86,7 @@ upstream:
   - **PySide6 結果（2026-11-08）：** ✅ 通過。Python 內建 `sqlite3`，作答紀錄和經驗值用同一個 transaction 寫入，關掉程式重開後經驗值還在（Avi 確認）；試驗資料庫在 `%APPDATA%\學習精靈-試驗\spike.db`。Godot 版也通過（要另裝外掛），但 ADR-001 選了 PySide6。
 - **存放位置（Claude 提議）：** `%APPDATA%\學習精靈\` 底下的一個資料庫檔案。不需要管理員權限；移除程式時可以選擇保留資料。**[M]**
 - **安全存檔：** 作答紀錄和經驗值放在同一個 transaction 裡寫入（AC-10）；新題目和新的題庫版本號也放在同一個 transaction（AC-13）。**[H]**
-- **試用資料（Owner 決定 3A）：** 程式有「匯出作答紀錄」按鈕，產生 CSV 檔，由同學自己決定要不要傳給 Avi。程式本身不上傳任何資料，符合 AC §4 Privacy。驗收條件見 AC-14。**[M]**
+- **試用資料（Owner 決定 3A）：** 程式有「匯出作答紀錄」按鈕，產生 CSV 檔，由同學自己決定要不要傳給 Avi。量 Latency 的毫秒數存在另一張表 `answer_latency`，匯出時合併（Owner 決定 2026-11-09，A；data-model AnswerLatency）。程式本身不上傳任何資料，符合 AC §4 Privacy。驗收條件見 AC-14。**[M]**
 - **備份（Owner 決定 4A）：** v1 不做備份，接受「換電腦或重灌時資料不見」的風險（c4-diagram R1）。**[M]**
 - **Positive consequences:** AC-10、AC-13 不用自己寫複雜的存檔程式；§6 的查詢都能直接做；Avi 拿得到試用資料算 G1、G2；同學看得到自己交出了什麼。
 - **Negative consequences（必填）:**
@@ -97,7 +97,7 @@ upstream:
   - 不備份：硬碟壞掉、重灌或換電腦時，進度全部不見；資料也可能被會用 DB Browser 的同學改掉（c4-diagram R6）。
 - **Follow-up:**
   - ADR-001 小試驗做第 4 項，結果寫回本 ADR。
-  - 開發時用 SQLite 內建的 `user_version` 記資料表版本，之後升級資料表才知道要從哪一版改起。_TODO: 開發時確認_
+  - 開發時用 SQLite 內建的 `user_version` 記資料表版本，之後升級資料表才知道要從哪一版改起。→ 已做：目前是第 1 版（`app/leveling/storage.py`，2026-11-09）
   - 階段 2 以後有職業、寶物，資料不見的損失變大時，重新考慮備份。
   - 試用時告訴同學怎麼匯出、傳給誰。
 
@@ -128,5 +128,5 @@ upstream:
 
 - ~~等 ADR-001 選定框架~~ → PySide6，已 Accepted（Owner 決定 2026-11-08）
 - _TODO: 匯出檔用什麼方式傳給 Avi（Email、Line、雲端硬碟），試用前決定_
-- _TODO: 資料表版本怎麼記（`user_version`），開發時確認_
+- ~~資料表版本怎麼記~~ → `user_version`，第 1 版（2026-11-09）
 - _TODO: 作答紀錄保留期限（data-model §12）_

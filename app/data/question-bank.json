@@ -1,0 +1,294 @@
+{
+  "bank_version": 1,
+  "questions": [
+    {
+      "id": "Q001",
+      "concept": "字串與數字",
+      "type": "multiple_choice",
+      "code": "a = \"3\"\nb = \"4\"\nprint(a + b)",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "7",
+        "34",
+        "12",
+        "會出現錯誤"
+      ],
+      "answer": "34",
+      "explanation": "\"3\" 和 \"4\" 都是字串，+ 是把兩段字串接起來，不是數學相加。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q002",
+      "concept": "range 和 for",
+      "type": "multiple_choice",
+      "code": "for i in range(3):\n    print(i)",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "0 1 2 3",
+        "1 2 3",
+        "3",
+        "0 1 2"
+      ],
+      "answer": "0 1 2",
+      "explanation": "range(3) 從 0 開始、不包含 3，所以是 0、1、2（每個數字印一行）。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q003",
+      "concept": "if/elif",
+      "type": "multiple_choice",
+      "code": "x = 7\nif x > 10:\n    print(\"A\")\nelif x > 5:\n    print(\"B\")\nelif x > 3:\n    print(\"C\")\nelse:\n    print(\"D\")",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "C",
+        "B",
+        "B 和 C",
+        "D"
+      ],
+      "answer": "B",
+      "explanation": "由上往下檢查，x > 5 第一個成立就印 B，後面的 elif、else 都不會再檢查。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q004",
+      "concept": "list 索引",
+      "type": "multiple_choice",
+      "code": "fruits = [\"蘋果\", \"香蕉\", \"橘子\"]\nprint(fruits[1])",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "蘋果",
+        "香蕉",
+        "橘子",
+        "會出現錯誤"
+      ],
+      "answer": "香蕉",
+      "explanation": "索引從 0 開始，[1] 是第 2 個。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q005",
+      "concept": "字串與數字",
+      "type": "multiple_choice",
+      "code": "age = \"18\"   # input() 拿到的都是字串\nprint(age + 1)",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "19",
+        "181",
+        "會出現錯誤",
+        "18"
+      ],
+      "answer": "會出現錯誤",
+      "explanation": "字串不能直接加數字（TypeError），要先用 int(age) 轉成數字。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q006",
+      "concept": "range 和 for",
+      "type": "multiple_choice",
+      "code": "total = 0\nfor i in range(1, 4):\n    total = total + i\nprint(total)",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "10",
+        "3",
+        "6",
+        "4"
+      ],
+      "answer": "6",
+      "explanation": "range(1, 4) 是 1、2、3（不包含 4），加起來是 6。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q007",
+      "concept": "if/elif",
+      "type": "multiple_choice",
+      "code": "x = 7\nif x > 5:\n    print(\"A\")\nif x > 3:\n    print(\"B\")",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "先印出 A，再印出 B",
+        "只印出 A",
+        "只印出 B",
+        "什麼都不印"
+      ],
+      "answer": "先印出 A，再印出 B",
+      "explanation": "這是兩個獨立的 if，不是 elif，兩個都會檢查，兩個都成立。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q008",
+      "concept": "list 索引",
+      "type": "multiple_choice",
+      "code": "nums = [5, 10, 15]\nprint(nums[3])",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "15",
+        "5",
+        "會出現錯誤",
+        "30"
+      ],
+      "answer": "會出現錯誤",
+      "explanation": "3 個元素的索引是 0～2，[3] 超出範圍（IndexError）。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q009",
+      "concept": "字串與數字",
+      "type": "multiple_choice",
+      "code": "n = int(\"7\")\nprint(n * 3)",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "21",
+        "777",
+        "會出現錯誤",
+        "73"
+      ],
+      "answer": "21",
+      "explanation": "int(\"7\") 已經把字串轉成數字 7，所以是數學相乘。對照：如果是 \"7\" * 3，結果會是 777。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q010",
+      "concept": "range 和 for",
+      "type": "multiple_choice",
+      "code": "print(list(range(0, 10, 3)))",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "[0, 3, 6, 9]",
+        "[3, 6, 9]",
+        "[0, 3, 6]",
+        "[0, 3, 6, 9, 12]"
+      ],
+      "answer": "[0, 3, 6, 9]",
+      "explanation": "從 0 開始每次加 3，到 10 之前停下，不包含 10。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q011",
+      "concept": "if/elif",
+      "type": "multiple_choice",
+      "code": "x = 2\nif x > 5:\n    print(\"A\")\n    print(\"B\")\nprint(\"C\")",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "只印出 C",
+        "A、B、C",
+        "B、C",
+        "什麼都不印"
+      ],
+      "answer": "只印出 C",
+      "explanation": "有縮排的兩行都在 if 裡面，條件不成立就都不執行；print(\"C\") 沒有縮排，一定會執行。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q012",
+      "concept": "list 索引",
+      "type": "multiple_choice",
+      "code": "nums = [1, 2, 3, 4, 5]\nprint(nums[-2])",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "2",
+        "5",
+        "會出現錯誤",
+        "4"
+      ],
+      "answer": "4",
+      "explanation": "負數索引從後面數，[-1] 是最後一個，[-2] 是倒數第 2 個。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q013",
+      "concept": "字串與數字",
+      "type": "multiple_choice",
+      "code": "x = \"5\"\ny = 2\nprint(x * y)",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "10",
+        "55",
+        "7",
+        "會出現錯誤"
+      ],
+      "answer": "55",
+      "explanation": "x 是字串 \"5\"，字串乘以 2 是重複兩次，不是數學相乘。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q014",
+      "concept": "縮排",
+      "type": "multiple_choice",
+      "code": "for i in range(3):\n    print(\"A\")\nprint(\"B\")",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "印出 A、A、A，最後印出 1 次 B",
+        "A 和 B 交替印 3 次",
+        "印出 A、A、A、B、B、B",
+        "只印出 B"
+      ],
+      "answer": "印出 A、A、A，最後印出 1 次 B",
+      "explanation": "print(\"B\") 沒有縮排，不在迴圈裡，所以迴圈跑完才印 1 次。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q015",
+      "concept": "if/elif",
+      "type": "multiple_choice",
+      "code": "score = 85\nif score >= 60:\n    print(\"及格\")\nelif score >= 80:\n    print(\"良好\")\nelse:\n    print(\"不及格\")",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "及格",
+        "良好",
+        "及格 和 良好 都會印出",
+        "不及格"
+      ],
+      "answer": "及格",
+      "explanation": "85 ≥ 60 先成立，後面的 elif 就不會再檢查。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q016",
+      "concept": "range 和 for",
+      "type": "multiple_choice",
+      "code": "print(list(range(1, 5)))",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "[1, 2, 3, 4, 5]",
+        "[0, 1, 2, 3, 4]",
+        "[1, 2, 3, 4]",
+        "[2, 3, 4, 5]"
+      ],
+      "answer": "[1, 2, 3, 4]",
+      "explanation": "range(1, 5) 包含 1、不包含 5。",
+      "status": "active",
+      "added_in_version": 1
+    },
+    {
+      "id": "Q017",
+      "concept": "list 索引",
+      "type": "multiple_choice",
+      "code": "nums = [10, 20, 30]\nnums.append(40)\nprint(nums[1] + nums[-1])",
+      "prompt": "這段程式會印出什麼？",
+      "choices": [
+        "50",
+        "60",
+        "70",
+        "會出現錯誤"
+      ],
+      "answer": "60",
+      "explanation": "nums[1] 是 20，append 後 nums[-1] 是 40，加起來 60。",
+      "status": "active",
+      "added_in_version": 1
+    }
+  ]
+}

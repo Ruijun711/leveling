@@ -17,17 +17,17 @@ upstream:
 >
 > **寫法（Owner 決定 2026-11-08，3A）：** 這是**邏輯模型**，不綁定儲存方式（SQLite、JSON 檔或其他，待「本機存資料」ADR）。型別用通用名稱（text、integer、boolean、datetime、list）；§6 的索引寫成「需要支援的查詢」，等 ADR 選定後再對應到實際做法。
 >
-> **更新（2026-11-08）：** `adr-002-local-storage.md`（Accepted）選定 SQLite，存在 `%APPDATA%\學習精靈\`；§6 的索引已對應成 SQLite 索引。作答紀錄可以匯出成 CSV（AC-14），包含量 Latency 用的 `update_ms`（non-functional-reqs L1，2026-11-08 新增）。
+> **更新（2026-11-08）：** `adr-002-local-storage.md`（Accepted）選定 SQLite，存在 `%APPDATA%\學習精靈\`；§6 的索引已對應成 SQLite 索引。作答紀錄可以匯出成 CSV（AC-14），包含量 Latency 用的 `update_ms`（non-functional-reqs L1，2026-11-08 新增；2026-11-09 Owner 決定 A，另存在 AnswerLatency）。
 
 ---
 
 ## 1. Executive Summary
 
-- **範圍（Owner 決定 2026-11-08，1C）：** 階段 1 核心循環寫完整欄位：玩家進度、題目、題庫版本、作答紀錄、提醒紀錄，共 5 個 entity，存在使用者自己的電腦；加上 `api-spec.md` E3/E4 的雲端玩家進度（階段 3+），共 6 個。階段 2～5（職業、技能、寶物、Boss、AI、寫程式題）只畫關係，欄位等 PRD 的 TODO 補齊後再寫（依據：roadmap 階段 1～5；prd FR-4、FR-5 TODO）。
+- **範圍（Owner 決定 2026-11-08，1C）：** 階段 1 核心循環寫完整欄位：玩家進度、題目、題庫版本、作答紀錄、提醒紀錄，加上作答回饋時間（AnswerLatency，2026-11-09 Owner 決定 A），共 6 個 entity，存在使用者自己的電腦；加上 `api-spec.md` E3/E4 的雲端玩家進度（階段 3+），共 7 個。階段 2～5（職業、技能、寶物、Boss、AI、寫程式題）只畫關係，欄位等 PRD 的 TODO 補齊後再寫（依據：roadmap 階段 1～5；prd FR-4、FR-5 TODO）。
 - **個資（Owner 決定 2026-11-08，2B）：** 維持輕量版，不升級到完整版。上傳到雲端的只有暱稱、經驗值、等級三個欄位，而且規定**暱稱不能用真名**；作答紀錄只存在自己的電腦（依據：prd §6 Privacy；acceptance-criteria §4 Privacy；api-spec E4）。注意：concierge 測試的資料（`學習精靈 · 第 1 週經驗值 - 表單回覆 1.csv`）有同學用真名當暱稱，這份資料只留在 Avi 的電腦，不匯入學習精靈。
 - **稽核欄位：** 依工作包規定，每個 entity 都有 `created_at`、`updated_at`、`version`、`deleted_at`。作答紀錄只新增、題目停用改用 `status`，所以有些稽核欄位在這裡的意思比較特別，寫在各 entity 的 Notes。
 
-> **TL;DR:** 6 個 entity：本機 5 個（階段 1 核心循環），雲端 1 個（階段 3+ 同學互看等級）；階段 2～5 另有 9 個 entity 只畫關係。
+> **TL;DR:** 7 個 entity：本機 6 個（階段 1 核心循環），雲端 1 個（階段 3+ 同學互看等級）；階段 2～5 另有 9 個 entity 只畫關係。
 
 ---
 
@@ -104,13 +104,28 @@ upstream:
 | `is_correct` | boolean | [NO] | | 對或錯 |
 | `is_first_attempt` | boolean | [NO] | 同一位玩家、同一題只能有 1 筆是 true | 選擇題只算第一次作答（AC-6） |
 | `xp_gained` | integer | [NO] | 選擇題：第一次作答答對才是 10，其餘是 0 | 階段 5 寫程式題另有遞減規則（10→8→6→4→2），放在 CodeSubmission |
-| `update_ms` | integer | [YES] | ≥ 0 | 從按下送出到畫面顯示新經驗值和等級，花了幾毫秒；量 Latency 用，隨匯出檔交回（non-functional-reqs L1；AC-14）。存檔失敗時沒有這筆紀錄，所以不會記到 **[M]** |
 | `created_at` | datetime | [NO] | audit | 等於存檔時間 |
 | `updated_at` | datetime | [NO] | audit | 只新增不修改，所以永遠等於 `created_at` |
 | `version` | integer | [NO] | audit | 永遠是 1 |
 | `deleted_at` | datetime | [YES] | audit | 永遠是空的；_TODO: 保留期限待 Owner 決定_ |
 
 - **存檔失敗（AC-10）：** 這筆作答紀錄和 PlayerProgress 的 `xp` 要一起寫進去，全部成功才算數；失敗就兩邊都不變，重送時仍算第一次作答。**[H]**
+- **`update_ms` 移到 AnswerLatency（Owner 決定 2026-11-09，A）：** 毫秒數要等存檔、畫面更新後才知道，放在作答紀錄裡就要事後修改，違反「只新增，不修改」。
+
+### AnswerLatency · 作答回饋時間（本機，階段 1）· **[M]**
+
+每筆作答紀錄最多 1 筆，記「從按下送出到畫面顯示新經驗值和等級」花了幾毫秒；量 Latency 用（non-functional-reqs L1），匯出時和作答紀錄合併成一欄（AC-14）。**只新增，不修改。**（Owner 決定 2026-11-09，A）
+
+| Field | Type | Nullable | Constraints | Notes |
+|---|---|---|---|---|
+| `answer_id` | text | [NO] | PK；FK → AnswerRecord | 一筆作答對應一筆時間 |
+| `update_ms` | integer | [NO] | ≥ 0 | 畫面畫完才停止計時 |
+| `created_at` | datetime | [NO] | audit | |
+| `updated_at` | datetime | [NO] | audit | 只新增不修改，等於 `created_at` |
+| `version` | integer | [NO] | audit | 永遠是 1 |
+| `deleted_at` | datetime | [YES] | audit | 永遠是空的 |
+
+- 存檔失敗時沒有作答紀錄，也就沒有這筆；記錄時間失敗也不影響作答，只是少一筆量測（匯出時這欄是空的）。
 
 ### ReminderLog · 提醒紀錄（本機，階段 1）· **[M]**
 
@@ -168,6 +183,7 @@ upstream:
 erDiagram
     PlayerProgress ||--o{ AnswerRecord : "作答"
     Question ||--o{ AnswerRecord : "被作答"
+    AnswerRecord ||--o| AnswerLatency : "回饋時間"
     PlayerProgress ||--o{ ReminderLog : "收到提醒"
     QuestionBank ||--|{ Question : "包含"
     PlayerProgress ||--o| CloudPlayerProgress : "上傳（階段 3+）"
@@ -192,6 +208,7 @@ erDiagram
 |---|---|---|---|---|---|
 | AnswerRecord | PlayerProgress | N:1 | `player_id` | RESTRICT（作答紀錄要留著算 G1、G2） | **[H]** |
 | AnswerRecord | Question | N:1 | `question_id` | RESTRICT（題目只能停用，不能刪；4A） | **[H]** |
+| AnswerLatency | AnswerRecord | 1:0..1 | `answer_id` | CASCADE（作答紀錄不會刪，實際上不會發生） | **[M]** |
 | ReminderLog | PlayerProgress | N:1 | `player_id` | CASCADE（玩家不在了，提醒紀錄就沒用） | **[M]** |
 | CloudPlayerProgress | PlayerProgress | 1:0..1 | `player_id`（跨本機和雲端，不是真正的 FK） | 不適用；本機刪除不會自動刪雲端。_TODO: 見 CloudPlayerProgress `deleted_at`_ | **[L]** |
 | PlayerProgress | CharacterClass | N:0..1 | _TODO_ | RESTRICT（Claude 草稿） | **[L]** |
